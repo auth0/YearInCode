@@ -1,0 +1,25 @@
+:root {
+  --primary: #000000;
+  --secondary: #ffffff;
+
+  --text-base: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: #000000;
+
+  --flamingo: #e85425;
+
+  --font-sans: poppins, sans-serif;
+}
+
+html,
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--primary);
+  color: var(--text-primary);
+}
+
+body > * {
+  font-family: var(--font-sans);
+}

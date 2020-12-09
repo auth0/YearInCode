@@ -1,8 +1,7 @@
 // This import is only needed when checking authentication status directly from getInitialProps
 // import auth0 from '../lib/auth0'
 import Layout from '@components/common/Layout'
-
-import {useFetchUser} from '../lib/user'
+import {useFetchUser} from '@lib/user'
 
 function ProfileCard({user}) {
   return (

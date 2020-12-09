@@ -1,37 +1,40 @@
-import Layout from '../components/common/Layout/Layout'
-import {useFetchUser} from '../lib/user'
+import {Layout} from '@components/common'
+import {Typography} from '@components/ui'
+import {useFetchUser} from '@lib/user'
 
-function Home() {
+export default function Home() {
   const {user, loading} = useFetchUser()
 
   return (
-    <Layout user={user} loading={loading}>
-      <h1>Next.js and Auth0 Example</h1>
+    <section className="text-center space-y-6">
+      <Typography variant="h3" as="h1">
+        Next.js and Auth0 Example
+      </Typography>
 
       {loading && <p>Loading login info...</p>}
 
       {!loading && !user && (
-        <>
-          <p>
+        <div className="space-y-2">
+          <Typography variant="body1">
             To test the login click in <i>Login</i>
-          </p>
-          <p>
+          </Typography>
+          <Typography variant="body2">
             Once you have logged in you should be able to click in{' '}
             <i>Profile</i> and <i>Logout</i>
-          </p>
-        </>
+          </Typography>
+        </div>
       )}
 
       {user && (
         <>
-          <h4>Rendered user info on the client</h4>
+          <Typography variant="h4">Rendered user info on the client</Typography>
           <img src={user.picture} alt="user picture" />
-          <p>nickname: {user.nickname}</p>
-          <p>name: {user.name}</p>
+          <Typography variant="body1">nickname: {user.nickname}</Typography>
+          <Typography variant="body1">name: {user.name}</Typography>
         </>
       )}
-    </Layout>
+    </section>
   )
 }
 
-export default Home
+Home.Layout = Layout

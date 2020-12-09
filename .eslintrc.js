@@ -41,14 +41,16 @@ module.exports = {
     'no-useless-return': 1,
     'no-unused-vars': 0,
     'react/react-in-jsx-scope': 0,
+    'react/display-name': 0,
   },
   settings: {
     'import/resolver': {
       alias: {
         map: [
-          ['@', '.'],
           ['@components', './components'],
+          ['@assets', './assets'],
           ['@lib', './lib'],
+          ['@', '.'],
         ],
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
       },

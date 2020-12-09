@@ -1,10 +1,15 @@
 import Link from 'next/link'
 
+import {Typography} from '@components/ui'
+
 function Header({user, loading}) {
   return (
-    <header>
+    <header className="container flex items-center justify-between mx-auto py-6">
+      <Typography variant="h3" as="h1" className="font-bold">
+        Nebula
+      </Typography>
       <nav>
-        <ul>
+        <ul className="flex space-x-8">
           <li>
             <Link href="/">
               <a>Home</a>
@@ -39,41 +44,6 @@ function Header({user, loading}) {
             ))}
         </ul>
       </nav>
-
-      <style jsx>{`
-        header {
-          padding: 0.2rem;
-          color: #fff;
-          background-color: #333;
-        }
-        nav {
-          max-width: 42rem;
-          margin: 1.5rem auto;
-        }
-        ul {
-          display: flex;
-          list-style: none;
-          margin-left: 0;
-          padding-left: 0;
-        }
-        li {
-          margin-right: 1rem;
-        }
-        li:nth-child(2) {
-          margin-right: auto;
-        }
-        a {
-          color: #fff;
-          text-decoration: none;
-        }
-        button {
-          font-size: 1rem;
-          color: #fff;
-          cursor: pointer;
-          border: none;
-          background: none;
-        }
-      `}</style>
     </header>
   )
 }
