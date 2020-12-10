@@ -1,8 +1,11 @@
 import Link from 'next/link'
 
 import {Typography} from '@components/ui'
+import {useAuth} from '@lib/auth'
 
-function Header({user, loading}) {
+function Header() {
+  const {user, isLoading} = useAuth()
+
   return (
     <header className="container flex items-center justify-between mx-auto py-6">
       <Typography variant="h3" as="h1" className="text-flamingo font-bold">
@@ -15,12 +18,7 @@ function Header({user, loading}) {
               <a>Home</a>
             </Link>
           </li>
-          <li>
-            <Link href="/about">
-              <a>About</a>
-            </Link>
-          </li>
-          {!loading &&
+          {!isLoading &&
             (user ? (
               <>
                 <li>
@@ -28,11 +26,7 @@ function Header({user, loading}) {
                     <a>Client-rendered profile</a>
                   </Link>
                 </li>
-                <li>
-                  <Link href="/advanced/ssr-profile">
-                    <a>Server rendered profile (advanced)</a>
-                  </Link>
-                </li>
+
                 <li>
                   <a href="/api/logout">Logout</a>
                 </li>

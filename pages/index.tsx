@@ -1,19 +1,19 @@
 import {Layout} from '@components/common'
 import {Typography} from '@components/ui'
-import {useFetchUser} from '@lib/user'
+import {useAuth} from '@lib/auth'
 
 export default function Home() {
-  const {user, loading} = useFetchUser()
+  const {user, isLoading} = useAuth()
 
   return (
-    <section className="text-center space-y-6">
+    <section className="text-center space-y-8">
       <Typography variant="h3" as="h1">
         Next.js and Auth0 Example
       </Typography>
 
-      {loading && <p>Loading login info...</p>}
+      {isLoading && <p>Loading login info...</p>}
 
-      {!loading && !user && (
+      {!isLoading && !user && (
         <div className="space-y-2">
           <Typography variant="body1">
             To test the login click in <i>Login</i>
@@ -26,12 +26,16 @@ export default function Home() {
       )}
 
       {user && (
-        <>
-          <Typography variant="h4">Rendered user info on the client</Typography>
-          <img src={user.picture} alt="user picture" />
+        <div className="flex flex-col items-center space-y-6">
+          <Typography variant="h5">Rendered user info on the client</Typography>
+          <img
+            className="w-36 h-36 rounded-lg"
+            src={user.picture}
+            alt="user picture"
+          />
           <Typography variant="body1">nickname: {user.nickname}</Typography>
           <Typography variant="body1">name: {user.name}</Typography>
-        </>
+        </div>
       )}
     </section>
   )

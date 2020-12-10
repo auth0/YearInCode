@@ -1,3 +1,4 @@
+import {ReactQueryDevtools} from 'react-query-devtools'
 import 'typeface-poppins'
 
 import '@assets/css/main.css'
@@ -10,6 +11,7 @@ function App({Component, pageProps}) {
   return (
     <Layout>
       <Component {...pageProps} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </Layout>
   )
 }
