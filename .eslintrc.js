@@ -48,6 +48,7 @@ module.exports = {
       alias: {
         map: [
           ['@components', './components'],
+          ['@config', './config'],
           ['@assets', './assets'],
           ['@lib', './lib'],
           ['@', '.'],

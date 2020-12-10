@@ -1,0 +1,10 @@
+{
+  "name": "Nebula",
+  "short_name": "Nebula",
+  "description": "Nebula",
+  "display": "standalone",
+  "start_url": "/",
+  "theme_color": "#e85425",
+  "background_color": "#000000",
+  "orientation": "portrait"
+}
