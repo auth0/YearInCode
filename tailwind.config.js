@@ -9,9 +9,9 @@ module.exports = {
         flamingo: 'var(--flamingo)',
       },
       textColor: {
-        base: 'var(--text-base)',
-        primary: 'var(--text-primary)',
-        secondary: 'var(--text-secondary)',
+        'text-base': 'var(--text-base)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
       },
     },
   },
