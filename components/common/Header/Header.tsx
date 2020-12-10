@@ -5,7 +5,7 @@ import {Typography} from '@components/ui'
 function Header({user, loading}) {
   return (
     <header className="container flex items-center justify-between mx-auto py-6">
-      <Typography variant="h3" as="h1" className="font-bold">
+      <Typography variant="h3" as="h1" className="text-flamingo font-bold">
         Nebula
       </Typography>
       <nav>

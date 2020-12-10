@@ -6,6 +6,7 @@ module.exports = {
       colors: {
         primary: 'var(--primary)',
         secondary: 'var(--secondary)',
+        flamingo: 'var(--flamingo)',
       },
       textColor: {
         base: 'var(--text-base)',
