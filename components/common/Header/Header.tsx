@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
 import {Typography} from '@components/ui'
-import {useAuth} from '@lib/auth'
+import {useFetchUser} from '@lib/auth'
 
 function Header() {
-  const {user, isLoading} = useAuth()
+  const {user, isLoading} = useFetchUser()
 
   return (
     <header className="container flex items-center justify-between mx-auto py-6">
@@ -23,7 +23,7 @@ function Header() {
               <>
                 <li>
                   <Link href="/profile">
-                    <a>Client-rendered profile</a>
+                    <a>Server-rendered profile</a>
                   </Link>
                 </li>
 

@@ -1,9 +1,9 @@
 import {Layout} from '@components/common'
 import {Typography} from '@components/ui'
-import {useAuth} from '@lib/auth'
+import {useFetchUser} from '@lib/auth'
 
 export default function Home() {
-  const {user, isLoading} = useAuth()
+  const {user, isLoading} = useFetchUser()
 
   return (
     <section className="text-center space-y-8">

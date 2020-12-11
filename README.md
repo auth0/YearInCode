@@ -1,36 +1,3 @@
-# Next.js and Auth0 Example
-
-This example shows how you can use `@auth0/nextjs-auth` to easily add
-authentication support to your Next.js application. It tries to cover a few
-topics:
-
-- Signing in
-- Signing out
-- Loading the user on the server side and adding it as part of SSR
-  ([`pages/advanced/ssr-profile.js`](pages/advanced/ssr-profile.js))
-- Loading the user on the client side and using fast/cached SSR pages
-  ([`pages/index.js`](pages/index.js))
-- API Routes which can load the current user
-  ([`pages/api/me.js`](pages/api/me.js))
-- Using hooks to make the user available throughout the application
-  ([`lib/user.js`](lib/user.js))
-
-Read more:
-[https://auth0.com/blog/ultimate-guide-nextjs-authentication-auth0/](https://auth0.com/blog/ultimate-guide-nextjs-authentication-auth0/)
-
-## How to use
-
-Execute
-[`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app)
-with [npm](https://docs.npmjs.com/cli/init) or
-[Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npx create-next-app --example auth0 auth0
-# or
-yarn create next-app --example auth0 auth0
-```
-
 ## Configuring Auth0
 
 1. Go to the [Auth0 dashboard](https://manage.auth0.com/) and create a new
@@ -80,11 +47,6 @@ Then, open `.env.local` and add the missing environment variables:
 You can deploy this app to the cloud with
 [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example)
 ([Documentation](https://nextjs.org/docs/deployment)).
-
-### Deploy Your Local Project
-
-To deploy your local project to Vercel, push it to GitHub/GitLab/Bitbucket and
-[import to Vercel](https://vercel.com/import/git?utm_source=github&utm_medium=readme&utm_campaign=next-example).
 
 **Important**: When you import your project on Vercel, make sure to click on
 **Environment Variables** and set them to match your `.env.local` file.

@@ -1,23 +1,23 @@
-import {AxiosError} from 'axios'
 import {useQuery} from 'react-query'
+import {AxiosError} from 'axios'
 
 import {createLoginUrl} from '@lib/common'
 
 import {AuthService} from './auth-services'
 
-interface useAuthParams {
+interface useFetchUserParams {
   required?: boolean
   redirectTo?: string
 }
 
-export function useAuth({required, redirectTo}: useAuthParams = {}) {
+export function useFetchUser({required, redirectTo}: useFetchUserParams = {}) {
   const query = useQuery('user', AuthService.fetchUser, {
-    cacheTime: 60000,
+    staleTime: 7200,
     retry: 0,
     refetchOnWindowFocus: false,
-    onError: (err: AxiosError) => {
-      if (err.message.includes('401') && required) {
-        window.location.assign(createLoginUrl(redirectTo))
+    onError: (error: AxiosError) => {
+      if (required && error.message.includes('401')) {
+        window.location.href = createLoginUrl(redirectTo)
       }
     },
   })
