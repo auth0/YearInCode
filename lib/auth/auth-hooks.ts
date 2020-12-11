@@ -5,12 +5,12 @@ import {createLoginUrl} from '@lib/common'
 
 import {AuthService} from './auth-services'
 
-interface useFetchUserParams {
+export interface UseFetchUserParams {
   required?: boolean
   redirectTo?: string
 }
 
-export function useFetchUser({required, redirectTo}: useFetchUserParams = {}) {
+export function useFetchUser({required, redirectTo}: UseFetchUserParams = {}) {
   const query = useQuery('user', AuthService.fetchUser, {
     staleTime: 7200,
     retry: 0,
