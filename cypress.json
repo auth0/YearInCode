@@ -5,5 +5,8 @@
   "viewportHeight": 768,
   "retries": {
     "runMode": 2
+  },
+  "env": {
+    "api_url": "http://localhost:3000/api"
   }
 }
