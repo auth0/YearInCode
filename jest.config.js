@@ -16,6 +16,7 @@ module.exports = {
     // Allow `@/` to map in Jest tests
     '@test/(.*)$': '<rootDir>/test/$1',
     '@lib/(.*)$': '<rootDir>/lib/$1',
+    '@constants/(.*)$': '<rootDir>/constants/$1',
   },
   transformIgnorePatterns: [
     '/node_modules/',

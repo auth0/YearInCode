@@ -2,6 +2,7 @@ import Layout from '@components/common/Layout'
 import {Typography} from '@components/ui'
 import {auth0, UserProfile} from '@lib/auth'
 import {createLoginUrl} from '@lib/common'
+import {useUserRepositories} from '@lib/github/github-hooks'
 
 function ProfileCard({user}) {
   return (
@@ -28,6 +29,8 @@ interface Props {
 }
 
 export default function ProtectedRouteTest({user}: Props) {
+  const {data: repos} = useUserRepositories(user.sub)
+
   return (
     <div className="flex flex-col items-center space-y-8">
       <ProfileCard user={user} />

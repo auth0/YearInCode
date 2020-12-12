@@ -3,7 +3,7 @@ import {QueryCache, ReactQueryCacheProvider} from 'react-query'
 
 import {useFetchUser, UseFetchUserParams} from '@lib/auth'
 import {rest, server} from '@test/server'
-import {apiUrl} from '@lib/api'
+import api from '@constants/api'
 
 interface SetupUseFetchHookParams {
   params?: UseFetchUserParams
@@ -39,7 +39,7 @@ describe('useFetchUser', () => {
 
   it('should redirect user on required when unauthorized', async () => {
     server.use(
-      rest.get(`${apiUrl}/me`, (req, res, ctx) => {
+      rest.get(`${api.url}/me`, (req, res, ctx) => {
         return res(ctx.status(401))
       }),
     )

@@ -15,6 +15,7 @@
     "jsx": "preserve",
     "paths": {
       "@components/*": ["components/*"],
+      "@constants/*": ["constants/*"],
       "@config/*": ["config/*"],
       "@assets/*": ["assets/*"],
       "@test/*": ["test/*"],

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "0.16.0",
+    "@octokit/rest": "^18.0.12",
     "axios": "^0.21.0",
     "clsx": "^1.1.1",
     "next": "10.0.3",
