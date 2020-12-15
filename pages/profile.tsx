@@ -43,7 +43,7 @@ export async function getServerSideProps({req, res}) {
 
   if (!session || !session.user) {
     res.writeHead(302, {
-      Location: createLoginUrl('/private/protected-route-test'),
+      Location: createLoginUrl('/profile'),
     })
     res.end()
 

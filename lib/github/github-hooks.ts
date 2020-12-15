@@ -13,7 +13,8 @@ export function useUserRepositories(userId: string) {
     GitHubService.getUserRepositories,
     {
       enabled: Boolean(userId),
-      staleTime: 7200,
+      staleTime: 60 * 1000,
+      cacheTime: 60 * 1000,
       retry: 0,
       refetchOnWindowFocus: false,
     },
