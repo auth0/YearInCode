@@ -1,6 +1,8 @@
 import {QueryClientProvider, QueryClient} from 'react-query'
 import {ReactQueryDevtools} from 'react-query/devtools'
-import 'typeface-poppins'
+
+import 'fontsource-poppins/400.css' // Normal
+import 'fontsource-poppins/700.css' // Bold
 
 import '@assets/css/main.css'
 
