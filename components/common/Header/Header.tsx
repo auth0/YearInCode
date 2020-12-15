@@ -1,8 +1,11 @@
 import Link from 'next/link'
 
 import {Typography} from '@components/ui'
+import {useFetchUser} from '@lib/auth'
 
-function Header({user, loading}) {
+function Header() {
+  const {user, isLoading} = useFetchUser()
+
   return (
     <header className="container flex items-center justify-between mx-auto py-6">
       <Typography variant="h3" as="h1" className="text-flamingo font-bold">
@@ -15,24 +18,15 @@ function Header({user, loading}) {
               <a>Home</a>
             </Link>
           </li>
-          <li>
-            <Link href="/about">
-              <a>About</a>
-            </Link>
-          </li>
-          {!loading &&
+          {!isLoading &&
             (user ? (
               <>
                 <li>
                   <Link href="/profile">
-                    <a>Client-rendered profile</a>
+                    <a>Server-rendered profile</a>
                   </Link>
                 </li>
-                <li>
-                  <Link href="/advanced/ssr-profile">
-                    <a>Server rendered profile (advanced)</a>
-                  </Link>
-                </li>
+
                 <li>
                   <a href="/api/logout">Logout</a>
                 </li>

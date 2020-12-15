@@ -1,16 +1,21 @@
-// This import is only needed when checking authentication status directly from getInitialProps
-// import auth0 from '../lib/auth0'
 import Layout from '@components/common/Layout'
-import {useFetchUser} from '@lib/user'
+import {Typography} from '@components/ui'
+import {auth0, UserProfile} from '@lib/auth'
+import {createLoginUrl} from '@lib/common'
 
 function ProfileCard({user}) {
   return (
     <>
-      <h1>Profile</h1>
+      <Typography variant="h2" as="h1">
+        Profile (private)
+      </Typography>
 
-      <div>
-        <h3>Profile (client rendered)</h3>
-        <img src={user.picture} alt="user picture" />
+      <div className="flex flex-col items-center space-y-4">
+        <img
+          className="w-36 h-36 rounded-lg"
+          src={user.picture}
+          alt="user picture"
+        />
         <p>nickname: {user.nickname}</p>
         <p>name: {user.name}</p>
       </div>
@@ -18,14 +23,31 @@ function ProfileCard({user}) {
   )
 }
 
-function Profile() {
-  const {user, loading} = useFetchUser({required: true})
+interface Props {
+  user: UserProfile
+}
 
+export default function ProtectedRouteTest({user}: Props) {
   return (
-    <Layout user={user} loading={loading}>
-      {loading ? <>Loading...</> : <ProfileCard user={user} />}
-    </Layout>
+    <div className="flex flex-col items-center space-y-8">
+      <ProfileCard user={user} />
+    </div>
   )
 }
 
-export default Profile
+export async function getServerSideProps({req, res}) {
+  const session = await auth0.getSession(req)
+
+  if (!session || !session.user) {
+    res.writeHead(302, {
+      Location: createLoginUrl('/private/protected-route-test'),
+    })
+    res.end()
+
+    return
+  }
+
+  return {props: {user: session.user}}
+}
+
+ProtectedRouteTest.Layout = Layout

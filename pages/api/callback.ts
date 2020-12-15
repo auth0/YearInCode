@@ -1,15 +1,16 @@
 import {NextApiRequest, NextApiResponse} from 'next'
 
-import auth0 from '../../lib/auth0'
+import {logger} from '@lib/log'
+import auth0 from '@lib/auth/auth0'
 
 export default async function callback(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
-    await auth0.handleCallback(req, res, {redirectTo: '/'})
+    await auth0.handleCallback(req, res)
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.status(error.status || 500).end(error.message)
   }
 }

@@ -17,11 +17,12 @@
       "@components/*": ["components/*"],
       "@config/*": ["config/*"],
       "@assets/*": ["assets/*"],
+      "@test/*": ["test/*"],
       "@lib/*": ["lib/*"],
       "@/*": ["/*"]
     },
     "baseUrl": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "test/setupTests.js"],
   "exclude": ["node_modules", "cypress"]
 }
