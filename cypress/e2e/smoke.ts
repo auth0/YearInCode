@@ -1,7 +1,7 @@
 import {buildUserProfile} from '../support/generate'
 
-describe('smoke', () => {
-  it.only('should allow a typical user flow', () => {
+describe('Index page smoke test', () => {
+  it('should allow a typical user flow', () => {
     const userProfile = buildUserProfile()
     cy.intercept(`${Cypress.env('api_url')}/me`, {
       statusCode: 200,

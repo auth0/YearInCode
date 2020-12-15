@@ -23,13 +23,13 @@
     "@auth0/nextjs-auth0": "0.16.0",
     "axios": "^0.21.0",
     "clsx": "^1.1.1",
+    "fontsource-poppins": "^3.1.5",
     "next": "10.0.3",
     "next-seo": "^4.17.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-query": "^2.26.4",
     "react-query-devtools": "^2.6.3",
-    "typeface-poppins": "^1.1.13",
     "winston": "^3.3.3"
   },
   "devDependencies": {
