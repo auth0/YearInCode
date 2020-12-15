@@ -8,9 +8,9 @@ export interface UseFetchUserParams {
 }
 
 export function useUserRepositories(userId: string) {
-  const query = useQuery(
+  return useQuery(
     ['repositories', {userId}],
-    GitHubService.getUserRepositories,
+    () => GitHubService.getUserRepositories(userId),
     {
       enabled: Boolean(userId),
       staleTime: 60 * 1000,
@@ -19,6 +19,4 @@ export function useUserRepositories(userId: string) {
       refetchOnWindowFocus: false,
     },
   )
-
-  return query
 }

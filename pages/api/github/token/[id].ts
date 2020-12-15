@@ -16,6 +16,7 @@ owWithMessage(
 
 async function getUserRepositories(req: NextApiRequest, res: NextApiResponse) {
   try {
+    console.time('time1')
     const {
       query: {id},
       method,

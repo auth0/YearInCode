@@ -24,7 +24,7 @@ class GitHubServiceImplementation {
     })
   }
 
-  public async getUserRepositories(_key: string, {userId}: {userId: string}) {
+  public async getUserRepositories(userId: string) {
     if (!this._client) await this.getClient(userId)
 
     // TODO: handle logic
