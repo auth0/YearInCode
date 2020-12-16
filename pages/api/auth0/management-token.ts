@@ -1,31 +1,14 @@
 import {NextApiRequest, NextApiResponse} from 'next'
 import {ManagementClient} from 'auth0'
-import ow from 'ow'
 
-import auth from '@constants/auth'
+import {constants} from '@lib/common'
 import {logger} from '@lib/log'
-import {owWithMessage} from '@lib/api/validation'
+import {validateEnvironment} from '@lib/api'
 
-owWithMessage(
-  process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
-  'AUTH0_CLIENT_ID environment variable not set',
-  ow.string.minLength(1),
-)
-
-owWithMessage(
-  process.env.AUTH0_CLIENT_SECRET,
-  'AUTH0_CLIENT_ID environment variable not set',
-  ow.string.minLength(1),
-)
-
-owWithMessage(
-  auth.auth0.domain,
-  'Auth0 domain is not set',
-  ow.string.minLength(1),
-)
+validateEnvironment()
 
 const auth0Management = new ManagementClient({
-  domain: auth.auth0.domain,
+  domain: constants.auth0.domain,
   clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   scope: 'read:users read:user_idp_tokens',

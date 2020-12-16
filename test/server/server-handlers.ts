@@ -1,7 +1,9 @@
 import {rest} from 'msw'
 
 import {buildUserProfile} from '@test/generate'
-import api from '@constants/api'
+import {constants} from '@lib/common'
+
+const {api} = constants
 
 const handlers = [
   rest.get(`${api.url}/me`, async (req, res, ctx) => {

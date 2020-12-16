@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-import api from '@constants/api'
+import {constants} from '@lib/common'
 
 export default axios.create({
-  baseURL: api.url,
+  baseURL: constants.api.url,
   timeout: 10000,
 })

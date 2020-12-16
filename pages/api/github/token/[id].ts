@@ -2,21 +2,15 @@ import {ManagementClient} from 'auth0'
 import {NextApiRequest, NextApiResponse} from 'next'
 import ow from 'ow'
 
-import auth from '@constants/auth'
+import {constants} from '@lib/common'
 import {logger} from '@lib/log'
 import {auth0} from '@lib/auth'
-import {client} from '@lib/api'
-import {owWithMessage} from '@lib/api/validation'
+import {client, owWithMessage, validateEnvironment} from '@lib/api'
 
-owWithMessage(
-  auth.auth0.domain,
-  'Auth0 domain is not set',
-  ow.string.minLength(1),
-)
+validateEnvironment()
 
-async function getUserRepositories(req: NextApiRequest, res: NextApiResponse) {
+async function getUserGitHubToken(req: NextApiRequest, res: NextApiResponse) {
   try {
-    console.time('time1')
     const {
       query: {id},
       method,
@@ -30,6 +24,8 @@ async function getUserRepositories(req: NextApiRequest, res: NextApiResponse) {
       )
     } catch (error) {
       logger.info(`Validation failed ${error.message}`)
+
+      return res.status(403).end(error.message)
     }
 
     logger.info(`Getting repositories for id: ${id}`)
@@ -38,7 +34,7 @@ async function getUserRepositories(req: NextApiRequest, res: NextApiResponse) {
       case 'GET':
         const accessToken = await getAuth0ManagementToken()
         const auth0Management = new ManagementClient({
-          domain: auth.auth0.domain,
+          domain: constants.auth0.domain,
           token: accessToken,
         })
         const {identities} = await auth0Management.getUser({
@@ -68,4 +64,4 @@ async function getAuth0ManagementToken() {
   return data.accessToken
 }
 
-export default auth0.requireAuthentication(getUserRepositories)
+export default auth0.requireAuthentication(getUserGitHubToken)
