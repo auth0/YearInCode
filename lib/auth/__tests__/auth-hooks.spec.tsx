@@ -1,20 +1,18 @@
 import {renderHook} from '@testing-library/react-hooks'
-import {QueryCache, ReactQueryCacheProvider} from 'react-query'
+import {QueryClientProvider, QueryClient} from 'react-query'
 
 import {useFetchUser, UseFetchUserParams} from '@lib/auth'
 import {rest, server} from '@test/server'
-import {apiUrl} from '@lib/api'
+import {constants} from '@lib/common'
 
 interface SetupUseFetchHookParams {
   params?: UseFetchUserParams
 }
 
 function setupFetchUserHook({params}: SetupUseFetchHookParams = {}) {
-  const queryCache = new QueryCache()
+  const queryClient = new QueryClient()
   const wrapper = ({children}) => (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      {children}
-    </ReactQueryCacheProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 
   return renderHook(() => useFetchUser(params), {wrapper})
@@ -39,7 +37,7 @@ describe('useFetchUser', () => {
 
   it('should redirect user on required when unauthorized', async () => {
     server.use(
-      rest.get(`${apiUrl}/me`, (req, res, ctx) => {
+      rest.get(`${constants.api.url}/me`, (req, res, ctx) => {
         return res(ctx.status(401))
       }),
     )

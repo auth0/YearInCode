@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom/extend-expect'
-import dotenv from 'dotenv'
 
 import {server} from './server'
 
@@ -9,11 +8,13 @@ beforeAll(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {})
   jest.spyOn(console, 'warn').mockImplementation(() => {})
 })
+
 afterAll(() => {
   server.close()
   console.error.mockRestore()
   console.warn.mockRestore()
 })
+
 afterEach(() => {
   server.resetHandlers()
   jest.clearAllMocks()

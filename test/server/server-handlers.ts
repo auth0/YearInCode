@@ -1,10 +1,12 @@
 import {rest} from 'msw'
 
 import {buildUserProfile} from '@test/generate'
+import {constants} from '@lib/common'
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
+const {api} = constants
+
 const handlers = [
-  rest.get(`${apiUrl}/me`, async (req, res, ctx) => {
+  rest.get(`${api.url}/me`, async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json({...buildUserProfile()}))
   }),
 ]

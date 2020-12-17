@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL
+import {constants} from '@lib/common'
 
-export const client = axios.create({
-  baseURL: apiUrl,
+export default axios.create({
+  baseURL: constants.api.url,
   timeout: 10000,
 })
