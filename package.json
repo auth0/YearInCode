@@ -1,6 +1,9 @@
 {
   "name": "nebula",
   "private": true,
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -11,7 +14,6 @@
     "test:watch": "jest --watch",
     "test:ci": "jest --ci",
     "test:e2e": "is-ci \"test:e2e:run\" \"test:e2e:dev\"",
-    "pretest:e2e:run": "npm run build",
     "test:e2e:run": "start-server-and-test start http://localhost:3000 cy:run",
     "test:e2e:dev": "start-server-and-test dev http://localhost:3000 cy:open",
     "cy:run": "cypress run",
@@ -41,14 +43,14 @@
     "@storybook/addon-links": "^6.1.11",
     "@storybook/preset-typescript": "^3.0.0",
     "@storybook/react": "^6.1.11",
-    "@testing-library/cypress": "^7.0.2",
+    "@testing-library/cypress": "^7.0.3",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/react-hooks": "^3.7.0",
     "@types/auth0": "^2.20.11",
     "@types/faker": "^5.1.5",
     "@types/jest": "^26.0.19",
-    "@types/node": "14.14.13",
+    "@types/node": "14.14.14",
     "@types/react": "17.0.0",
     "@typescript-eslint/eslint-plugin": "4.10.0",
     "@typescript-eslint/parser": "4.10.0",

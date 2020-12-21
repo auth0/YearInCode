@@ -50,3 +50,31 @@ You can deploy this app to the cloud with
 
 **Important**: When you import your project on Vercel, make sure to click on
 **Environment Variables** and set them to match your `.env.local` file.
+
+## Testing GitHub Actions
+
+To run GitHub Actions locally please install
+[act runner](https://github.com/nektos/act). 
+
+Then, add this action to the `integration-and-e2e-test` steps: 
+
+```
+  - name: Install Cypress dependencies
+    run:
+      apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev
+      libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+```
+
+finally, run the following command:
+
+```
+act -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+```
+
+⚠️ `WARNING: this will run a Docker container with >18 GB file size`
+
+A lean build can be run, but Cypress has to be excluded. Like this:
+
+```
+act --job unit-test
+```
