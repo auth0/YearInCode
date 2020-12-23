@@ -8,8 +8,6 @@ export type Variants =
   | 'h4'
   | 'h5'
   | 'h6'
-  | 'subtitle1'
-  | 'subtitle2'
   | 'body1'
   | 'body2'
   | 'caption'
@@ -21,8 +19,6 @@ const defaultVariantMapping: Record<Variants, React.ElementType> = {
   h4: 'h4',
   h5: 'h5',
   h6: 'h6',
-  subtitle1: 'h6',
-  subtitle2: 'h6',
   body1: 'p',
   body2: 'p',
   caption: 'span',
@@ -31,17 +27,17 @@ const defaultVariantMapping: Record<Variants, React.ElementType> = {
 const getStyles = (variant: Variants) => {
   switch (variant) {
     case 'h1':
-      return 'text-7xl'
+      return 'text-5xl sm:text-7xl'
     case 'h2':
-      return 'text-6xl'
+      return 'text-4xl sm:text-6xl'
     case 'h3':
-      return 'text-5xl'
+      return 'text-3xl sm:text-5xl'
     case 'h4':
-      return 'text-4xl'
+      return 'text-2xl sm:text-4xl'
     case 'h5':
-      return 'text-2xl'
+      return 'text-xl sm:text-2xl'
     case 'h6':
-      return 'text-xl'
+      return 'text-lg sm:text-xl'
     case 'body1':
       return 'text-base'
     case 'body2':
@@ -62,9 +58,9 @@ interface Props {
 }
 
 const Typography = React.forwardRef<React.ElementType, Props>((props, ref) => {
-  const {variant, as, className, ...other} = props
+  const {variant, as: asProp, className, ...other} = props
 
-  const Component = as || defaultVariantMapping[variant]
+  const Component = asProp || defaultVariantMapping[variant]
 
   return (
     <Component

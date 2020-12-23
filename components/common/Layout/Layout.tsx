@@ -1,21 +1,19 @@
 import Head from 'next/head'
 
-import {Header} from '@components/common'
+import {Header, Footer, DeathStarBackdrop} from '@components/common'
 
-function Layout({children}) {
-  return (
-    <>
-      <Head>
-        <title>Next.js with Auth0</title>
-      </Head>
+const Layout: React.FC = ({children}) => (
+  <div className="container flex flex-col mx-auto min-h-screen">
+    <Head>
+      <title>Next.js with Auth0</title>
+    </Head>
 
-      <Header />
+    <Header />
 
-      <main>
-        <div className="container mx-auto">{children}</div>
-      </main>
-    </>
-  )
-}
+    <DeathStarBackdrop>{children}</DeathStarBackdrop>
+
+    <Footer />
+  </div>
+)
 
 export default Layout

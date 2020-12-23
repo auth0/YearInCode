@@ -1,0 +1,56 @@
+.ripple {
+  @apply w-16 h-16 text-white stroke-current stroke-1;
+  opacity: 0.48;
+  stroke-width: 1px;
+
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+
+.ripple--1 {
+  animation-name: ripple--1;
+  animation-delay: 1.2s;
+}
+
+.ripple--2 {
+  animation-name: ripple--2;
+  animation-delay: 0.9s;
+}
+
+.ripple--3 {
+  animation-name: ripple--3;
+  animation-delay: 0.6s;
+}
+
+.ripple--4 {
+  animation-name: ripple--4;
+  animation-delay: 0.3s;
+}
+
+@keyframes ripple--1 {
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple--2 {
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple--3 {
+  100% {
+    transform: scale(3.5);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple--4 {
+  100% {
+    transform: scale(4.5);
+    opacity: 0;
+  }
+}

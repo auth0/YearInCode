@@ -17,6 +17,8 @@ module.exports = {
   ],
   plugins: ['import'],
   rules: {
+    // turn on errors for missing imports
+    'import/no-unresolved': 'error',
     // Separate import groups with newline by section
     'import/order': [
       'error',
@@ -42,19 +44,15 @@ module.exports = {
     'no-unused-vars': 0,
     'react/react-in-jsx-scope': 0,
     'react/display-name': 0,
+    'import/no-named-as-default-member': 0,
   },
   settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
     'import/resolver': {
-      alias: {
-        map: [
-          ['@components', './components'],
-          ['@config', './config'],
-          ['@assets', './assets'],
-          ['@test', './test'],
-          ['@lib', './lib'],
-          ['@', '.'],
-        ],
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      typescript: {
+        alwaysTryTypes: true,
       },
     },
     react: {

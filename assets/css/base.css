@@ -1,14 +1,15 @@
 :root {
-  --primary: #000000;
-  --secondary: #ffffff;
+  --primary: theme('colors.black');
+  --secondary: theme('colors.white');
 
-  --text-base: #ffffff;
-  --text-primary: #ffffff;
-  --text-secondary: #000000;
+  --text-base: theme('colors.white');
+  --text-primary: theme('colors.white');
+  --text-secondary: theme('colors.black');
 
-  --flamingo: #e85425;
+  --flamingo: theme('colors.flamingo.500');
 
-  --font-sans: poppins, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: Inter, sans-serif;
 }
 
 html,
@@ -18,8 +19,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--primary);
   color: var(--text-primary);
+  scroll-behavior: smooth;
 }
 
 body > * {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
 }

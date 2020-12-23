@@ -1,3 +1,7 @@
+# devrel-nebula
+
+An experience for developers to see their career in space/time
+
 ## Configuring Auth0
 
 1. Go to the [Auth0 dashboard](https://manage.auth0.com/) and create a new
@@ -53,8 +57,7 @@ You can deploy this app to the cloud with
 
 ## Testing GitHub Actions
 
-To run GitHub Actions locally please install
-[act runner](https://github.com/nektos/act). 
+To run GitHub Actions locally please install [act runner](https://github.com/nektos/act). 
 
 Then, add this action to the `integration-and-e2e-test` steps: 
 

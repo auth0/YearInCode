@@ -1,43 +1,16 @@
 import Link from 'next/link'
 
-import {Typography} from '@components/ui'
-import {useFetchUser} from '@lib/auth'
+import Logo from '@assets/svg/auth0-logo-white.svg'
 
 function Header() {
-  const {user, isLoading} = useFetchUser()
-
   return (
-    <header className="container flex items-center justify-between mx-auto py-6">
-      <Typography variant="h3" as="h1" className="text-flamingo font-bold">
-        Nebula
-      </Typography>
-      <nav>
-        <ul className="flex space-x-8">
-          <li>
-            <Link href="/">
-              <a>Home</a>
-            </Link>
-          </li>
-          {!isLoading &&
-            (user ? (
-              <>
-                <li>
-                  <Link href="/profile">
-                    <a>Server-rendered profile</a>
-                  </Link>
-                </li>
-
-                <li>
-                  <a href="/api/logout">Logout</a>
-                </li>
-              </>
-            ) : (
-              <li>
-                <a href="/api/login">Login</a>
-              </li>
-            ))}
-        </ul>
-      </nav>
+    <header className="flex items-center justify-center py-6">
+      <Link href="/" passHref>
+        <a>
+          <Logo aria-hidden />
+          <span className="sr-only">Auth0 Logo</span>
+        </a>
+      </Link>
     </header>
   )
 }
