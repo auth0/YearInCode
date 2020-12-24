@@ -14,12 +14,12 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
-      "@components/*": ["components/*"],
-      "@config/*": ["config/*"],
-      "@assets/*": ["assets/*"],
-      "@test/*": ["test/*"],
-      "@lib/*": ["lib/*"],
-      "@/*": ["/*"]
+      "@components/*": ["src/components/*"],
+      "@config/*": ["src/config/*"],
+      "@assets/*": ["src/assets/*"],
+      "@test/*": ["src/test/*"],
+      "@lib/*": ["src/lib/*"],
+      "@/*": ["src/*"]
     },
     "baseUrl": "."
   },
