@@ -28,7 +28,7 @@ export async function getServerSideProps({req, res}) {
     })
     res.end()
 
-    return {}
+    return {props: {}}
   }
 
   return {props: {user: session.user}}

@@ -19,9 +19,7 @@ const MeetDeathStar = () => {
             Death Star — your journey
           </Typography>
           <Typography className="font-semibold" variant="h1">
-            You’re the heart of innovation.
-            <br />
-            Tell your journey today.
+            Meet Death Star — the visual representation of your journey.
           </Typography>
           <Typography
             variant="h6"

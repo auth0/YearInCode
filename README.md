@@ -2,6 +2,25 @@
 
 An experience for developers to see their career in space/time
 
+## Development
+
+### Requirements
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+### Commands
+
+In the development environment, an elasticmq server is running on port 9324, a
+serverless offline on port 1337, and a Next.js dev server on port 3000 for the
+React frontend. To run all of these servers concurrently, run the dev command.
+
+```
+yarn dev
+# or
+npm run dev
+```
+
 ## Configuring Auth0
 
 1. Go to the [Auth0 dashboard](https://manage.auth0.com/) and create a new
@@ -57,9 +76,10 @@ You can deploy this app to the cloud with
 
 ## Testing GitHub Actions
 
-To run GitHub Actions locally please install [act runner](https://github.com/nektos/act). 
+To run GitHub Actions locally please install
+[act runner](https://github.com/nektos/act).
 
-Then, add this action to the `integration-and-e2e-test` steps: 
+Then, add this action to the `integration-and-e2e-test` steps:
 
 ```
   - name: Install Cypress dependencies

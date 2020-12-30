@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/jspm_packages
 /.pnp
 .pnp.js
 
@@ -14,6 +15,7 @@
 
 # production
 /build
+/api/dist
 
 # misc
 .DS_Store
@@ -35,3 +37,6 @@ yarn-error.log*
 
 # Cypress
 cypress/videos
+
+# Serverless directories
+.serverless

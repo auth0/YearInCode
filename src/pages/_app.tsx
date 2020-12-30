@@ -4,8 +4,8 @@ import {QueryClientProvider, QueryClient} from 'react-query'
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {SSRProvider} from '@react-aria/ssr'
 
-import 'fontsource-inter/400.css' // Normal
-import 'fontsource-inter/600.css' // Semi-Bold
+import '@fontsource/inter/400.css' // Normal
+import '@fontsource/inter/600.css' // Semi-Bold
 
 import '@assets/css/main.css'
 
