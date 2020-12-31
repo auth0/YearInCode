@@ -1,4 +1,4 @@
-const {join} = require(`path`)
+const path = require(`path`)
 const slsw = require(`serverless-webpack`)
 const nodeExternals = require(`webpack-node-externals`)
 const MinifyPlugin = require(`babel-minify-webpack-plugin`)
@@ -7,7 +7,7 @@ const ENV =
   (process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) ||
   (process.env.NODE_ENV = `development`)
 const envProd = ENV === `production`
-const outDir = join(__dirname, `dist`)
+const outDir = path.join(__dirname, `dist`)
 
 const isLocal = slsw.lib.webpack.isLocal
 
@@ -21,6 +21,9 @@ module.exports = {
     extensions: ['.js', '.json', '.ts'],
     symlinks: false,
     cacheWithContext: false,
+    alias: {
+      '@nebula': path.resolve(__dirname, '../libs'),
+    },
   },
   output: {
     libraryTarget: `commonjs`,

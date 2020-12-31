@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import {
   Button,
   ProgressBar,
@@ -5,15 +7,44 @@ import {
   ToggleButton,
   Group,
 } from '@components/ui'
-
-import {years} from './SelectYearsView.utils'
+import {arrayToObjectKeys} from '@lib/common'
+import {useQueueDeathStar} from '@lib/death-star/death-star-hooks'
+import {useFetchUser} from '@lib/auth'
+import {Years} from '@nebula/types/queue'
 
 interface SelectYearsProps {
   setInProgress: (value: boolean) => void
 }
 
+const years: Years = ['2017', '2018', '2019', '2020']
+
 const SelectYears: React.FC<SelectYearsProps> = ({setInProgress}) => {
-  // TODO: Request generation with selected year(s)
+  const {data} = useFetchUser({required: true, redirectTo: '/death-star'})
+  const {mutateAsync, isLoading, isSuccess} = useQueueDeathStar()
+  const [selectedYears, setSelectedYears] = React.useState(() =>
+    arrayToObjectKeys(years),
+  )
+
+  // Get years that are toggled
+  const toggledYears = Object.keys(selectedYears).filter(
+    key => selectedYears[key],
+  ) as Years
+
+  const toggleYear = (year: string) => () => {
+    const newSelectedYears = {...selectedYears}
+    newSelectedYears[year] = !selectedYears[year]
+
+    setSelectedYears(newSelectedYears)
+  }
+
+  const submitToQueue = () => {
+    // Get years that are toggled
+
+    mutateAsync({userId: data.sub, years: toggledYears})
+      .then(() => setInProgress(true))
+      .catch(console.error)
+  }
+
   return (
     <section className="flex flex-1 flex-col items-center justify-center px-4 space-y-12">
       <ProgressBar className="max-w-md" max={100} value={0} />
@@ -34,11 +65,23 @@ const SelectYears: React.FC<SelectYearsProps> = ({setInProgress}) => {
 
       <Group className="flex space-x-4">
         {years.map(year => (
-          <ToggleButton key={year}>{year}</ToggleButton>
+          <ToggleButton
+            onPress={toggleYear(year)}
+            isSelected={selectedYears[year]}
+            key={year}
+          >
+            {year}
+          </ToggleButton>
         ))}
       </Group>
 
-      <Button onPress={() => setInProgress(true)} color="primary" size="large">
+      <Button
+        onPress={submitToQueue}
+        disabled={toggledYears.length === 0}
+        loading={isLoading || isSuccess}
+        color="primary"
+        size="large"
+      >
         Generate Death Star
       </Button>
     </section>

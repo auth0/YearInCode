@@ -28,4 +28,10 @@ export function validateEnvironment() {
     'Auth0 domain is not set',
     ow.string.minLength(1),
   )
+
+  owWithMessage(
+    constants.api.lambdaUrl,
+    'Lambda URL domain is not set',
+    ow.string.minLength(1),
+  )
 }

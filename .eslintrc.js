@@ -55,6 +55,7 @@ module.exports = {
         alwaysTryTypes: true,
       },
     },
+    'import/ignore': ['middy/middlewares'],
     react: {
       version: 'detect',
     },

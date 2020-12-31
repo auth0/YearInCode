@@ -3,7 +3,7 @@ import {AxiosError} from 'axios'
 
 import {createLoginUrl} from '@lib/common'
 
-import {AuthService} from './auth-services'
+import {AuthService} from './auth-service'
 
 export interface UseFetchUserParams {
   required?: boolean

@@ -19,7 +19,9 @@
       "@assets/*": ["src/assets/*"],
       "@test/*": ["src/test/*"],
       "@lib/*": ["src/lib/*"],
-      "@/*": ["src/*"]
+      "@api/*": ["api/*"],
+      "@src/*": ["src/*"],
+      "@nebula/*": ["libs/*"]
     },
     "baseUrl": "."
   },

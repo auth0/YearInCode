@@ -70,3 +70,12 @@ Outlined.args = {
   children: 'See How it Works',
   size: 'small',
 }
+
+export const Loading = Template.bind({})
+
+Loading.args = {
+  color: 'primary',
+  children: 'See How it Works',
+  size: 'small',
+  loading: true,
+}

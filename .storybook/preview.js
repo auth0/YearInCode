@@ -1,7 +1,7 @@
-import '../assets/css/main.css'
+import '../src/assets/css/main.css'
 
-import 'fontsource-inter/400.css' // Normal
-import 'fontsource-inter/600.css' // Semi-Bold
+import '@fontsource/inter/400.css' // Normal
+import '@fontsource/inter/600.css' // Semi-Bold
 
 export const parameters = {
   actions: {argTypesRegex: '^on[A-Z].*'},

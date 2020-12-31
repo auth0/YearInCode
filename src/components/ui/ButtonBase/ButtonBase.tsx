@@ -13,6 +13,8 @@ export interface ButtonBaseProps extends AriaButtonProps<'a' | 'button'> {
   icon?: React.ReactNode
   href?: string
   style?: React.CSSProperties
+  loading?: boolean
+  disabled?: boolean
 }
 
 const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
@@ -25,12 +27,16 @@ const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
       size = 'default',
       variant = 'contained',
       href,
+      loading,
+      disabled,
       ...rest
     } = props
 
     const Component = href
       ? ('a' as React.ElementType)
       : ('button' as React.ElementType)
+
+    const content = loading ? 'Loading...' : children
 
     return (
       <Component
@@ -45,14 +51,15 @@ const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
         )}
         ref={ref}
         href={href}
+        disabled={loading || disabled}
         {...rest}
       >
         {icon ? (
           <>
-            <span aria-hidden>{icon}</span> <span>{children}</span>
+            <span aria-hidden>{icon}</span> <span>{content}</span>
           </>
         ) : (
-          children
+          content
         )}
       </Component>
     )

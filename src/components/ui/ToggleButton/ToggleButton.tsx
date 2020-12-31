@@ -6,16 +6,31 @@ import {AriaButtonProps} from '@react-types/button'
 
 import ButtonBase, {ButtonBaseProps} from '../ButtonBase'
 
-const ToggleButton: React.FC<ButtonBaseProps> = props => {
-  const {color = 'primary', children, className} = props
+interface ToggleButtonProps extends ButtonBaseProps {
+  isSelected: boolean
+}
+
+const ToggleButton: React.FC<ToggleButtonProps> = props => {
+  const {
+    color = 'primary',
+    children,
+    className,
+    onPress,
+    isSelected,
+    ...otherProps
+  } = props
   const ref = React.useRef()
   const state = useToggleState(props)
-  const {buttonProps} = useToggleButton(props, state, ref)
+  const {buttonProps} = useToggleButton(
+    {...props, isDisabled: props.loading || props.disabled},
+    state,
+    ref,
+  )
 
   return (
     <ButtonBase
       {...(buttonProps as AriaButtonProps<'button'>)}
-      {...props}
+      {...otherProps}
       color={color}
       variant="outlined"
       ref={ref}

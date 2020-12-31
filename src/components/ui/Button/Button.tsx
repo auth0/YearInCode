@@ -8,13 +8,14 @@ import ButtonBase, {ButtonBaseProps} from '../ButtonBase'
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
   (props, userRef) => {
-    const {href, onPress, ...otherProps} = props
+    const {onPress, ...otherProps} = props
     const libraryRef = React.useRef()
     const composedRef = useCombinedRef(libraryRef, userRef)
     const {buttonProps} = useButton(
       {
         ...props,
-        elementType: href ? 'a' : 'button',
+        elementType: props.href ? 'a' : 'button',
+        isDisabled: props.loading || props.disabled,
       },
       composedRef,
     )
@@ -23,7 +24,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
       <ButtonBase
         {...(buttonProps as AriaButtonProps<'a' | 'button'>)}
         {...otherProps}
-        href={href}
         ref={composedRef}
       />
     )

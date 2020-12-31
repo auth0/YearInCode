@@ -22,6 +22,8 @@ custom:
     accessKeyId: local
     secretAccessKey: local
     skipCacheInvalidation: false
+  dotenv:
+    path: .env.local
 
 provider:
   name: aws
@@ -33,15 +35,20 @@ provider:
     - Effect: 'Allow'
       Action:
         - 'sqs:SendMessage'
+        - 'sqs:DeleteMessage'
       Resource: 'arn:aws:sqs:${self:provider.region}:*:StarQueue'
 
 functions:
+  authorize:
+    handler: handler.authorize
+
   queueStar:
     handler: handler.queueStar
     events:
       - http:
           path: api/death-star/queue
-          method: get
+          method: post
+          authorizer: authorize
           cors: true
   start:
     handler: handler.start
@@ -82,6 +89,7 @@ resources:
         StatusCode: '401'
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-functions-base-path
   - serverless-webpack
   - serverless-offline-sqs

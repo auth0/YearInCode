@@ -1,10 +1,9 @@
-const path = require('path')
-const fs = require('fs')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 module.exports = {
   stories: [
-    '../components/**/*.stories.mdx',
-    '../components/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/components/**/*.stories.mdx',
+    '../src/components/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [
     '@storybook/addon-links',
@@ -12,16 +11,7 @@ module.exports = {
     'storybook-css-modules-preset',
   ],
   webpackFinal: async config => {
-    const ROOT_DIR = process.cwd()
-
-    const directories = fs
-      .readdirSync(ROOT_DIR, {withFileTypes: true})
-      .filter(file => file.isDirectory() && file.name[0] !== '.')
-      .map(file => file.name)
-
-    directories.forEach(directory => {
-      config.resolve.alias[`@${directory}`] = path.join(ROOT_DIR, directory)
-    })
+    config.resolve.plugins.push(new TsconfigPathsPlugin())
 
     let rule = config.module.rules.find(
       r =>
