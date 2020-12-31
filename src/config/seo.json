@@ -1,0 +1,16 @@
+{
+  "title": "Nebula",
+  "titleTemplate": "Nebula - Auth0",
+  "description": "<PENDING>",
+  "openGraph": {
+    "type": "website",
+    "locale": "en_IE",
+    "url": "<PENDING>",
+    "site_name": "Nebula"
+  },
+  "twitter": {
+    "handle": "<PENDING>",
+    "site": "<PENDING>",
+    "cardType": "<PENDING>"
+  }
+}

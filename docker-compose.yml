@@ -1,0 +1,9 @@
+# This Docker Compose is only meant to be used in development
+
+version: '3.9'
+services:
+  elasticmq:
+    image: 'softwaremill/elasticmq-native'
+    ports:
+      - '9324:9324'
+      - '9325:9325'

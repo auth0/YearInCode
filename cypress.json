@@ -1,0 +1,14 @@
+{
+  "projectId": "2s7x2z",
+  "baseUrl": "http://localhost:3000",
+  "integrationFolder": "cypress/e2e",
+  "viewportWidth": 1366,
+  "viewportHeight": 768,
+  "retries": {
+    "runMode": 2
+  },
+  "env": {
+    "api_url": "http://localhost:3000/api",
+    "serverless_api_url": "http://localhost:1337/dev/api"
+  }
+}

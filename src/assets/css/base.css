@@ -1,0 +1,27 @@
+:root {
+  --primary: theme('colors.black');
+  --secondary: theme('colors.white');
+
+  --text-base: theme('colors.white');
+  --text-primary: theme('colors.white');
+  --text-secondary: theme('colors.black');
+
+  --flamingo: theme('colors.flamingo.500');
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: Inter, sans-serif;
+}
+
+html,
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--primary);
+  color: var(--text-primary);
+  scroll-behavior: smooth;
+}
+
+body > * {
+  font-family: var(--font-body);
+}

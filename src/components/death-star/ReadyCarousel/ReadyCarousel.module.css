@@ -1,0 +1,4 @@
+.arrowContainer {
+  @apply absolute flex items-center justify-between px-8 w-screen sm:px-0;
+  max-width: 500px;
+}

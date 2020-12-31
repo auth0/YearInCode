@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@config/*": ["src/config/*"],
+      "@assets/*": ["src/assets/*"],
+      "@test/*": ["src/test/*"],
+      "@lib/*": ["src/lib/*"],
+      "@api/*": ["api/*"],
+      "@src/*": ["src/*"],
+      "@nebula/*": ["libs/*"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "test/setupTests.js"],
+  "exclude": ["node_modules", "cypress"]
+}

@@ -1,0 +1,96 @@
+service: nebula-serverless
+
+# app and org for use with dashboard.serverless.com
+app: nebula
+org: stackbuilders
+
+frameworkVersion: '2'
+
+custom:
+  serverless-offline:
+    httpPort: 1337
+  functionsBasePath: api
+  webpack:
+    webpackConfig: api/webpack.config.js
+    includeModules: true
+    packager: 'yarn'
+  serverless-offline-sqs:
+    autoCreate: true
+    apiVersion: '2012-11-05'
+    endpoint: http://0.0.0.0:9324
+    region: us-east-1
+    accessKeyId: local
+    secretAccessKey: local
+    skipCacheInvalidation: false
+  dotenv:
+    path: .env.local
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  apiGateway:
+    shouldStartNameWithService: true
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'sqs:SendMessage'
+        - 'sqs:DeleteMessage'
+      Resource: 'arn:aws:sqs:${self:provider.region}:*:StarQueue'
+
+functions:
+  authorize:
+    handler: handler.authorize
+
+  queueStar:
+    handler: handler.queueStar
+    events:
+      - http:
+          path: api/death-star/queue
+          method: post
+          authorizer: authorize
+          cors: true
+  start:
+    handler: handler.start
+    timeout: 900
+    reservedConcurrency: 8 # No more than 8 concurrent invocations
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - StarQueue
+              - Arn
+
+resources:
+  Resources:
+    StarQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: 'StarQueue'
+    GatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: EXPIRED_TOKEN
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+    AuthFailureGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-functions-base-path
+  - serverless-webpack
+  - serverless-offline-sqs
+  - serverless-offline
