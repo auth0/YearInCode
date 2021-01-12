@@ -2,6 +2,7 @@ const path = require(`path`)
 const slsw = require(`serverless-webpack`)
 const nodeExternals = require(`webpack-node-externals`)
 const MinifyPlugin = require(`babel-minify-webpack-plugin`)
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 const ENV =
   (process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) ||
@@ -21,9 +22,7 @@ module.exports = {
     extensions: ['.js', '.json', '.ts'],
     symlinks: false,
     cacheWithContext: false,
-    alias: {
-      '@nebula': path.resolve(__dirname, '../libs'),
-    },
+    plugins: [new TsconfigPathsPlugin()],
   },
   output: {
     libraryTarget: `commonjs`,

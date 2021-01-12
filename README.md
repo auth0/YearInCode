@@ -8,6 +8,7 @@ An experience for developers to see their career in space/time
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/)
+- [Java](https://openjdk.java.net/install/index.html)
 
 ### Commands
 

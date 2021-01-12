@@ -6,6 +6,30 @@ org: stackbuilders
 
 frameworkVersion: '2'
 
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  stackName: ${self:service}-${self:provider.stage}
+  region: us-east-1
+  apiGateway:
+    shouldStartNameWithService: true
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - sqs:SendMessage
+        - sqs:DeleteMessage
+      Resource: 'arn:aws:sqs:${self:provider.region}:*:StarQueue'
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/*'
+
 custom:
   serverless-offline:
     httpPort: 1337
@@ -24,19 +48,15 @@ custom:
     skipCacheInvalidation: false
   dotenv:
     path: .env.local
-
-provider:
-  name: aws
-  runtime: nodejs12.x
-  stage: dev
-  apiGateway:
-    shouldStartNameWithService: true
-  iamRoleStatements:
-    - Effect: 'Allow'
-      Action:
-        - 'sqs:SendMessage'
-        - 'sqs:DeleteMessage'
-      Resource: 'arn:aws:sqs:${self:provider.region}:*:StarQueue'
+    logging: false
+  dynamodb:
+    stages:
+      - dev
+    start:
+      host: localhost
+      port: '8000' # the port of our Dynamo docker container
+      noStart: true
+      migrate: true
 
 functions:
   authorize:
@@ -50,6 +70,28 @@ functions:
           method: post
           authorizer: authorize
           cors: true
+
+  getStatus:
+    handler: handler.getStatus
+    events:
+      - http:
+          path: api/death-star/status
+          method: get
+          authorizer: authorize
+          cors: true
+
+  connect:
+    handler: handler.connect
+    events:
+      - websocket:
+          route: $connect
+
+  disconnect:
+    handler: handler.disconnect
+    events:
+      - websocket:
+          route: $disconnect
+
   start:
     handler: handler.start
     timeout: 900
@@ -67,6 +109,35 @@ resources:
       Type: 'AWS::SQS::Queue'
       Properties:
         QueueName: 'StarQueue'
+    DeathStar:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: DeathStar
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: connectionStatus
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: connectionIdIndex
+            KeySchema:
+              - AttributeName: connectionId
+                KeyType: HASH
+              - AttributeName: connectionStatus
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -91,6 +162,8 @@ resources:
 plugins:
   - serverless-dotenv-plugin
   - serverless-functions-base-path
+  - serverless-dynamodb-autoscaling
   - serverless-webpack
+  - serverless-dynamodb-local
   - serverless-offline-sqs
   - serverless-offline

@@ -55,7 +55,7 @@ module.exports = {
         alwaysTryTypes: true,
       },
     },
-    'import/ignore': ['middy/middlewares'],
+    'import/ignore': ['middy/middlewares', 'dynamoose'],
     react: {
       version: 'detect',
     },

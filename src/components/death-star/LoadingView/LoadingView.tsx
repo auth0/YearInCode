@@ -4,28 +4,29 @@ import Link from 'next/link'
 import {Alert, Button, ProgressBar, Typography} from '@components/ui'
 import GitHubIcon from '@assets/svg/github-logo.svg'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
+import {DeathStarSteps} from '@nebula/types/death-star'
 
 import {steps} from './LoadingView.utils'
 
-const Loading = () => {
-  // TODO: Change steps through server requests
-  const [currentStep, setCurrentStep] = React.useState(0)
+interface LoadingProps {
+  step: DeathStarSteps
+  wsDisconnected: boolean
+}
 
-  const isLastStep = currentStep === steps.length - 1
-  const title = steps[currentStep].title
-  const subtitle = steps[currentStep].subtitle
-  const completionPercent = ((currentStep + 1) / steps.length) * 100
-
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      !isLastStep && setCurrentStep(currentStep + 1)
-    }, 2000)
-
-    return () => clearInterval(intervalId)
-  })
+const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
+  const isReady = step === DeathStarSteps.READY
+  const title = steps[step].title
+  const subtitle = steps[step].subtitle
+  const completionPercent = steps[step].percent
 
   return (
     <section className="flex flex-1 flex-col items-center px-4">
+      {wsDisconnected && (
+        <Alert type="warning" className="my-12">
+          Disconnected. Please Reload!
+        </Alert>
+      )}
+
       <div className="flex flex-1 flex-col items-center justify-center space-y-12">
         <ProgressBar className="max-w-md" max={100} value={completionPercent} />
 
@@ -45,7 +46,7 @@ const Loading = () => {
           </Typography>
         </header>
 
-        {!isLastStep && (
+        {!isReady && (
           <div className="flex items-center space-x-6">
             <Button href="#" icon={<YoutubeIcon />}>
               See How it Works
@@ -57,7 +58,7 @@ const Loading = () => {
           </div>
         )}
 
-        {isLastStep && (
+        {isReady && (
           <Link href="/death-star/ready" passHref>
             <Button color="primary" size="large">
               Show My Death Star
@@ -66,7 +67,7 @@ const Loading = () => {
         )}
       </div>
 
-      {!isLastStep && (
+      {!isReady && (
         <Alert type="warning" className="my-12">
           Creating your Death Star can take around an hour. We&apos;ll email you
           when it’s ready!

@@ -1,7 +1,9 @@
 import {promisify} from 'util'
 
 import jwksClient from 'jwks-rsa'
-import jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
+
+import {decodeToken} from '@api/lib/token'
 
 const getPolicyDocument = (effect, resource) => {
   const policyDocument = {
@@ -54,10 +56,7 @@ const client = jwksClient({
 const authorize = params => {
   const token = getToken(params)
 
-  const decoded = jwt.decode(token, {complete: true})
-  if (!decoded || !decoded.header || !decoded.header.kid) {
-    throw new Error('invalid token')
-  }
+  const decoded = decodeToken(token)
 
   const getSigningKey = promisify(client.getSigningKey)
 
@@ -67,7 +66,7 @@ const authorize = params => {
 
       return jwt.verify(token, signingKey, jwtOptions)
     })
-    .then(decoded => ({
+    .then((decoded: Record<string, any>) => ({
       principalId: decoded.sub,
       policyDocument: getPolicyDocument('Allow', params.methodArn),
       context: {scope: decoded.scope},

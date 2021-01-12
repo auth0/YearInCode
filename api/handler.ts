@@ -1,2 +1,2 @@
-export {queueStar, start} from './death-star'
+export {queueStar, start, connect, disconnect, getStatus} from './death-star'
 export {authorize} from './auth'
