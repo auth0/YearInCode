@@ -13,20 +13,17 @@ provider:
   name: aws
   runtime: nodejs12.x
   stage: dev
-  profile: ${self:custom.profiles.${opt:stage, self:provider.stage, 'dev'}}
+  profile: ${self:custom.profiles.${self:custom.stage}}
   stackName: ${self:service}-${self:provider.stage}
   region: us-east-1
   environment:
-    AUTH0_DOMAIN: ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/domain}
-    AUTH0_AUDIENCE:
-      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/audience}
-    AUTH0_CLIENT_ID:
-      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/client_id}
-    AUTH0_CLIENT_SECRET:
-      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/client_secret~true}
-    JWT_TOKEN_ISSUER:
-      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/jwt/token_issuer}
-    JWKS_URI: ${ssm:/${opt:stage, self:provider.stage, 'dev'}/jwt/jwks_uri}
+    AUTH0_DOMAIN: ${ssm:/${self:custom.stage}/auth0/domain}
+    AUTH0_AUDIENCE: ${ssm:/${self:custom.stage}/auth0/audience}
+    AUTH0_CLIENT_ID: ${ssm:/${self:custom.stage}/auth0/client_id}
+    AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
+    JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
+    JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
+    DEATH_STAR_TABLE: ${self:custom.death-star-table}
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
@@ -54,8 +51,11 @@ provider:
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/*'
 
 custom:
+  stage: ${opt:stage, self:provider.stage, 'dev'}
+  death-star-table: ${self:service}-death-star-${self:custom.stage}
   profiles:
     dev: nebula-dev
+    staging: nebula-staging
   logs:
     restApi: true
   serverless-offline:
@@ -110,8 +110,7 @@ functions:
   authorizeWS:
     handler: auth/authorizeWS.default
     environment:
-      WEBSOCKET_PAYLOAD_SECRET:
-        ${ssm:/${opt:stage, self:provider.stage}/websocket/payload_secret~true}
+      WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
   queueStar:
     handler: death-star/queueStar.default
@@ -136,8 +135,7 @@ functions:
   connect:
     handler: death-star/connect.default
     environment:
-      WEBSOCKET_PAYLOAD_SECRET:
-        ${ssm:/${opt:stage, self:provider.stage}/websocket/payload_secret~true}
+      WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
     events:
       - websocket:
           route: $connect
@@ -164,7 +162,7 @@ functions:
             - .execute-api.
             - Ref: AWS::Region
             - .amazonaws.com/
-            - ${self:provider.stage}
+            - ${self:custom.stage}
     events:
       - sqs:
           arn:
@@ -177,12 +175,12 @@ resources:
     StarQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
-        QueueName: sqs-star-queue-${opt:stage, self:provider.stage}
+        QueueName: sqs-star-queue-${self:custom.stage}
         VisibilityTimeout: 900
     DeathStar:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: DeathStar
+        TableName: ${self:custom.death-star-table}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S

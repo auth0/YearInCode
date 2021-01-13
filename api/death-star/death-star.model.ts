@@ -37,8 +37,12 @@ const schema = new dynamoose.Schema(
   },
 )
 
-const DeathStar = dynamoose.model<DeathStarDocument>('DeathStar', schema, {
-  create: false,
-})
+const DeathStar = dynamoose.model<DeathStarDocument>(
+  process.env.DEATH_STAR_TABLE,
+  schema,
+  {
+    create: false,
+  },
+)
 
 export default DeathStar

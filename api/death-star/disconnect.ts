@@ -10,7 +10,7 @@ async function disconnect(event: APIGatewayEvent) {
     .using('connectionIdIndex')
     .exec()
 
-  if (result) {
+  if (result.length) {
     await DeathStar.update(
       {userId: result[0].userId},
       {
