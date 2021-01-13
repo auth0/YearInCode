@@ -9,17 +9,17 @@ import {
 } from '@components/ui'
 import {arrayToObjectKeys} from '@lib/common'
 import {useQueueDeathStar} from '@lib/death-star/death-star-hooks'
-import {useFetchUser} from '@lib/auth'
 import {Years} from '@nebula/types/queue'
-
-interface SelectYearsProps {
-  setInProgress: (value: boolean) => void
-}
+import {DeathStarSteps} from '@nebula/types/death-star'
 
 const years: Years = ['2017', '2018', '2019', '2020']
 
-const SelectYears: React.FC<SelectYearsProps> = ({setInProgress}) => {
-  const {data} = useFetchUser({required: true, redirectTo: '/death-star'})
+interface SelectYearsProps {
+  userId: string
+  setStep: (step: DeathStarSteps) => void
+}
+
+const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
   const {mutateAsync, isLoading, isSuccess} = useQueueDeathStar()
   const [selectedYears, setSelectedYears] = React.useState(() =>
     arrayToObjectKeys(years),
@@ -40,8 +40,8 @@ const SelectYears: React.FC<SelectYearsProps> = ({setInProgress}) => {
   const submitToQueue = () => {
     // Get years that are toggled
 
-    mutateAsync({userId: data.sub, years: toggledYears})
-      .then(() => setInProgress(true))
+    mutateAsync({userId, years: toggledYears})
+      .then(() => setStep(DeathStarSteps.PREPARING))
       .catch(console.error)
   }
 

@@ -7,6 +7,7 @@ import {constants} from '@lib/common'
 import {logger} from '@nebula/log'
 import {owWithMessage} from '@lib/api'
 import {QueueDTO, QueueResponse} from '@nebula/types/queue'
+import {DeathStarService} from '@lib/death-star/death-star-service'
 
 async function queueStar(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -41,8 +42,11 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
 
     const tokenCache = auth0.tokenCache(req, res)
     const {accessToken} = await tokenCache.getAccessToken()
-
-    const {data} = await requestQueue(userId, years, accessToken)
+    const {data} = await DeathStarService.requestQueue(
+      userId,
+      years,
+      accessToken,
+    )
 
     res.status(200).json(data)
   } catch (error) {
@@ -52,24 +56,6 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
       error: error.message,
     })
   }
-}
-
-async function requestQueue(
-  userId: QueueDTO['userId'],
-  years: QueueDTO['years'],
-  accessToken: string,
-) {
-  const url = `${constants.api.lambdaUrl}/death-star/queue`
-
-  return axios.post<QueueResponse>(
-    url,
-    {userId, years},
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  )
 }
 
 export default auth0.requireAuthentication(queueStar)
