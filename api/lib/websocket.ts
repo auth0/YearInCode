@@ -10,14 +10,16 @@ export const sendMessageToClient = (
   payload: string | Record<string, any>,
 ) =>
   new Promise((resolve, reject) => {
-    const apigatewaymanagementapi = new ApiGatewayManagementApi({
+    const apiGatewayManagementApi = new ApiGatewayManagementApi({
       apiVersion: '2018-11-29',
       endpoint: apiGatewayManagementApiURL,
-      accessKeyId: 'local',
-      secretAccessKey: 'local',
+      ...(process.env.IS_OFFLINE && {
+        accessKeyId: 'local',
+        secretAccessKey: 'local',
+      }),
     })
 
-    apigatewaymanagementapi.postToConnection(
+    apiGatewayManagementApi.postToConnection(
       {
         ConnectionId: connectionId,
         Data: JSON.stringify(payload),

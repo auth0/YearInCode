@@ -30,7 +30,11 @@ export interface DeathStarStatusDTO {
   userId: string
 }
 
-export interface WebsocketConnectDTO {
+export interface WebSocketConnectDTO {
+  wsPayload: string
+}
+
+export interface UnsealedWebSocketConnectDTO {
   accessToken: string
   userId: string
 }

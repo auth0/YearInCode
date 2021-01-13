@@ -12,10 +12,13 @@ import {sendMessageToClient} from '@api/lib/websocket'
 
 import DeathStar from './death-star.model'
 
-const auth0Domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN
 const auth0Management = new ManagementClient({
-  domain: auth0Domain,
-  clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
+  domain: process.env.IS_OFFLINE
+    ? process.env.NEXT_PUBLIC_AUTH0_DOMAIN
+    : process.env.AUTH0_DOMAIN,
+  clientId: process.env.IS_OFFLINE
+    ? process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID
+    : process.env.AUTH0_CLIENT_ID,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   scope: 'read:users read:user_idp_tokens',
 })
@@ -37,8 +40,6 @@ function start(event: SQSEvent) {
       identity => identity.provider === 'github',
     ).access_token
 
-    logger.info(`GH TOKEN: ${GitHubToken}`)
-
     await sendUpdateToClient(userId, DeathStarSteps.GATHERING)
     logger.info(`${userId} started step ${DeathStarSteps.GATHERING}`)
 
@@ -57,13 +58,15 @@ function start(event: SQSEvent) {
 }
 
 async function sendUpdateToClient(userId: string, step: DeathStarSteps) {
-  const url = 'http://localhost:3001'
-
   try {
+    const websocketConnectionUrl = process.env.IS_OFFLINE
+      ? 'http://localhost:3001'
+      : process.env.WEBSOCKET_API_ENDPOINT
+
     const {connectionId} = await DeathStar.update({userId}, {step})
 
     if (connectionId) {
-      sendMessageToClient(url, connectionId, {step})
+      await sendMessageToClient(websocketConnectionUrl, connectionId, {step})
     }
   } catch (error) {
     logger.error(error)

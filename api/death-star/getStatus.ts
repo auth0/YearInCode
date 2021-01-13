@@ -21,13 +21,11 @@ async function getStatus(
     const {userId} = event.queryStringParameters
     const userDocument = await DeathStar.get(userId, {attributes: ['step']})
 
-    if (userDocument) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          status: userDocument.toJSON(),
-        }),
-      }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        status: userDocument ? userDocument.toJSON() : {},
+      }),
     }
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)

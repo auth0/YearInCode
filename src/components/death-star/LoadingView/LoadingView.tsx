@@ -21,7 +21,7 @@ const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
 
   return (
     <section className="flex flex-1 flex-col items-center px-4">
-      {wsDisconnected && (
+      {wsDisconnected && !isReady && (
         <Alert type="warning" className="my-12">
           Disconnected. Please Reload!
         </Alert>

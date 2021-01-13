@@ -9,26 +9,27 @@ import {DeathStarSteps} from '@nebula/types/death-star'
 import {DeathStarService} from '@lib/death-star/death-star-service'
 interface Props {
   user: UserProfile
-  sealedAccessToken: string
+  wsPayload: string
   currentStep: DeathStarSteps | ''
 }
 
-export default function Loading({user, sealedAccessToken, currentStep}: Props) {
+export default function Loading({user, wsPayload, currentStep}: Props) {
   const [step, setStep] = React.useState(currentStep)
+  const userId = user.sub
+
   const {readyState, lastJsonMessage} = useWebSocket(
     process.env.NEXT_PUBLIC_API_WEBSOCKET_URL,
     {
       queryParams: {
-        userId: user.sub,
-        accessToken: sealedAccessToken,
+        wsPayload,
       },
-      retryOnError: true,
     },
   )
   const isConnecting =
     readyState === ReadyState.CONNECTING ||
     readyState === ReadyState.UNINSTANTIATED
-  const isDisconnected = readyState === ReadyState.CLOSED
+  const isDisconnected =
+    readyState === ReadyState.CLOSED || readyState === ReadyState.CLOSING
 
   React.useEffect(() => {
     if (lastJsonMessage) {
@@ -38,15 +39,15 @@ export default function Loading({user, sealedAccessToken, currentStep}: Props) {
     }
   }, [lastJsonMessage])
 
-  if (isConnecting && currentStep) {
+  if (isConnecting && step) {
     return <span className="sr-only">Connecting to Websocket</span>
   }
 
-  if (step) {
+  if (step && step !== DeathStarSteps.FAILED) {
     return <LoadingView step={step} wsDisconnected={isDisconnected} />
   }
 
-  return <SelectYearsView setStep={setStep} />
+  return <SelectYearsView userId={userId} setStep={setStep} />
 }
 
 export async function getServerSideProps({req, res}) {
@@ -68,19 +69,19 @@ export async function getServerSideProps({req, res}) {
     session.user.sub as string,
     accessToken,
   )
-  const sealedAccessTokenPromise = Iron.seal(
-    accessToken,
-    process.env.SESSION_ACCESS_TOKEN_SECRET,
+  const wsPayloadPromise = Iron.seal(
+    {accessToken, userId: session.user.sub},
+    process.env.WEBSOCKET_PAYLOAD_SECRET,
     Iron.defaults,
   )
 
   const {status} = await getStatusPromise
-  const sealedAccessToken = await sealedAccessTokenPromise
+  const wsPayload = await wsPayloadPromise
 
   return {
     props: {
       user: session.user,
-      sealedAccessToken,
+      wsPayload,
       currentStep: status?.step ?? '',
     },
   }

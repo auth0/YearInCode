@@ -6,20 +6,42 @@ org: stackbuilders
 
 frameworkVersion: '2'
 
+package:
+  individually: true
+
 provider:
   name: aws
   runtime: nodejs12.x
   stage: dev
+  profile: ${self:custom.profiles.${opt:stage, self:provider.stage, 'dev'}}
   stackName: ${self:service}-${self:provider.stage}
   region: us-east-1
+  environment:
+    AUTH0_DOMAIN: ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/domain}
+    AUTH0_AUDIENCE:
+      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/audience}
+    AUTH0_CLIENT_ID:
+      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/client_id}
+    AUTH0_CLIENT_SECRET:
+      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/auth0/client_secret~true}
+    JWT_TOKEN_ISSUER:
+      ${ssm:/${opt:stage, self:provider.stage, 'dev'}/jwt/token_issuer}
+    JWKS_URI: ${ssm:/${opt:stage, self:provider.stage, 'dev'}/jwt/jwks_uri}
+  lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'execute-api:Invoke'
+      Resource:
+        - 'arn:aws:execute-api:*:*:**/@connections/*'
     - Effect: 'Allow'
       Action:
         - sqs:SendMessage
         - sqs:DeleteMessage
-      Resource: 'arn:aws:sqs:${self:provider.region}:*:StarQueue'
+      Resource:
+        Fn::GetAtt: [StarQueue, Arn]
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -28,16 +50,27 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/*'
 
 custom:
+  profiles:
+    dev: nebula-dev
+  logs:
+    restApi: true
   serverless-offline:
     httpPort: 1337
   functionsBasePath: api
   webpack:
     webpackConfig: api/webpack.config.js
-    includeModules: true
+    includeModules:
+      forceInclude:
+        - uuid
     packager: 'yarn'
+    packagerOptions:
+      scripts:
+        - npx del-cli node_modules/aws-sdk "node_modules/**/@types/**"
+          "node_modules/**/*.d.ts" "node_modules/**/.bin"
   serverless-offline-sqs:
     autoCreate: true
     apiVersion: '2012-11-05'
@@ -49,7 +82,19 @@ custom:
   dotenv:
     path: .env.local
     logging: false
-  dynamodb:
+  capacities: # DynamoDB Auto Scaling
+    - table: DeathStar
+      index:
+        - connectionIdIndex
+      read:
+        minimum: 31 # Minimum read capacity
+        maximum: 1000 # Maximum read capacity
+        usage: 0.75 # Targeted usage percentage
+      write:
+        minimum: 40 # Minimum write capacity
+        maximum: 200 # Maximum write capacity
+        usage: 0.5 # Targeted usage percentage
+  dynamodb: # DynamoDB Local Instance
     stages:
       - dev
     start:
@@ -60,10 +105,18 @@ custom:
 
 functions:
   authorize:
-    handler: handler.authorize
+    handler: auth/authorize.default
+
+  authorizeWS:
+    handler: auth/authorizeWS.default
+    environment:
+      WEBSOCKET_PAYLOAD_SECRET:
+        ${ssm:/${opt:stage, self:provider.stage}/websocket/payload_secret~true}
 
   queueStar:
-    handler: handler.queueStar
+    handler: death-star/queueStar.default
+    environment:
+      SQS_QUEUE_URL: {Ref: StarQueue}
     events:
       - http:
           path: api/death-star/queue
@@ -72,7 +125,7 @@ functions:
           cors: true
 
   getStatus:
-    handler: handler.getStatus
+    handler: death-star/getStatus.default
     events:
       - http:
           path: api/death-star/status
@@ -81,21 +134,37 @@ functions:
           cors: true
 
   connect:
-    handler: handler.connect
+    handler: death-star/connect.default
+    environment:
+      WEBSOCKET_PAYLOAD_SECRET:
+        ${ssm:/${opt:stage, self:provider.stage}/websocket/payload_secret~true}
     events:
       - websocket:
           route: $connect
+          authorizer:
+            name: authorizeWS
+            identitySource:
+              - 'route.request.querystring.wsPayload'
 
   disconnect:
-    handler: handler.disconnect
+    handler: death-star/disconnect.default
     events:
       - websocket:
           route: $disconnect
 
   start:
-    handler: handler.start
+    handler: death-star/start.default
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
+    environment:
+      WEBSOCKET_API_ENDPOINT:
+        Fn::Join:
+          - ''
+          - - Ref: WebsocketsApi
+            - .execute-api.
+            - Ref: AWS::Region
+            - .amazonaws.com/
+            - ${self:provider.stage}
     events:
       - sqs:
           arn:
@@ -108,7 +177,8 @@ resources:
     StarQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
-        QueueName: 'StarQueue'
+        QueueName: sqs-star-queue-${opt:stage, self:provider.stage}
+        VisibilityTimeout: 900
     DeathStar:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -133,11 +203,11 @@ resources:
             Projection:
               ProjectionType: ALL
             ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+              ReadCapacityUnits: 3
+              WriteCapacityUnits: 3
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:

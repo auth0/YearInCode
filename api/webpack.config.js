@@ -3,6 +3,7 @@ const slsw = require(`serverless-webpack`)
 const nodeExternals = require(`webpack-node-externals`)
 const MinifyPlugin = require(`babel-minify-webpack-plugin`)
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 const ENV =
   (process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) ||
@@ -16,8 +17,10 @@ module.exports = {
   entry: slsw.lib.entries,
   target: `node`,
   mode: isLocal ? 'development' : 'production',
-  externals: [nodeExternals({modulesFromFile: true})],
-  devtool: 'source-map',
+  externals: [nodeExternals()],
+  devtool: slsw.lib.webpack.isLocal
+    ? 'eval-cheap-module-source-map'
+    : 'source-map',
   resolve: {
     extensions: ['.js', '.json', '.ts'],
     symlinks: false,
@@ -29,26 +32,24 @@ module.exports = {
     path: outDir,
     filename: `[name].js`,
   },
+
   module: {
     rules: [
       {
-        test: /\.ts$/,
-        exclude: /node_modules/,
+        test: /\.(ts|js)$/,
+        exclude: [
+          [
+            path.resolve(__dirname, 'node_modules'),
+            path.resolve('..', __dirname, '.serverless'),
+            path.resolve(__dirname, '.dist'),
+          ],
+        ],
         use: [
-          {
-            loader: 'babel-loader',
-          },
           {
             loader: 'ts-loader',
-          },
-        ],
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
+            options: {
+              transpileOnly: true,
+            },
           },
         ],
       },
@@ -73,6 +74,15 @@ module.exports = {
       simplifyComparisons: envProd,
       typeConstructors: envProd,
       undefinedToVoid: envProd,
+    }),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+        mode: 'write-references',
+      },
     }),
   ],
 }

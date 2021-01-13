@@ -42,8 +42,8 @@ const getToken = params => {
 }
 
 const jwtOptions = {
-  audience: process.env.AUDIENCE,
-  issuer: process.env.TOKEN_ISSUER,
+  audience: process.env.AUTH0_AUDIENCE,
+  issuer: process.env.JWT_TOKEN_ISSUER,
 }
 
 const client = jwksClient({
@@ -68,7 +68,7 @@ const authorize = params => {
     })
     .then((decoded: Record<string, any>) => ({
       principalId: decoded.sub,
-      policyDocument: getPolicyDocument('Allow', params.methodArn),
+      policyDocument: getPolicyDocument('Allow', '*'),
       context: {scope: decoded.scope},
     }))
 }

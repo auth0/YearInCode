@@ -15,7 +15,6 @@ import {QueueDTO} from '@nebula/types/queue'
 import {DeathStarSteps} from '@nebula/types/death-star'
 import {logger} from '@nebula/log'
 import {decodeToken, getTokenFromString} from '@api/lib/token'
-import dynamoose from '@api/lib/db'
 
 import DeathStar from './death-star.model'
 
@@ -32,7 +31,7 @@ const sqsConfig = IS_OFFLINE
 
 const QUEUE_URL = IS_OFFLINE
   ? 'http://localhost:9324/queue/StarQueue'
-  : 'AWS_ENDPOINT'
+  : process.env.SQS_QUEUE_URL
 
 const sqs = new SQS(sqsConfig)
 
@@ -48,11 +47,11 @@ async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
   }
 
   let inDb = false
-
+  console.log(QUEUE_URL)
   try {
     const status = await DeathStar.get(userId)
 
-    if (status.step === DeathStarSteps.PREPARING) {
+    if (status?.step === DeathStarSteps.PREPARING) {
       return createHttpError(400, 'Already queued')
     }
 
@@ -84,15 +83,21 @@ async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
 
     return response
   } catch (err) {
-    logger.info('error:', 'Failed to send message', err)
+    logger.info('error: Failed to send message: ' + err)
 
     if (inDb) {
-      DeathStar.update(
-        {userId},
-        {
-          step: undefined,
-        },
-      ).catch(() => {})
+      try {
+        await DeathStar.update(
+          {userId},
+          {
+            step: DeathStarSteps.FAILED,
+          },
+        )
+
+        logger.info(`Removed stray user (${userId}) request`)
+      } catch (err) {
+        logger.error(`Error removing stray user (${userId}) request: ${err}`)
+      }
     }
 
     return createHttpError(500, 'ERROR adding to queue')
