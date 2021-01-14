@@ -1,0 +1,36 @@
+name: Deploy Serverless Dev
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  deploy-dev:
+    name: Deploys serverless function to 'production' stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.20.0'
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Serverless AWS authentication
+        run:
+          sls config credentials --provider aws --key ${{
+          secrets.PRODUCTION_AWS_KEY }} --secret ${{
+          secrets.PRODUCTION_AWS_SECRET }}
+
+      - name: Deploy Lambda functions
+        run: sls deploy --stage production
