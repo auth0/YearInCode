@@ -1,13 +1,13 @@
-name: Deploy Serverless Production
+name: Deploy Serverless Dev
 
 on:
   push:
     branches:
-      - production
+      - main
 
 jobs:
-  deploy-production:
-    name: Deploys serverless function to 'production' stage
+  deploy-dev:
+    name: Deploys serverless function to 'dev' stage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -30,7 +30,7 @@ jobs:
         run: yarn global add serverless
 
       - name: Deploy Lambda functions
-        run: sls deploy --stage production --profile '' --verbose
+        run: sls deploy --stage dev --profile '' --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET }}

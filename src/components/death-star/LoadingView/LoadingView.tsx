@@ -69,8 +69,8 @@ const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
 
       {!isReady && (
         <Alert type="warning" className="my-12">
-          Creating your Death Star can take around an hour. We&apos;ll email you
-          when it’s ready!
+          Creating your Death Star can take around one hour. We&apos;ll email
+          you when it’s ready!
         </Alert>
       )}
     </section>

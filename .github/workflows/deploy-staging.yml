@@ -1,4 +1,4 @@
-name: Deploy Serverless Dev
+name: Deploy Serverless Staging
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - staging
 
 jobs:
-  deploy-dev:
+  deploy-staging:
     name: Deploys serverless function to 'staging' stage
     runs-on: ubuntu-latest
     steps:
@@ -26,10 +26,12 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
-      - name: Serverless AWS authentication
-        run:
-          sls config credentials --provider aws --key ${{
-          secrets.STAGING_AWS_KEY }} --secret ${{ secrets.STAGING_AWS_SECRET }}
+      - name: Install Serverless Framework
+        run: yarn global add serverless
 
       - name: Deploy Lambda functions
-        run: sls deploy --stage staging
+        run: sls deploy --stage staging --profile '' --verbose
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
