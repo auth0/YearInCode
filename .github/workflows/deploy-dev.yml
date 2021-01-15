@@ -32,6 +32,6 @@ jobs:
       - name: Deploy Lambda functions
         run: sls deploy --stage dev --profile '' --verbose
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_ACCESS_SECRET }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
