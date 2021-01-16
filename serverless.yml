@@ -23,22 +23,11 @@ provider:
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
-    DEATH_STAR_TABLE: ${self:custom.death-star-table}
+    DEATH_STAR_TABLE: ${self:custom.deathStartTableName}
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
   iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - 'execute-api:Invoke'
-      Resource:
-        - 'arn:aws:execute-api:*:*:**/@connections/*'
-    - Effect: 'Allow'
-      Action:
-        - sqs:SendMessage
-        - sqs:DeleteMessage
-      Resource:
-        Fn::GetAtt: [StarQueue, Arn]
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -52,7 +41,9 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
-  death-star-table: ${self:service}-death-star-${self:custom.stage}
+  deathStartTableName: ${self:service}-death-star-${self:custom.stage}
+  sqsStarQueueName: sqs-star-queue-${self:custom.stage}
+  photosBucketName: ${self:service}-photos-${self:provider.stage}
   profiles:
     dev: nebula-dev
     staging: nebula-staging
@@ -103,20 +94,30 @@ custom:
       port: '8000' # the port of our Dynamo docker container
       noStart: true
       migrate: true
+  s3:
+    host: localhost
+    directory: api/tmp
 
 functions:
   authorize:
-    handler: auth/authorize.default
+    handler: auth/authorize.authorize
 
   authorizeWS:
-    handler: auth/authorizeWS.default
+    handler: auth/authorizeWS.authorizeWS
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
   queueStar:
-    handler: death-star/queueStar.default
+    handler: death-star/queueStar.queueStar
     environment:
       SQS_QUEUE_URL: {Ref: StarQueue}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - sqs:SendMessage
+          - sqs:DeleteMessage
+        Resource:
+          Fn::GetAtt: [StarQueue, Arn]
     events:
       - http:
           path: api/death-star/queue
@@ -125,7 +126,7 @@ functions:
           cors: true
 
   getStatus:
-    handler: death-star/getStatus.default
+    handler: death-star/getStatus.getStatus
     events:
       - http:
           path: api/death-star/status
@@ -134,7 +135,7 @@ functions:
           cors: true
 
   connect:
-    handler: death-star/connect.default
+    handler: death-star/connect.connect
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
     events:
@@ -146,15 +147,25 @@ functions:
               - 'route.request.querystring.wsPayload'
 
   disconnect:
-    handler: death-star/disconnect.default
+    handler: death-star/disconnect.disconnect
     events:
       - websocket:
           route: $disconnect
 
   start:
-    handler: death-star/start.default
+    handler: death-star/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource: arn:aws:s3:::${self:custom.photosBucketName}/*
+      - Effect: Allow
+        Action:
+          - 'execute-api:Invoke'
+        Resource:
+          - 'arn:aws:execute-api:*:*:**/@connections/*'
     environment:
       WEBSOCKET_API_ENDPOINT:
         Fn::Join:
@@ -176,12 +187,12 @@ resources:
     StarQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
-        QueueName: sqs-star-queue-${self:custom.stage}
+        QueueName: ${self:custom.sqsStarQueueName}
         VisibilityTimeout: 900
     DeathStar:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.death-star-table}
+        TableName: ${self:custom.deathStartTableName}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
@@ -207,6 +218,66 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 3
           WriteCapacityUnits: 3
+    PhotosBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.photosBucketName}
+        AccessControl: Private
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: ['PUT']
+              AllowedOrigins: ['*'] # Update with domain when available
+    PhotosBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: PhotosBucket
+        PolicyDocument:
+          Statement:
+            - Action: s3:GetObject
+              Effect: 'Allow'
+              Resource: 'arn:aws:s3:::#{self:custom.photosBucketName}/*'
+              Principal:
+                CanonicalUser: CloudFrontOriginAccessIdentity.S3CanonicalUserId
+    CloudFrontOriginAccessIdentity:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment:
+            'Identity for accessing CloudFront from S3 within stack
+            #{AWS::StackName}'
+    PhotosCdnDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Origins:
+            # S3 origin for static content
+            - DomainName: '${self:custom.photosBucketName}.s3.amazonaws.com'
+              Id: PhotosBucketS3Origin
+              S3OriginConfig:
+                OriginAccessIdentity: 'origin-access-identity/cloudfront/#{CloudFrontOriginAccessIdentity}'
+          Comment: CDN for photos.
+          Enabled: true
+          DefaultRootObject: index.html
+          HttpVersion: http2
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - DELETE
+              - GET
+              - HEAD
+              - OPTIONS
+              - PATCH
+              - POST
+              - PUT
+            Compress: true
+            TargetOriginId: PhotosBucketS3Origin
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: redirect-to-https
+          PriceClass: PriceClass_200
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -234,5 +305,6 @@ plugins:
   - serverless-dynamodb-autoscaling
   - serverless-webpack
   - serverless-dynamodb-local
+  - serverless-s3-local
   - serverless-offline-sqs
   - serverless-offline

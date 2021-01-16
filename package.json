@@ -62,6 +62,7 @@
     "react-dom": "17.0.1",
     "react-query": "^3.5.11",
     "react-use-websocket": "^2.2.0",
+    "serverless-s3-local": "^0.6.7",
     "uuid": "3.3.2",
     "winston": "^3.3.3"
   },
