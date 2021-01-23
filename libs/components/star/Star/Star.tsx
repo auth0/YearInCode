@@ -163,6 +163,8 @@ const Star: React.FC<Props> = ({
             />
           ))}
         </Group>
+
+        {/* Gradients */}
         <defs>
           {data.weeks.map(d => {
             const {week, lines, total, dominantLanguage} = d
@@ -183,7 +185,9 @@ const Star: React.FC<Props> = ({
             )
           })}
         </defs>
+
         <Group>
+          {/* Commits bars */}
           <Group>
             {data.weeks.map(({week, total}) => (
               <Arc
@@ -200,6 +204,8 @@ const Star: React.FC<Props> = ({
               />
             ))}
           </Group>
+
+          {/* Lines bars */}
           <Group>
             {data.weeks.map(({week, lines, dominantLanguage}) => (
               <Arc
