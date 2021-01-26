@@ -3,6 +3,7 @@ import middy from 'middy'
 import {SQSEvent, SQSRecord} from 'aws-lambda'
 import sqsBatch from '@middy/sqs-partial-batch-failure'
 import sqsJsonBodyParser from '@middy/sqs-json-body-parser'
+import AWS from 'aws-sdk'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
@@ -21,6 +22,13 @@ const auth0Management = new ManagementClient({
     : process.env.AUTH0_CLIENT_ID,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   scope: 'read:users read:user_idp_tokens',
+})
+
+const S3 = new AWS.S3({
+  s3ForcePathStyle: true,
+  accessKeyId: 'S3RVER', // This specific key is required when working offline
+  secretAccessKey: 'S3RVER',
+  endpoint: new AWS.Endpoint('http://localhost:4569').href,
 })
 
 function start(event: SQSEvent) {
@@ -79,6 +87,4 @@ function sleep(ms) {
   })
 }
 
-const handler = middy(start).use(sqsJsonBodyParser()).use(sqsBatch())
-
-export default handler
+export const handler = middy(start).use(sqsJsonBodyParser()).use(sqsBatch())

@@ -53,7 +53,8 @@ const client = jwksClient({
   jwksUri: process.env.JWKS_URI,
 })
 
-const authorize = params => {
+export const authorize = params => {
+  console.log(params)
   const token = getToken(params)
 
   const decoded = decodeToken(token)
@@ -63,7 +64,6 @@ const authorize = params => {
   return getSigningKey(decoded.header.kid)
     .then((key: any) => {
       const signingKey = key.publicKey || key.rsaPublicKey
-
       return jwt.verify(token, signingKey, jwtOptions)
     })
     .then((decoded: Record<string, any>) => ({
@@ -72,5 +72,3 @@ const authorize = params => {
       context: {scope: decoded.scope},
     }))
 }
-
-export default authorize

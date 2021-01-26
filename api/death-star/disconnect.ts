@@ -4,7 +4,7 @@ import {DeathStarUserStatus} from '@nebula/types/death-star'
 
 import DeathStar from './death-star.model'
 
-async function disconnect(event: APIGatewayEvent) {
+export async function disconnect(event: APIGatewayEvent) {
   const result = await DeathStar.query('connectionId')
     .eq(event.requestContext.connectionId)
     .using('connectionIdIndex')
@@ -20,5 +20,3 @@ async function disconnect(event: APIGatewayEvent) {
     )
   }
 }
-
-export default disconnect

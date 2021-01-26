@@ -39,7 +39,7 @@ const client = jwksClient({
   jwksUri: process.env.JWKS_URI,
 })
 
-const authorize = (
+export const authorize = (
   params: SetQueryStringType<APIGatewayAuthorizerEvent, WebSocketConnectDTO>,
 ) => {
   const {wsPayload} = params.queryStringParameters
@@ -65,5 +65,3 @@ const authorize = (
       context: {scope: decoded.scope},
     }))
 }
-
-export default authorize

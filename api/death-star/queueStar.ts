@@ -128,11 +128,9 @@ const inputSchema = {
   },
 }
 
-const handler = middy(queueStar)
+export const handler = middy(queueStar)
   .use(httpSecurityHeaders())
   .use(doNotWaitForEmptyEventLoop())
   .use(jsonBodyParser())
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
-
-export default handler

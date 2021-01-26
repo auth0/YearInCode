@@ -65,25 +65,34 @@ export async function getServerSideProps({req, res}) {
   const tokenCache = auth0.tokenCache(req, res)
   const {accessToken} = await tokenCache.getAccessToken()
 
-  const getStatusPromise = DeathStarService.getStatus(
-    session.user.sub as string,
-    accessToken,
-  )
-  const wsPayloadPromise = Iron.seal(
-    {accessToken, userId: session.user.sub},
-    process.env.WEBSOCKET_PAYLOAD_SECRET,
-    Iron.defaults,
-  )
+  try {
+    const getStatusPromise = DeathStarService.getStatus(
+      session.user.sub as string,
+      accessToken,
+    )
 
-  const {status} = await getStatusPromise
-  const wsPayload = await wsPayloadPromise
+    const wsPayloadPromise = Iron.seal(
+      {accessToken, userId: session.user.sub},
+      process.env.WEBSOCKET_PAYLOAD_SECRET,
+      Iron.defaults,
+    )
 
-  return {
-    props: {
-      user: session.user,
-      wsPayload,
-      currentStep: status?.step ?? '',
-    },
+    const {status} = await getStatusPromise
+    const wsPayload = await wsPayloadPromise
+
+    return {
+      props: {
+        user: session.user,
+        wsPayload,
+        currentStep: status?.step ?? '',
+      },
+    }
+  } catch (e) {
+    return {
+      props: {
+        user: session.user,
+      },
+    }
   }
 }
 

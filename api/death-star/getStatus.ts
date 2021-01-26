@@ -49,10 +49,8 @@ const inputSchema = {
   },
 }
 
-const handler = middy(getStatus)
+export const handler = middy(getStatus)
   .use(httpSecurityHeaders())
   .use(doNotWaitForEmptyEventLoop())
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
-
-export default handler

@@ -55,8 +55,6 @@ const inputSchema = {
   },
 }
 
-const handler = middy(connect)
+export const handler = middy(connect)
   .use(doNotWaitForEmptyEventLoop())
   .use(validator({inputSchema}))
-
-export default handler
