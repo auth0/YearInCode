@@ -1,11 +1,13 @@
 import * as React from 'react'
 import {scaleBand, scaleRadial} from '@visx/scale'
 import {Group} from '@visx/group'
-import {Arc, Line} from '@visx/shape'
+import {arc, Arc, Line} from '@visx/shape'
 import {withParentSize} from '@visx/responsive'
 import {LinearGradient} from '@visx/gradient'
 import * as d3 from 'd3-array'
 import clsx from 'clsx'
+import useMeasure from 'react-use/lib/useMeasure'
+import {parseSVG} from 'svg-path-parser'
 
 import {Star as StarSchema, StarWeek} from '@nebula/types/death-star'
 import NameIcon from '@assets/svg/name.svg'
@@ -14,19 +16,9 @@ import FollowersIcon from '@assets/svg/followers.svg'
 import LanguageIcon from '@assets/svg/language.svg'
 import {Typography} from '@components/ui'
 
-import {commitColors, linesColors, toDegrees, toRadians} from './Star.utils'
-
-const genPoints = (length: number, radius: number) => {
-  const step = (Math.PI * 2) / length
-
-  return [...new Array(length)].map((_, i) => ({
-    x: radius * Math.sin(i * step),
-    y: radius * Math.cos(i * step),
-  }))
-}
+import {commitColors, genPoints, linesColors, toRadians} from './Star.utils'
 
 const AXIS_LINE_AMOUNT = 30
-
 interface Props {
   data: StarSchema
 
@@ -47,6 +39,7 @@ const Star: React.FC<Props> = ({
   const innerRadius = 20
   const outerRadius = Math.min(xMax, yMax) / 2
   const anglePadding = 0.07
+  const [ref, {height: infoBoxHeight}] = useMeasure()
 
   const x = React.useMemo(
     () =>
@@ -67,87 +60,9 @@ const Star: React.FC<Props> = ({
     [data, outerRadius],
   )
 
-  const getVectors = (d: StarWeek) => {
-    const startingRad = x(1) + toRadians(360)
-    const bandwidth = toRadians(5.79)
-    const weekRad = startingRad - (d.week - 1) * bandwidth
-    const vectorX = Math.cos(weekRad)
-    const vectorY = Math.sin(weekRad)
-
-    const degrees = Math.floor(toDegrees(weekRad))
-
-    return {
-      vector: {
-        x: vectorX,
-        y: vectorY,
-      },
-      isLeftSide: degrees > 150,
-      isRightSide: degrees <= 49,
-      isCenter: degrees <= 150 && degrees > 49,
-      weekRad,
-    }
-  }
-
-  const getX1 = (d: StarWeek) => {
-    const {vector, isLeftSide, isRightSide, isCenter} = getVectors(d)
-
-    if (isLeftSide) {
-      return `${Math.abs(vector.x) * 100}%`
-    }
-
-    if (isCenter) {
-      return '0%'
-    }
-
-    if (isRightSide) {
-      return '0%'
-    }
-  }
-
-  const getY1 = (d: StarWeek) => {
-    const {vector, isLeftSide, isRightSide, isCenter} = getVectors(d)
-
-    if (isLeftSide) {
-      return `${Math.abs(vector.y) * 100}%`
-    }
-
-    if (isCenter) {
-      return '100%'
-    }
-
-    if (isRightSide) {
-      return '0%'
-    }
-  }
-
-  const getX2 = (d: StarWeek) => {
-    const {isLeftSide, isCenter} = getVectors(d)
-
-    if (isLeftSide) {
-      return '0%'
-    }
-
-    if (isCenter) {
-      return '0%'
-    }
-  }
-
-  const getY2 = (d: StarWeek) => {
-    const {vector, isLeftSide, isCenter} = getVectors(d)
-
-    if (isLeftSide) {
-      return `${Math.abs(vector.y) * 100}%`
-    }
-
-    if (isCenter) {
-      return '0%'
-    }
-  }
-
   const axesOriginPoints = genPoints(AXIS_LINE_AMOUNT, innerRadius)
   const axesOuterPoints = genPoints(AXIS_LINE_AMOUNT, outerRadius)
   const starHeight = height / 2 + outerRadius + margin.top
-  const infoBoxHeight = 192
 
   return (
     <section className="relative flex flex-col items-center">
@@ -171,18 +86,35 @@ const Star: React.FC<Props> = ({
             {data.weeks.map(d => {
               const {week, lines, total, dominantLanguage} = d
 
+              // Get each bar vector
+              const path = arc({
+                innerRadius: barY(0),
+                outerRadius: barY(total),
+                startAngle: x(week),
+                endAngle: x(week) + x.bandwidth(),
+                padAngle: anglePadding,
+                padRadius: innerRadius,
+                cornerRadius: 9999,
+              })(d)
+
+              // extract vector points
+              const parsedPath = parseSVG(path).filter(({code}) =>
+                ['M', 'L'].includes(code),
+              ) as Array<{x: number; y: number}>
+
               return (
                 <LinearGradient
                   key={week}
                   id={`starGradient-${week}`}
                   from={'#000'}
-                  fromOffset={`${(lines / total) * 95}%`}
+                  fromOffset={`${(lines / total) * 100}%`}
                   to={commitColors[dominantLanguage]}
                   toOffset="100%"
-                  x1={getX1(d)}
-                  y1={getY1(d)}
-                  x2={getX2(d)}
-                  y2={getY2(d)}
+                  gradientUnits="userSpaceOnUse"
+                  x1={parsedPath[1].x}
+                  y1={parsedPath[1].y}
+                  x2={parsedPath[0].x}
+                  y2={parsedPath[0].y}
                 />
               )
             })}
@@ -194,7 +126,7 @@ const Star: React.FC<Props> = ({
               {data.weeks.map(({week, total}) => (
                 <Arc
                   key={week}
-                  data={data}
+                  id={`commit-bar-${week}`}
                   innerRadius={barY(0)}
                   outerRadius={barY(total)}
                   startAngle={x(week)}
@@ -235,14 +167,15 @@ const Star: React.FC<Props> = ({
               ? infoBoxHeight + starHeight - margin.top
               : starHeight,
           width: outerRadius * 2,
+          marginBottom: margin.bottom,
         }}
         className="absolute flex items-center"
       >
         <div
-          className={clsx(
-            'absolute bottom-0 grid flex-1',
-            'grid-cols-2 grid-rows-2',
-          )}
+          ref={ref}
+          className={clsx('absolute bottom-0 grid flex-1', {
+            'grid-cols-2 grid-rows-2': outerRadius > 161.5,
+          })}
         >
           <InfoBox
             label="Name"
@@ -285,14 +218,14 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
           borderWidth: '0.5px',
         }}
         className={clsx(
-          'flex items-center justify-center p-2 w-1/4 h-24 border-gray-600',
+          'flex items-center justify-center p-2 w-1/4 h-full border-gray-600',
           'sm:p-6',
         )}
       >
         {icon}
       </div>
 
-      <header className="flex flex-col justify-center p-4 w-3/4 h-24 border border-gray-600 space-y-3">
+      <header className="flex flex-col justify-center p-4 w-3/4 h-full border border-gray-600 space-y-3">
         <Typography
           variant="caption"
           as="h1"

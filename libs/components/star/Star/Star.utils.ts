@@ -36,8 +36,13 @@ export function toRadians(deg: number) {
   return deg * (Math.PI / 180)
 }
 
-export function toDegrees(rad: number) {
-  return rad * (180 / Math.PI)
+export function genPoints(length: number, radius: number) {
+  const step = (Math.PI * 2) / length
+
+  return [...new Array(length)].map((_, i) => ({
+    x: radius * Math.sin(i * step),
+    y: radius * Math.cos(i * step),
+  }))
 }
 
 function indexOfMax(arr) {
