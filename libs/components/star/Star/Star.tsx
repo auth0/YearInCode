@@ -19,7 +19,7 @@ import {Typography} from '@components/ui'
 import {commitColors, genPoints, linesColors, toRadians} from './Star.utils'
 
 const AXIS_LINE_AMOUNT = 30
-interface Props {
+interface StarProps {
   data: StarSchema
 
   parentWidth?: number
@@ -28,7 +28,7 @@ interface Props {
   initialHeight?: number
 }
 
-const Star: React.FC<Props> = ({
+const Star: React.FC<StarProps> = ({
   data,
   parentWidth: width,
   parentHeight: height,
@@ -244,4 +244,6 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   )
 }
 
-export default withParentSize(Star)
+const WrappedStar: React.FC<StarProps> = withParentSize(Star) as any
+
+export default WrappedStar

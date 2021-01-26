@@ -73,7 +73,7 @@ function getRandomLanguage() {
   ]
 }
 
-export function getMockData(): Star {
+export function getMockData(weekAmount = 52): Star {
   const schema = {
     name: 'Robert',
     year: 2020,
@@ -82,10 +82,9 @@ export function getMockData(): Star {
     weeks: [] as Star['weeks'],
   }
 
-  const WEEK_AMOUNT = 52
   const languageCount: Record<string, number> = {}
 
-  const weeks: Star['weeks'] = new Array(WEEK_AMOUNT)
+  const weeks: Star['weeks'] = new Array(weekAmount)
     .fill(undefined)
     .map((_, i) => {
       const commits = getRandomArbitrary(1, 50)
