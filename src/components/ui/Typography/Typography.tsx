@@ -52,6 +52,7 @@ const getStyles = (variant: Variants) => {
 interface Props {
   variant: Variants
 
+  style?: React.CSSProperties
   as?: React.ElementType
   className?: string
   children?: React.ReactNode
