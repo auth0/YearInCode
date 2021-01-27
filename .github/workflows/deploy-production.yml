@@ -30,5 +30,5 @@ jobs:
         run: npx serverless deploy --stage production --profile '' --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_ACCESS_SECRET }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
