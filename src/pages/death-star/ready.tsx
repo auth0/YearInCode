@@ -5,7 +5,10 @@ import {
   LayoutNoBackdrop,
   GetPoster,
 } from '@components/death-star'
-import {getMockData} from '@components/death-star/Star/Star.utils'
+import {
+  getMockData,
+  getRandomArbitrary,
+} from '@components/death-star/Star/Star.utils'
 
 const Star = dynamic(() => import('@components/death-star/Star'), {ssr: false})
 
@@ -14,7 +17,10 @@ export default function Ready() {
     <section className="flex flex-1 flex-col items-center pb-12 px-4 overflow-hidden">
       <ReadyCarousel />
       <GetPoster />
-      <Star wrapperClassName="mt-12" data={getMockData()} />
+      <Star
+        wrapperClassName="mt-12"
+        data={getMockData([16, 32, 52][getRandomArbitrary(0, 3)])}
+      />
     </section>
   )
 }

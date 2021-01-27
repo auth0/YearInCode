@@ -2,12 +2,14 @@ import {Star} from '@nebula/types/death-star'
 
 export const commitColors = new Proxy(
   {
-    Python: '#CF4744',
-    JavaScript: '#1368F8',
-    Java: '#884DF0',
-    'Objective-C': '#9D6F0D',
-    'C#': '#B04EA9',
-    TypeScript: '#388659',
+    Python: '#001FBC',
+    JavaScript: '#9D6F0D',
+    Java: '#a54f00',
+    'Objective-C': '#1368F8',
+    'C#': '#388659',
+    TypeScript: '#0b7a9a',
+    PHP: '#884DF0',
+    Ruby: '#C7504B',
   },
   {
     get: function (target, name) {
@@ -18,12 +20,14 @@ export const commitColors = new Proxy(
 
 export const linesColors = new Proxy(
   {
-    Python: '#EC5E5E',
-    JavaScript: '#0078FF',
-    Java: '#9F6EFF',
-    'Objective-C': '#E7B130',
-    'C#': '#db85d1',
-    TypeScript: '#3DAF6B',
+    Python: '#0025E4',
+    JavaScript: '#E7B130',
+    Java: '#D16909',
+    'Objective-C': '#0078FF',
+    'C#': '#3DAF6B',
+    TypeScript: '#1396BB',
+    PHP: '#9F6EFF',
+    Ruby: '#E46764',
   },
   {
     get: function (target, name) {
@@ -45,7 +49,7 @@ export function genPoints(length: number, radius: number) {
   }))
 }
 
-function indexOfMax(arr) {
+export function indexOfMax(arr) {
   if (arr.length === 0) {
     return -1
   }
@@ -63,14 +67,15 @@ function indexOfMax(arr) {
   return maxIndex
 }
 
-function getRandomArbitrary(min: number, max: number) {
+export function getRandomArbitrary(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min)
 }
 
 function getRandomLanguage() {
-  return ['JavaScript', 'TypeScript', 'Objective-C', 'Perl', 'Java', 'Python'][
-    getRandomArbitrary(0, 6)
-  ]
+  const languages = Object.keys(commitColors)
+  languages.push('Perl')
+
+  return languages[getRandomArbitrary(0, languages.length)]
 }
 
 export function getMockData(weekAmount = 52): Star {

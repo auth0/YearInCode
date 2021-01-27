@@ -222,7 +222,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
         }}
         className={clsx(
           'flex items-center justify-center p-2 w-1/4 h-full border-gray-600',
-          'sm:p-6',
+          'xl:p-4',
         )}
       >
         {icon}
@@ -235,7 +235,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
           style={{
             letterSpacing: '0.2em',
           }}
-          className="text-white text-opacity-30 uppercase"
+          className="text-white text-opacity-40 uppercase"
         >
           {label}
         </Typography>

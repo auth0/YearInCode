@@ -82,18 +82,6 @@ custom:
   dotenv:
     path: .env.local
     logging: false
-  capacities: # DynamoDB Auto Scaling
-    - table: DeathStar
-      index:
-        - connectionIdIndex
-      read:
-        minimum: 31 # Minimum read capacity
-        maximum: 1000 # Maximum read capacity
-        usage: 0.75 # Targeted usage percentage
-      write:
-        minimum: 40 # Minimum write capacity
-        maximum: 200 # Maximum write capacity
-        usage: 0.5 # Targeted usage percentage
   dynamodb: # DynamoDB Local Instance
     stages:
       - dev
@@ -200,12 +188,7 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 3
-              WriteCapacityUnits: 3
-        ProvisionedThroughput:
-          ReadCapacityUnits: 3
-          WriteCapacityUnits: 3
+        BillingMode: PAY_PER_REQUEST
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -230,7 +213,6 @@ resources:
 plugins:
   - serverless-dotenv-plugin
   - serverless-functions-base-path
-  - serverless-dynamodb-autoscaling
   - serverless-webpack
   - serverless-dynamodb-local
   - serverless-offline-sqs
