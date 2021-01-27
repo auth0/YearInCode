@@ -78,11 +78,17 @@ function getRandomLanguage() {
   return languages[getRandomArbitrary(0, languages.length)]
 }
 
+function getRandomName() {
+  const names = ['Jarod', 'Fernanda', 'David', 'Cynthia', 'Jose', 'Maciej']
+
+  return names[getRandomArbitrary(0, names.length)]
+}
+
 export function getMockData(weekAmount = 52): Star {
   const schema = {
-    name: 'Robert',
+    name: getRandomName(),
     year: 2020,
-    followers: 22,
+    followers: getRandomArbitrary(5, 25),
     dominantLanguage: '',
     weeks: [] as Star['weeks'],
   }
