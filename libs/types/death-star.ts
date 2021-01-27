@@ -1,5 +1,20 @@
 import {Document} from 'dynamoose/dist/Document'
 
+export interface StarWeek {
+  week: number
+  commits: number
+  lines: number
+  dominantLanguage: string
+  total: number
+}
+export interface Star {
+  name: string
+  year: number
+  followers: number
+  dominantLanguage: string
+  weeks: StarWeek[]
+}
+
 export enum DeathStarSteps {
   FAILED = 'FAILED',
   PREPARING = 'PREPARING',
