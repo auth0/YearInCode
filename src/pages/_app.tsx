@@ -1,5 +1,5 @@
 import {Router} from 'next/router'
-import NProgress from 'nprogress'
+import nProgress from 'nprogress'
 import {QueryClientProvider, QueryClient} from 'react-query'
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {SSRProvider} from '@react-aria/ssr'
@@ -16,9 +16,9 @@ if (process.env.NODE_ENV === 'development' && typeof document !== 'undefined') {
   document.body.classList.add('debug-screens')
 }
 
-Router.events.on('routeChangeStart', () => NProgress.start())
-Router.events.on('routeChangeComplete', () => NProgress.done())
-Router.events.on('routeChangeError', () => NProgress.done())
+Router.events.on('routeChangeStart', () => nProgress.start())
+Router.events.on('routeChangeComplete', () => nProgress.done())
+Router.events.on('routeChangeError', () => nProgress.done())
 
 function App({Component, pageProps}) {
   const Layout = (Component as any).Layout || Noop

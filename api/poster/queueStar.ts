@@ -30,7 +30,7 @@ const sqsConfig = IS_OFFLINE
   : {region: 'us-east-1'}
 
 const QUEUE_URL = IS_OFFLINE
-  ? 'http://localhost:9324/queue/StarQueue'
+  ? `http://localhost:9324/queue/sqs-star-queue-${process.env.STAGE}`
   : process.env.SQS_QUEUE_URL
 
 const sqs = new SQS(sqsConfig)
@@ -47,7 +47,7 @@ async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
   }
 
   let inDb = false
-  console.log(QUEUE_URL)
+
   try {
     const status = await PosterModel.get(userId)
 

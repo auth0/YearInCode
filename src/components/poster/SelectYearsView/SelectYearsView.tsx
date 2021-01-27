@@ -6,6 +6,7 @@ import {
   Typography,
   ToggleButton,
   Group,
+  Alert,
 } from '@components/ui'
 import {arrayToObjectKeys} from '@lib/common'
 import {useQueueDeathStar} from '@lib/poster/poster-hooks'
@@ -20,7 +21,7 @@ interface SelectYearsProps {
 }
 
 const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
-  const {mutateAsync, isLoading, isSuccess} = useQueueDeathStar()
+  const {mutateAsync, isLoading, isSuccess, isError} = useQueueDeathStar()
   const [selectedYears, setSelectedYears] = React.useState(() =>
     arrayToObjectKeys(years),
   )
@@ -47,7 +48,15 @@ const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
 
   return (
     <section className="flex flex-1 flex-col items-center justify-center px-4 space-y-12">
-      <ProgressBar className="max-w-md" max={100} value={0} />
+      <div className="flex flex-col items-center w-full">
+        {isError && (
+          <Alert type="warning" className="my-12 animate-fade-in">
+            Error queuing. Please try again.
+          </Alert>
+        )}
+
+        <ProgressBar className="max-w-md" max={100} value={0} />
+      </div>
 
       <header className="flex flex-col items-center text-center space-y-12">
         <Typography className="max-w-5xl font-semibold" variant="h1">

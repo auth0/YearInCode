@@ -23,7 +23,8 @@ provider:
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
-    DEATH_STAR_TABLE: ${self:custom.poster-table}
+    POSTER_TABLE: ${self:custom.poster-table}
+    STAGE: ${self:custom.stage}
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
@@ -81,8 +82,9 @@ custom:
     secretAccessKey: local
     skipCacheInvalidation: false
   dotenv:
-    path: .env.local
     logging: false
+    required:
+      file: true
   dynamodb: # DynamoDB Local Instance
     stages:
       - dev

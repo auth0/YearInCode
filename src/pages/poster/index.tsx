@@ -1,12 +1,14 @@
 import React from 'react'
 import useWebSocket, {ReadyState} from 'react-use-websocket'
 import * as Iron from '@hapi/iron'
+import nProgress from 'nprogress'
 
 import {auth0, UserProfile} from '@lib/auth'
 import {createLoginUrl} from '@lib/common'
 import {Layout, LoadingView, SelectYearsView} from '@components/poster'
 import {PosterSteps} from '@nebula/types/poster'
 import {DeathStarService} from '@lib/poster/poster-service'
+import {Spinner} from '@components/ui'
 interface Props {
   user: UserProfile
   wsPayload: string
@@ -23,11 +25,18 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
       queryParams: {
         wsPayload,
       },
+      onOpen: () => {
+        nProgress.done()
+      },
+      onError: () => {
+        nProgress.done()
+      },
     },
   )
   const isConnecting =
     readyState === ReadyState.CONNECTING ||
     readyState === ReadyState.UNINSTANTIATED
+
   const isDisconnected =
     readyState === ReadyState.CLOSED || readyState === ReadyState.CLOSING
 
@@ -40,6 +49,8 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
   }, [lastJsonMessage])
 
   if (isConnecting && step) {
+    typeof window !== 'undefined' && nProgress.start()
+
     return <span className="sr-only">Connecting to Websocket</span>
   }
 
