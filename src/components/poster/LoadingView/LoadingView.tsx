@@ -4,17 +4,17 @@ import Link from 'next/link'
 import {Alert, Button, ProgressBar, Typography} from '@components/ui'
 import GitHubIcon from '@assets/svg/github-logo.svg'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
-import {DeathStarSteps} from '@nebula/types/death-star'
+import {PosterSteps} from '@nebula/types/poster'
 
 import {steps} from './LoadingView.utils'
 
 interface LoadingProps {
-  step: DeathStarSteps
+  step: PosterSteps
   wsDisconnected: boolean
 }
 
 const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
-  const isReady = step === DeathStarSteps.READY
+  const isReady = step === PosterSteps.READY
   const title = steps[step].title
   const subtitle = steps[step].subtitle
   const completionPercent = steps[step].percent
@@ -59,7 +59,7 @@ const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
         )}
 
         {isReady && (
-          <Link href="/death-star/ready" passHref>
+          <Link href="/poster/ready" passHref>
             <Button color="primary" size="large">
               Show My Death Star
             </Button>

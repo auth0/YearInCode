@@ -6,12 +6,12 @@ import * as Iron from '@hapi/iron'
 import {logger} from '@nebula/log'
 import {SetQueryStringType} from '@api/lib/types'
 import {
-  DeathStarUserStatus,
+  PosterUserStatus,
   WebSocketConnectDTO,
   UnsealedWebSocketConnectDTO,
-} from '@nebula/types/death-star'
+} from '@nebula/types/poster'
 
-import DeathStar from './death-star.model'
+import PosterModel from './poster.model'
 
 async function connect(
   event: SetQueryStringType<APIGatewayEvent, WebSocketConnectDTO>,
@@ -27,11 +27,11 @@ async function connect(
 
   logger.info(`Received connection from user (${userId})`)
 
-  await DeathStar.update(
+  await PosterModel.update(
     {userId},
     {
       connectionId,
-      connectionStatus: DeathStarUserStatus.ONLINE,
+      connectionStatus: PosterUserStatus.ONLINE,
     },
   )
 
@@ -55,8 +55,8 @@ const inputSchema = {
   },
 }
 
-const handler = middy(connect)
+export const handler = middy(connect)
   .use(doNotWaitForEmptyEventLoop())
   .use(validator({inputSchema}))
 
-export default handler
+export {handler as connect}

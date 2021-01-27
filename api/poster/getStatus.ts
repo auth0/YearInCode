@@ -9,17 +9,17 @@ import {
 import createHttpError from 'http-errors'
 
 import {SetQueryStringType} from '@api/lib/types'
-import {GetStatusDTO} from '@nebula/types/death-star'
+import {GetStatusDTO} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 
-import DeathStar from './death-star.model'
+import PosterModel from './poster.model'
 
 async function getStatus(
   event: SetQueryStringType<APIGatewayEvent, GetStatusDTO>,
 ) {
   try {
     const {userId} = event.queryStringParameters
-    const userDocument = await DeathStar.get(userId, {attributes: ['step']})
+    const userDocument = await PosterModel.get(userId, {attributes: ['step']})
 
     return {
       statusCode: 200,
@@ -55,4 +55,4 @@ const handler = middy(getStatus)
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
 
-export default handler
+export {handler as getStatus}

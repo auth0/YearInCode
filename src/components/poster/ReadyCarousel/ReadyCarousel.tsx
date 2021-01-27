@@ -43,7 +43,7 @@ const ReadyCarousel = (props: Props) => {
             width={446}
             height={600}
             layout="fixed"
-            src="/img/poster.png"
+            src="/img/poster-ready.png"
             alt="Your generated death star"
           />
         </div>

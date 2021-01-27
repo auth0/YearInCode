@@ -8,15 +8,15 @@ import {
   Group,
 } from '@components/ui'
 import {arrayToObjectKeys} from '@lib/common'
-import {useQueueDeathStar} from '@lib/death-star/death-star-hooks'
+import {useQueueDeathStar} from '@lib/poster/poster-hooks'
 import {Years} from '@nebula/types/queue'
-import {DeathStarSteps} from '@nebula/types/death-star'
+import {PosterSteps} from '@nebula/types/poster'
 
 const years: Years = ['2017', '2018', '2019', '2020']
 
 interface SelectYearsProps {
   userId: string
-  setStep: (step: DeathStarSteps) => void
+  setStep: (step: PosterSteps) => void
 }
 
 const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
@@ -41,7 +41,7 @@ const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
     // Get years that are toggled
 
     mutateAsync({userId, years: toggledYears})
-      .then(() => setStep(DeathStarSteps.PREPARING))
+      .then(() => setStep(PosterSteps.PREPARING))
       .catch(console.error)
   }
 

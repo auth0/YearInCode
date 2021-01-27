@@ -4,13 +4,13 @@ import * as Iron from '@hapi/iron'
 
 import {auth0, UserProfile} from '@lib/auth'
 import {createLoginUrl} from '@lib/common'
-import {Layout, LoadingView, SelectYearsView} from '@components/death-star'
-import {DeathStarSteps} from '@nebula/types/death-star'
-import {DeathStarService} from '@lib/death-star/death-star-service'
+import {Layout, LoadingView, SelectYearsView} from '@components/poster'
+import {PosterSteps} from '@nebula/types/poster'
+import {DeathStarService} from '@lib/poster/poster-service'
 interface Props {
   user: UserProfile
   wsPayload: string
-  currentStep: DeathStarSteps | ''
+  currentStep: PosterSteps | ''
 }
 
 export default function Loading({user, wsPayload, currentStep}: Props) {
@@ -33,7 +33,7 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
 
   React.useEffect(() => {
     if (lastJsonMessage) {
-      const {step} = lastJsonMessage as {step: DeathStarSteps}
+      const {step} = lastJsonMessage as {step: PosterSteps}
 
       setStep(step)
     }
@@ -43,7 +43,7 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
     return <span className="sr-only">Connecting to Websocket</span>
   }
 
-  if (step && step !== DeathStarSteps.FAILED) {
+  if (step && step !== PosterSteps.FAILED) {
     return <LoadingView step={step} wsDisconnected={isDisconnected} />
   }
 
@@ -55,7 +55,7 @@ export async function getServerSideProps({req, res}) {
 
   if (!session || !session.user) {
     res.writeHead(302, {
-      Location: createLoginUrl('/death-star'),
+      Location: createLoginUrl('/poster'),
     })
     res.end()
 

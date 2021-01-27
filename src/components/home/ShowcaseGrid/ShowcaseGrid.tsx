@@ -42,7 +42,7 @@ const ShowcaseGrid = () => {
       </header>
 
       <div className="flex flex-col items-center">
-        <Link href="/death-star" passHref>
+        <Link href="/poster" passHref>
           <Button
             icon={<GitHubIcon />}
             className="relative z-10"

@@ -1,10 +1,10 @@
 import {APIGatewayEvent} from 'aws-lambda'
 
-import {DeathStarUserStatus} from '@nebula/types/death-star'
+import {PosterUserStatus} from '@nebula/types/poster'
 
-import DeathStar from './death-star.model'
+import DeathStar from './poster.model'
 
-async function disconnect(event: APIGatewayEvent) {
+export async function disconnect(event: APIGatewayEvent) {
   const result = await DeathStar.query('connectionId')
     .eq(event.requestContext.connectionId)
     .using('connectionIdIndex')
@@ -15,10 +15,8 @@ async function disconnect(event: APIGatewayEvent) {
       {userId: result[0].userId},
       {
         connectionId: undefined,
-        connectionStatus: DeathStarUserStatus.OFFLINE,
+        connectionStatus: PosterUserStatus.OFFLINE,
       },
     )
   }
 }
-
-export default disconnect

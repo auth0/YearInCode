@@ -7,7 +7,7 @@ import {constants} from '@lib/common'
 import {logger} from '@nebula/log'
 import {owWithMessage} from '@lib/api'
 import {QueueDTO, QueueResponse} from '@nebula/types/queue'
-import {DeathStarService} from '@lib/death-star/death-star-service'
+import {DeathStarService} from '@lib/poster/poster-service'
 
 async function queueStar(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {

@@ -1,8 +1,8 @@
 import ApiGatewayManagementApi from 'aws-sdk/clients/apigatewaymanagementapi'
 
 import {logger} from '@nebula/log'
-import DeathStar from '@api/death-star/death-star.model'
-import {DeathStarUserStatus} from '@nebula/types/death-star'
+import PosterModel from '@api/poster/poster.model'
+import {PosterUserStatus} from '@nebula/types/poster'
 
 export const sendMessageToClient = (
   apiGatewayManagementApiURL: string,
@@ -30,16 +30,16 @@ export const sendMessageToClient = (
 
           if (error.statusCode === 410) {
             logger.info(`Found stale connection, deleting ${connectionId}`)
-            DeathStar.query('connectionId')
+            PosterModel.query('connectionId')
               .eq(connectionId)
               .using('connectionIdIndex')
               .exec()
               .then(result => {
-                DeathStar.update(
+                PosterModel.update(
                   {userId: result[0].userId},
                   {
                     connectionId: undefined,
-                    connectionStatus: DeathStarUserStatus.OFFLINE,
+                    connectionStatus: PosterUserStatus.OFFLINE,
                   },
                 )
               })

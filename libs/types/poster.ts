@@ -15,7 +15,7 @@ export interface Star {
   weeks: StarWeek[]
 }
 
-export enum DeathStarSteps {
+export enum PosterSteps {
   FAILED = 'FAILED',
   PREPARING = 'PREPARING',
   START = 'START_QUEUE',
@@ -24,24 +24,24 @@ export enum DeathStarSteps {
   READY = 'READY',
 }
 
-export enum DeathStarUserStatus {
+export enum PosterUserStatus {
   ONLINE = 'ONLINE',
   OFFLINE = 'OFFLINE',
 }
 
-export interface DeathStarState {
+export interface PosterState {
   userId: string
-  step: DeathStarSteps
+  step: PosterSteps
   connectionId: string
-  connectionStatus: DeathStarUserStatus
+  connectionStatus: PosterUserStatus
 }
 
-export interface DeathStarDocument extends Document, DeathStarState {}
+export interface PosterDocument extends Document, PosterState {}
 
-export interface DeathStarStatusResponse {
-  status: Pick<DeathStarState, 'step'>
+export interface PosterStatusResponse {
+  status: Pick<PosterState, 'step'>
 }
-export interface DeathStarStatusDTO {
+export interface PosterStatusDTO {
   userId: string
 }
 

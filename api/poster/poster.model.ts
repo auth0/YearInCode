@@ -1,9 +1,9 @@
 import dynamoose from '@api/lib/db'
 import {
-  DeathStarDocument,
-  DeathStarSteps,
-  DeathStarUserStatus,
-} from '@nebula/types/death-star'
+  PosterDocument,
+  PosterSteps,
+  PosterUserStatus,
+} from '@nebula/types/poster'
 
 const schema = new dynamoose.Schema(
   {
@@ -14,7 +14,7 @@ const schema = new dynamoose.Schema(
     },
     step: {
       type: String,
-      enum: Object.values(DeathStarSteps),
+      enum: Object.values(PosterSteps),
       required: true,
     },
     connectionId: {
@@ -28,7 +28,7 @@ const schema = new dynamoose.Schema(
     },
     connectionStatus: {
       type: String,
-      enum: Object.values(DeathStarUserStatus),
+      enum: Object.values(PosterUserStatus),
     },
   },
   {
@@ -37,7 +37,7 @@ const schema = new dynamoose.Schema(
   },
 )
 
-const DeathStar = dynamoose.model<DeathStarDocument>(
+const PosterModel = dynamoose.model<PosterDocument>(
   process.env.DEATH_STAR_TABLE,
   schema,
   {
@@ -45,4 +45,4 @@ const DeathStar = dynamoose.model<DeathStarDocument>(
   },
 )
 
-export default DeathStar
+export default PosterModel

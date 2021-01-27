@@ -2,15 +2,12 @@ import axios from 'axios'
 
 import {client} from '@lib/api'
 import {constants} from '@lib/common'
-import {
-  DeathStarStatusDTO,
-  DeathStarStatusResponse,
-} from '@nebula/types/death-star'
+import {PosterStatusDTO, PosterStatusResponse} from '@nebula/types/poster'
 import {QueueDTO, QueueResponse} from '@nebula/types/queue'
 
 class DeathStarServiceImplementation {
   public async queueStar({userId, years}: QueueDTO) {
-    const {data} = await client.post<QueueResponse>('/death-star/queue', {
+    const {data} = await client.post<QueueResponse>('/poster/queue', {
       userId,
       years,
     })
@@ -19,12 +16,12 @@ class DeathStarServiceImplementation {
   }
 
   public async getStatus(
-    userId: DeathStarStatusDTO['userId'],
+    userId: PosterStatusDTO['userId'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/death-star/status/?userId=${userId}`
+    const url = `${constants.api.lambdaUrl}/poster/status/?userId=${userId}`
 
-    const {data} = await axios.get<DeathStarStatusResponse>(url, {
+    const {data} = await axios.get<PosterStatusResponse>(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -38,7 +35,7 @@ class DeathStarServiceImplementation {
     years: QueueDTO['years'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/death-star/queue`
+    const url = `${constants.api.lambdaUrl}/poster/queue`
 
     return axios.post<QueueResponse>(
       url,

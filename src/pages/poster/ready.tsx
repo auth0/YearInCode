@@ -1,16 +1,12 @@
 import dynamic from 'next/dynamic'
 
-import {
-  ReadyCarousel,
-  LayoutNoBackdrop,
-  GetPoster,
-} from '@components/death-star'
+import {ReadyCarousel, LayoutNoBackdrop, GetPoster} from '@components/poster'
 import {
   getMockData,
   getRandomArbitrary,
-} from '@components/death-star/Star/Star.utils'
+} from '@components/poster/Star/Star.utils'
 
-const Star = dynamic(() => import('@components/death-star/Star'), {ssr: false})
+const Star = dynamic(() => import('@components/poster/Star'), {ssr: false})
 
 export default function Ready() {
   return (

@@ -23,7 +23,7 @@ provider:
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
-    DEATH_STAR_TABLE: ${self:custom.death-star-table}
+    DEATH_STAR_TABLE: ${self:custom.poster-table}
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
@@ -52,7 +52,7 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
-  death-star-table: ${self:service}-death-star-${self:custom.stage}
+  poster-table: ${self:service}-poster-${self:custom.stage}
   profiles:
     dev: nebula-dev
     staging: nebula-staging
@@ -94,35 +94,35 @@ custom:
 
 functions:
   authorize:
-    handler: auth/authorize.default
+    handler: auth/authorize.authorize
 
   authorizeWS:
-    handler: auth/authorizeWS.default
+    handler: auth/authorizeWS.authorizeWS
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
   queueStar:
-    handler: death-star/queueStar.default
+    handler: poster/queueStar.queueStar
     environment:
       SQS_QUEUE_URL: {Ref: StarQueue}
     events:
       - http:
-          path: api/death-star/queue
+          path: api/poster/queue
           method: post
           authorizer: authorize
           cors: true
 
   getStatus:
-    handler: death-star/getStatus.default
+    handler: poster/getStatus.getStatus
     events:
       - http:
-          path: api/death-star/status
+          path: api/poster/status
           method: get
           authorizer: authorize
           cors: true
 
   connect:
-    handler: death-star/connect.default
+    handler: poster/connect.connect
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
     events:
@@ -134,13 +134,13 @@ functions:
               - 'route.request.querystring.wsPayload'
 
   disconnect:
-    handler: death-star/disconnect.default
+    handler: poster/disconnect.disconnect
     events:
       - websocket:
           route: $disconnect
 
   start:
-    handler: death-star/start.default
+    handler: poster/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
     environment:
@@ -169,7 +169,7 @@ resources:
     DeathStar:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.death-star-table}
+        TableName: ${self:custom.poster-table}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S

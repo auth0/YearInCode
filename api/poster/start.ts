@@ -7,10 +7,10 @@ import sqsJsonBodyParser from '@middy/sqs-json-body-parser'
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
-import {DeathStarSteps} from '@nebula/types/death-star'
+import {PosterSteps} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
 
-import DeathStar from './death-star.model'
+import PosterModel from './poster.model'
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
@@ -29,8 +29,8 @@ function start(event: SQSEvent) {
       body: {userId},
     } = record as SetBodyToType<SQSRecord, QueueDTO>
 
-    await sendUpdateToClient(userId, DeathStarSteps.START)
-    logger.info(`${userId} started step ${DeathStarSteps.START}`)
+    await sendUpdateToClient(userId, PosterSteps.START)
+    logger.info(`${userId} started step ${PosterSteps.START}`)
 
     const {identities} = await auth0Management.getUser({
       id: userId,
@@ -40,30 +40,30 @@ function start(event: SQSEvent) {
       identity => identity.provider === 'github',
     ).access_token
 
-    await sendUpdateToClient(userId, DeathStarSteps.GATHERING)
-    logger.info(`${userId} started step ${DeathStarSteps.GATHERING}`)
+    await sendUpdateToClient(userId, PosterSteps.GATHERING)
+    logger.info(`${userId} started step ${PosterSteps.GATHERING}`)
 
     await sleep(8362)
 
-    await sendUpdateToClient(userId, DeathStarSteps.LAST_TOUCHES)
-    logger.info(`${userId} started step ${DeathStarSteps.LAST_TOUCHES}`)
+    await sendUpdateToClient(userId, PosterSteps.LAST_TOUCHES)
+    logger.info(`${userId} started step ${PosterSteps.LAST_TOUCHES}`)
 
     await sleep(5000)
 
-    await sendUpdateToClient(userId, DeathStarSteps.READY)
+    await sendUpdateToClient(userId, PosterSteps.READY)
     logger.info(`${userId} star is ready!`)
   })
 
   return Promise.allSettled(recordPromises)
 }
 
-async function sendUpdateToClient(userId: string, step: DeathStarSteps) {
+async function sendUpdateToClient(userId: string, step: PosterSteps) {
   try {
     const websocketConnectionUrl = process.env.IS_OFFLINE
       ? 'http://localhost:3001'
       : process.env.WEBSOCKET_API_ENDPOINT
 
-    const {connectionId} = await DeathStar.update({userId}, {step})
+    const {connectionId} = await PosterModel.update({userId}, {step})
 
     if (connectionId) {
       await sendMessageToClient(websocketConnectionUrl, connectionId, {step})
@@ -81,4 +81,4 @@ function sleep(ms) {
 
 const handler = middy(start).use(sqsJsonBodyParser()).use(sqsBatch())
 
-export default handler
+export {handler as start}

@@ -12,11 +12,11 @@ import createHttpError from 'http-errors'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
-import {DeathStarSteps} from '@nebula/types/death-star'
+import {PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import {decodeToken, getTokenFromString} from '@api/lib/token'
 
-import DeathStar from './death-star.model'
+import PosterModel from './poster.model'
 
 const {IS_OFFLINE} = process.env
 
@@ -49,16 +49,16 @@ async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
   let inDb = false
   console.log(QUEUE_URL)
   try {
-    const status = await DeathStar.get(userId)
+    const status = await PosterModel.get(userId)
 
-    if (status?.step === DeathStarSteps.PREPARING) {
+    if (status?.step === PosterSteps.PREPARING) {
       return createHttpError(400, 'Already queued')
     }
 
-    await DeathStar.update(
+    await PosterModel.update(
       {userId},
       {
-        step: DeathStarSteps.PREPARING,
+        step: PosterSteps.PREPARING,
       },
     )
     inDb = true
@@ -87,10 +87,10 @@ async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
 
     if (inDb) {
       try {
-        await DeathStar.update(
+        await PosterModel.update(
           {userId},
           {
-            step: DeathStarSteps.FAILED,
+            step: PosterSteps.FAILED,
           },
         )
 
@@ -135,4 +135,4 @@ const handler = middy(queueStar)
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
 
-export default handler
+export {handler as queueStar}

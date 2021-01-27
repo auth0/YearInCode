@@ -1,4 +1,4 @@
-import {Star} from '@nebula/types/death-star'
+import {Star} from '@nebula/types/poster'
 
 export const commitColors = new Proxy(
   {

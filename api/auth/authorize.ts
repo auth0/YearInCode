@@ -53,7 +53,7 @@ const client = jwksClient({
   jwksUri: process.env.JWKS_URI,
 })
 
-const authorize = params => {
+export const authorize = params => {
   const token = getToken(params)
 
   const decoded = decodeToken(token)
@@ -72,5 +72,3 @@ const authorize = params => {
       context: {scope: decoded.scope},
     }))
 }
-
-export default authorize
