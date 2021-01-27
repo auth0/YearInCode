@@ -14,6 +14,7 @@ import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
 import FollowersIcon from '@assets/svg/followers.svg'
 import LanguageIcon from '@assets/svg/language.svg'
+import SittingPersonIcon from '@assets/svg/sitting-person.svg'
 import {Typography} from '@components/ui'
 
 import {commitColors, genPoints, linesColors, toRadians} from './Star.utils'
@@ -154,6 +155,11 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
               ))}
             </Group>
           </Group>
+        </Group>
+
+        {/*Sitting person in center*/}
+        <Group top={outerRadius + margin.top - 60} left={width / 2 - 25.5}>
+          <SittingPersonIcon />
         </Group>
       </svg>
 
