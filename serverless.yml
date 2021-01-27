@@ -13,8 +13,8 @@ provider:
   name: aws
   runtime: nodejs12.x
   stage: dev
-  profile: ${self:custom.profiles.${self:custom.stage}}
-  stackName: ${self:service}-${self:provider.stage}
+  profile: ${opt:profile, self:custom.profiles.${self:custom.stage}}
+  stackName: ${self:service}-${self:custom.stage}
   region: us-east-1
   environment:
     AUTH0_DOMAIN: ${ssm:/${self:custom.stage}/auth0/domain}
@@ -56,6 +56,7 @@ custom:
   profiles:
     dev: nebula-dev
     staging: nebula-staging
+    prod: nebula-production
   logs:
     restApi: true
   serverless-offline:

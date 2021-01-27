@@ -6,16 +6,16 @@ module.exports = {
     '!**/node_modules/**',
     '!**/*.stories.{js,jsx,ts,tsx}',
   ],
-  setupFiles: ['<rootDir>/test/setupEnv.ts'],
-  setupFilesAfterEnv: ['<rootDir>/test/setupTests.js'],
+  setupFiles: ['<rootDir>/src/test/setupEnv.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/test/setupTests.js'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
   },
   moduleNameMapper: {
     // Allow `@/` to map in Jest tests
-    '@test/(.*)$': '<rootDir>/test/$1',
-    '@lib/(.*)$': '<rootDir>/lib/$1',
+    '@test/(.*)$': '<rootDir>/src/test/$1',
+    '@lib/(.*)$': '<rootDir>/src/lib/$1',
   },
   transformIgnorePatterns: [
     '/node_modules/',
