@@ -2,14 +2,14 @@ import * as React from 'react'
 import {scaleBand, scaleRadial} from '@visx/scale'
 import {Group} from '@visx/group'
 import {arc, Arc, Line} from '@visx/shape'
-import {withParentSize} from '@visx/responsive'
+import {ParentSize} from '@visx/responsive'
 import {LinearGradient} from '@visx/gradient'
 import * as d3 from 'd3-array'
 import clsx from 'clsx'
-import useMeasure from 'react-use/lib/useMeasure'
 import {parseSVG} from 'svg-path-parser'
+import {useWindowSize} from 'react-use'
 
-import {Star as StarSchema, StarWeek} from '@nebula/types/death-star'
+import {Star as StarSchema} from '@nebula/types/death-star'
 import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
 import FollowersIcon from '@assets/svg/followers.svg'
@@ -19,27 +19,21 @@ import {Typography} from '@components/ui'
 import {commitColors, genPoints, linesColors, toRadians} from './Star.utils'
 
 const AXIS_LINE_AMOUNT = 30
+
 interface StarProps {
   data: StarSchema
 
-  parentWidth?: number
-  parentHeight?: number
-  initialWidth?: number
-  initialHeight?: number
+  width?: number
+  height?: number
 }
 
-const Star: React.FC<StarProps> = ({
-  data,
-  parentWidth: width,
-  parentHeight: height,
-}) => {
+const Star: React.FC<StarProps> = ({data, width, height}) => {
   const margin = {top: 20, right: 10, bottom: 20, left: 10}
   const xMax = width - margin.left - margin.right
   const yMax = height - margin.top - margin.bottom
   const innerRadius = 20
   const outerRadius = Math.min(xMax, yMax) / 2
   const anglePadding = 0.07
-  const [ref, {height: infoBoxHeight}] = useMeasure()
 
   const x = React.useMemo(
     () =>
@@ -62,12 +56,15 @@ const Star: React.FC<StarProps> = ({
 
   const axesOriginPoints = genPoints(AXIS_LINE_AMOUNT, innerRadius)
   const axesOuterPoints = genPoints(AXIS_LINE_AMOUNT, outerRadius)
-  const starHeight = height / 2 + outerRadius + margin.top
+  const isMobile = outerRadius < 300
 
   return (
-    <section className="relative flex flex-col items-center">
-      <svg width={width} height={height}>
-        <Group top={height / 2 - margin.top} left={width / 2}>
+    <section
+      style={{marginBottom: margin.bottom}}
+      className="relative flex flex-col items-center"
+    >
+      <svg width={width} height={outerRadius * 2 + margin.top}>
+        <Group top={outerRadius + margin.top} left={width / 2}>
           {/* Axis lines */}
           <Group>
             {[...new Array(AXIS_LINE_AMOUNT)].map((_, i) => (
@@ -162,19 +159,19 @@ const Star: React.FC<StarProps> = ({
 
       <div
         style={{
-          height:
-            outerRadius < 300
-              ? infoBoxHeight + starHeight - margin.top
-              : starHeight,
-          width: outerRadius * 2,
-          marginBottom: margin.bottom,
+          height: isMobile
+            ? undefined
+            : height / 2 + outerRadius + margin.top * 2,
+          width: outerRadius * 1.5,
         }}
-        className="absolute flex items-center"
+        className={clsx('flex items-center', {
+          absolute: !isMobile,
+          'relative mt-6': isMobile,
+        })}
       >
         <div
-          ref={ref}
-          className={clsx('absolute bottom-0 grid flex-1', {
-            'grid-cols-2 grid-rows-2': outerRadius > 161.5,
+          className={clsx('bottom-0 grid flex-1', {
+            'absolute grid-cols-2 grid-rows-2': !isMobile,
           })}
         >
           <InfoBox
@@ -244,6 +241,21 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   )
 }
 
-const WrappedStar: React.FC<StarProps> = withParentSize(Star) as any
+interface WrappedStarProps extends StarProps {
+  wrapperClassName: string
+
+  screenWidth?: number
+}
+
+const WrappedStar: React.FC<WrappedStarProps> = props => {
+  const {height: screenHeight} = useWindowSize()
+  const height = screenHeight * 0.95
+
+  return (
+    <ParentSize className={props.wrapperClassName}>
+      {({width}) => <Star width={width} height={height} {...props} />}
+    </ParentSize>
+  )
+}
 
 export default WrappedStar

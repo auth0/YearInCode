@@ -6,6 +6,10 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      height: {
+        100: '28rem',
+        '90vh': '90vh',
+      },
       colors: {
         primary: 'var(--primary)',
         secondary: 'var(--secondary)',

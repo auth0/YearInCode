@@ -8,11 +8,7 @@ export default {
   component: Star,
 } as Meta
 
-const Template = args => (
-  <div className="h-screen">
-    <Star {...args} />
-  </div>
-)
+const Template = args => <Star wrapperStyle={{height: '90vh'}} {...args} />
 
 export const Basic = Template.bind({})
 
