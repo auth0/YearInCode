@@ -6,12 +6,11 @@ import * as Iron from '@hapi/iron'
 import {logger} from '@nebula/log'
 import {SetQueryStringType} from '@api/lib/types'
 import {
-  PosterUserStatus,
   WebSocketConnectDTO,
   UnsealedWebSocketConnectDTO,
 } from '@nebula/types/poster'
 
-import PosterModel from './poster.model'
+import ConnectionModel from './connection.model'
 
 async function connect(
   event: SetQueryStringType<APIGatewayEvent, WebSocketConnectDTO>,
@@ -26,11 +25,10 @@ async function connect(
   )) as UnsealedWebSocketConnectDTO
   logger.info(`Received connection from user (${userId})`)
 
-  await PosterModel.update(
-    {userId},
+  await ConnectionModel.update(
+    {connectionId},
     {
-      connectionId,
-      connectionStatus: PosterUserStatus.ONLINE,
+      userId,
     },
   )
 

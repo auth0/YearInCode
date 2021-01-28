@@ -1,17 +1,17 @@
 import dynamoose from '@api/lib/db'
-import {PosterDocument, PosterSteps} from '@nebula/types/poster'
+import {ConnectionDocument} from '@nebula/types/poster'
 
 const schema = new dynamoose.Schema(
   {
-    userId: {
+    connectionId: {
       type: String,
       required: true,
       hashKey: true,
     },
-    step: {
+    userId: {
       type: String,
-      enum: Object.values(PosterSteps),
       required: true,
+      rangeKey: true,
     },
   },
   {
@@ -20,12 +20,12 @@ const schema = new dynamoose.Schema(
   },
 )
 
-const PosterModel = dynamoose.model<PosterDocument>(
-  process.env.POSTER_TABLE,
+const ConnectionModel = dynamoose.model<ConnectionDocument>(
+  process.env.CONNECTION_TABLE,
   schema,
   {
     create: false,
   },
 )
 
-export default PosterModel
+export default ConnectionModel

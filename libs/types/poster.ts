@@ -24,19 +24,17 @@ export enum PosterSteps {
   READY = 'READY',
 }
 
-export enum PosterUserStatus {
-  ONLINE = 'ONLINE',
-  OFFLINE = 'OFFLINE',
-}
-
 export interface PosterState {
   userId: string
   step: PosterSteps
-  connectionId: string
-  connectionStatus: PosterUserStatus
 }
 
 export interface PosterDocument extends Document, PosterState {}
+
+export interface ConnectionDocument extends Document {
+  userId: string
+  connectionId: string
+}
 
 export interface PosterStatusResponse {
   status: Pick<PosterState, 'step'>

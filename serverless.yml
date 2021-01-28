@@ -24,6 +24,7 @@ provider:
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
     POSTER_TABLE: ${self:custom.poster-table}
+    CONNECTION_TABLE: ${self:custom.connection-table}
     STAGE: ${self:custom.stage}
   lambdaHashingVersion: 20201221
   apiGateway:
@@ -54,6 +55,7 @@ provider:
 custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
   poster-table: ${self:service}-poster-${self:custom.stage}
+  connection-table: ${self:service}-connection-${self:custom.stage}
   profiles:
     dev: nebulaDev
     staging: nebulaStaging
@@ -168,29 +170,36 @@ resources:
       Properties:
         QueueName: sqs-poster-queue-${self:custom.stage}
         VisibilityTimeout: 900
-    DeathStar:
+    ConnectionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.connection-table}
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+    PosterTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.poster-table}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: connectionId
-            AttributeType: S
-          - AttributeName: connectionStatus
-            AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: connectionIdIndex
-            KeySchema:
-              - AttributeName: connectionId
-                KeyType: HASH
-              - AttributeName: connectionStatus
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'

@@ -1,8 +1,7 @@
 import ApiGatewayManagementApi from 'aws-sdk/clients/apigatewaymanagementapi'
 
 import {logger} from '@nebula/log'
-import PosterModel from '@api/poster/poster.model'
-import {PosterUserStatus} from '@nebula/types/poster'
+import ConnectionModel from '@api/poster/connection.model'
 
 export const sendMessageToClient = (
   apiGatewayManagementApiURL: string,
@@ -30,22 +29,7 @@ export const sendMessageToClient = (
 
           if (error.statusCode === 410) {
             logger.info(`Found stale connection, deleting ${connectionId}`)
-            PosterModel.query('connectionId')
-              .eq(connectionId)
-              .using('connectionIdIndex')
-              .exec()
-              .then(result => {
-                PosterModel.update(
-                  {userId: result[0].userId},
-                  {
-                    connectionId: undefined,
-                    connectionStatus: PosterUserStatus.OFFLINE,
-                  },
-                )
-              })
-              .catch(err => {
-                logger.error('Failed removing stale connection: ' + err)
-              })
+            ConnectionModel.delete(connectionId)
           }
 
           reject(error)

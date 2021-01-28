@@ -11,6 +11,7 @@ import {PosterSteps} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
 
 import PosterModel from './poster.model'
+import ConnectionModel from './connection.model'
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
@@ -63,10 +64,19 @@ async function sendUpdateToClient(userId: string, step: PosterSteps) {
       ? 'http://localhost:3001'
       : process.env.WEBSOCKET_API_ENDPOINT
 
-    const {connectionId} = await PosterModel.update({userId}, {step})
+    await PosterModel.update({userId}, {step})
+    const result = await ConnectionModel.query('userId')
+      .eq(userId)
+      .using('userIdIndex')
+      .exec()
 
-    if (connectionId) {
-      await sendMessageToClient(websocketConnectionUrl, connectionId, {step})
+    if (result.length) {
+      // Send update to all devices
+      const clientsPromises = result.map(async ({connectionId}) =>
+        sendMessageToClient(websocketConnectionUrl, connectionId, {step}),
+      )
+
+      await Promise.all(clientsPromises)
     }
   } catch (error) {
     logger.error(error)
