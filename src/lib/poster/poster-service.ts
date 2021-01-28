@@ -5,8 +5,8 @@ import {constants} from '@lib/common'
 import {PosterStatusDTO, PosterStatusResponse} from '@nebula/types/poster'
 import {QueueDTO, QueueResponse} from '@nebula/types/queue'
 
-class DeathStarServiceImplementation {
-  public async queueStar({userId, years}: QueueDTO) {
+class PosterServiceImplementation {
+  public async queuePoster({userId, years}: QueueDTO) {
     const {data} = await client.post<QueueResponse>('/poster/queue', {
       userId,
       years,
@@ -49,4 +49,4 @@ class DeathStarServiceImplementation {
   }
 }
 
-export const DeathStarService = new DeathStarServiceImplementation()
+export const PosterService = new PosterServiceImplementation()

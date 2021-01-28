@@ -2,8 +2,8 @@ import {useMutation} from 'react-query'
 
 import {QueueDTO} from '@nebula/types/queue'
 
-import {DeathStarService} from './poster-service'
+import {PosterService} from './poster-service'
 
 export function useQueueDeathStar() {
-  return useMutation((dto: QueueDTO) => DeathStarService.queueStar(dto))
+  return useMutation((dto: QueueDTO) => PosterService.queuePoster(dto))
 }

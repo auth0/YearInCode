@@ -30,12 +30,14 @@ const sqsConfig = IS_OFFLINE
   : {region: 'us-east-1'}
 
 const QUEUE_URL = IS_OFFLINE
-  ? `http://localhost:9324/queue/sqs-star-queue-${process.env.STAGE}`
+  ? `http://localhost:9324/queue/sqs-poster-queue-${process.env.STAGE}`
   : process.env.SQS_QUEUE_URL
 
 const sqs = new SQS(sqsConfig)
 
-async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
+async function queuePoster(
+  event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
+) {
   const {userId, years} = event.body
   const {Authorization} = event.headers
 
@@ -72,12 +74,12 @@ async function queueStar(event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>) {
     }
 
     const data = await sqs.sendMessage(params).promise()
-    logger.info(`QUEUED STAR WITH ID: ${data.MessageId}`)
+    logger.info(`QUEUED POSTER WITH ID: ${data.MessageId}`)
 
     const response = {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Queued star!`,
+        message: `Queued poster!`,
       }),
     }
 
@@ -128,11 +130,11 @@ const inputSchema = {
   },
 }
 
-const handler = middy(queueStar)
+const handler = middy(queuePoster)
   .use(httpSecurityHeaders())
   .use(doNotWaitForEmptyEventLoop())
   .use(jsonBodyParser())
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
 
-export {handler as queueStar}
+export {handler as queuePoster}

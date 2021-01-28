@@ -7,8 +7,8 @@ import {auth0, UserProfile} from '@lib/auth'
 import {createLoginUrl} from '@lib/common'
 import {Layout, LoadingView, SelectYearsView} from '@components/poster'
 import {PosterSteps} from '@nebula/types/poster'
-import {DeathStarService} from '@lib/poster/poster-service'
-import {Spinner} from '@components/ui'
+import {PosterService} from '@lib/poster/poster-service'
+
 interface Props {
   user: UserProfile
   wsPayload: string
@@ -76,7 +76,7 @@ export async function getServerSideProps({req, res}) {
   const tokenCache = auth0.tokenCache(req, res)
   const {accessToken} = await tokenCache.getAccessToken()
 
-  const getStatusPromise = DeathStarService.getStatus(
+  const getStatusPromise = PosterService.getStatus(
     session.user.sub as string,
     accessToken,
   )
@@ -88,6 +88,13 @@ export async function getServerSideProps({req, res}) {
 
   const {status} = await getStatusPromise
   const wsPayload = await wsPayloadPromise
+
+  if (status?.step === PosterSteps.READY) {
+    res.writeHead(302, {
+      Location: '/poster/ready',
+    })
+    res.end()
+  }
 
   return {
     props: {

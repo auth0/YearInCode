@@ -24,7 +24,6 @@ async function connect(
     process.env.WEBSOCKET_PAYLOAD_SECRET,
     Iron.defaults,
   )) as UnsealedWebSocketConnectDTO
-
   logger.info(`Received connection from user (${userId})`)
 
   await PosterModel.update(

@@ -1,13 +1,11 @@
-import axios from 'axios'
 import ow from 'ow'
 import {NextApiRequest, NextApiResponse} from 'next'
 
 import auth0 from '@lib/auth/auth0'
-import {constants} from '@lib/common'
 import {logger} from '@nebula/log'
 import {owWithMessage} from '@lib/api'
-import {QueueDTO, QueueResponse} from '@nebula/types/queue'
-import {DeathStarService} from '@lib/poster/poster-service'
+import {QueueDTO} from '@nebula/types/queue'
+import {PosterService} from '@lib/poster/poster-service'
 
 async function queueStar(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -42,11 +40,7 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
 
     const tokenCache = auth0.tokenCache(req, res)
     const {accessToken} = await tokenCache.getAccessToken()
-    const {data} = await DeathStarService.requestQueue(
-      userId,
-      years,
-      accessToken,
-    )
+    const {data} = await PosterService.requestQueue(userId, years, accessToken)
 
     res.status(200).json(data)
   } catch (error) {

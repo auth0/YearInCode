@@ -39,7 +39,7 @@ provider:
         - sqs:SendMessage
         - sqs:DeleteMessage
       Resource:
-        Fn::GetAtt: [StarQueue, Arn]
+        Fn::GetAtt: [PosterQueue, Arn]
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -55,9 +55,9 @@ custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
   poster-table: ${self:service}-poster-${self:custom.stage}
   profiles:
-    dev: nebula-dev
-    staging: nebula-staging
-    prod: nebula-production
+    dev: nebulaDev
+    staging: nebulaStaging
+    prod: nebulaProduction
   logs:
     restApi: true
   serverless-offline:
@@ -103,10 +103,10 @@ functions:
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
-  queueStar:
-    handler: poster/queueStar.queueStar
+  queuePoster:
+    handler: poster/queuePoster.queuePoster
     environment:
-      SQS_QUEUE_URL: {Ref: StarQueue}
+      SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
           path: api/poster/queue
@@ -158,15 +158,15 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt:
-              - StarQueue
+              - PosterQueue
               - Arn
 
 resources:
   Resources:
-    StarQueue:
+    PosterQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
-        QueueName: sqs-star-queue-${self:custom.stage}
+        QueueName: sqs-poster-queue-${self:custom.stage}
         VisibilityTimeout: 900
     DeathStar:
       Type: AWS::DynamoDB::Table

@@ -1,6 +1,6 @@
 import {Document} from 'dynamoose/dist/Document'
 
-export interface StarWeek {
+export interface PosterWeek {
   week: number
   commits: number
   lines: number
@@ -12,7 +12,7 @@ export interface Star {
   year: number
   followers: number
   dominantLanguage: string
-  weeks: StarWeek[]
+  weeks: PosterWeek[]
 }
 
 export enum PosterSteps {
