@@ -4,14 +4,16 @@ export interface PosterWeek {
   week: number
   commits: number
   lines: number
-  dominantLanguage: string
   total: number
+  dominantLanguage: string
+  dominantRepository: string
 }
-export interface Star {
+export interface Poster {
   name: string
   year: number
   followers: number
   dominantLanguage: string
+  dominantRepository: string
   weeks: PosterWeek[]
 }
 

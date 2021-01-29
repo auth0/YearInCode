@@ -94,6 +94,8 @@ export async function getServerSideProps({req, res}) {
       Location: '/poster/ready',
     })
     res.end()
+
+    return {props: {}}
   }
 
   return {

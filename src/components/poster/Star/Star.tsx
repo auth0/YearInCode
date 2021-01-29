@@ -9,7 +9,7 @@ import clsx from 'clsx'
 import {parseSVG} from 'svg-path-parser'
 import {useWindowSize} from 'react-use'
 
-import {Star as StarSchema} from '@nebula/types/poster'
+import {Poster as StarSchema} from '@nebula/types/poster'
 import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
 import FollowersIcon from '@assets/svg/followers.svg'

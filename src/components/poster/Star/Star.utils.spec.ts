@@ -1,11 +1,6 @@
-import {genPoints, indexOfMax} from './Star.utils'
+import {genPoints} from './Star.utils'
 
 describe('Star utils', () => {
-  it('should get index of max number in array', () => {
-    const array = [10, 50, 12, 3, 23, 57]
-    expect(indexOfMax(array)).toBe(array.length - 1)
-  })
-
   it('should generate points in 360 degrees', () => {
     expect(genPoints(5, 20)).toEqual([
       {x: 0, y: 20},

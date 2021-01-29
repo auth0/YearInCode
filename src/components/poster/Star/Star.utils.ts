@@ -1,4 +1,5 @@
-import {Star} from '@nebula/types/poster'
+import {indexOfMax} from '@nebula/common/array'
+import {Poster} from '@nebula/types/poster'
 
 export const commitColors = new Proxy(
   {
@@ -49,24 +50,6 @@ export function genPoints(length: number, radius: number) {
   }))
 }
 
-export function indexOfMax(arr) {
-  if (arr.length === 0) {
-    return -1
-  }
-
-  var max = arr[0]
-  var maxIndex = 0
-
-  for (var i = 1; i < arr.length; i++) {
-    if (arr[i] > max) {
-      maxIndex = i
-      max = arr[i]
-    }
-  }
-
-  return maxIndex
-}
-
 export function getRandomArbitrary(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min)
 }
@@ -84,18 +67,19 @@ function getRandomName() {
   return names[getRandomArbitrary(0, names.length)]
 }
 
-export function getMockData(weekAmount = 52): Star {
+export function getMockData(weekAmount = 52): Poster {
   const schema = {
     name: getRandomName(),
     year: 2020,
     followers: getRandomArbitrary(5, 25),
     dominantLanguage: '',
-    weeks: [] as Star['weeks'],
+    dominantRepository: '',
+    weeks: [] as Poster['weeks'],
   }
 
   const languageCount: Record<string, number> = {}
 
-  const weeks: Star['weeks'] = new Array(weekAmount)
+  const weeks: Poster['weeks'] = new Array(weekAmount)
     .fill(undefined)
     .map((_, i) => {
       const commits = getRandomArbitrary(1, 50)
@@ -110,6 +94,7 @@ export function getMockData(weekAmount = 52): Star {
         commits,
         lines,
         dominantLanguage,
+        dominantRepository: 'test',
         total: commits + lines,
       }
     })
