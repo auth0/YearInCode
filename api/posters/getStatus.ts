@@ -19,7 +19,9 @@ async function getStatus(
 ) {
   try {
     const {userId} = event.queryStringParameters
-    const userDocument = await PosterModel.get(userId, {attributes: ['step']})
+    const userDocument = await PosterModel.get(userId, {
+      attributes: ['step', 'posterSlug'],
+    })
 
     return {
       statusCode: 200,

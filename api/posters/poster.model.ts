@@ -13,6 +13,17 @@ const schema = new dynamoose.Schema(
       enum: Object.values(PosterSteps),
       required: true,
     },
+    posterSlug: {
+      type: String,
+      index: {
+        name: 'posterSlugIndex',
+        global: true,
+        project: true,
+      },
+    },
+    posterData: {
+      type: String,
+    },
   },
   {
     saveUnknown: false,

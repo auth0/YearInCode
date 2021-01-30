@@ -31,7 +31,7 @@ const MeetDeathStar = () => {
           </Typography>
         </div>
 
-        <Link href="/poster" passHref>
+        <Link href="/posters/generate" passHref>
           <Button icon={<GitHubIcon />} color="primary" size="large">
             Connect with GitHub
           </Button>

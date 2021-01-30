@@ -11,7 +11,11 @@ const schema = new dynamoose.Schema(
     userId: {
       type: String,
       required: true,
-      rangeKey: true,
+      index: {
+        name: 'userIdIndex',
+        global: true,
+        project: true,
+      },
     },
   },
   {

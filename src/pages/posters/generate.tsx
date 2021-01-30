@@ -17,6 +17,7 @@ interface Props {
 
 export default function Loading({user, wsPayload, currentStep}: Props) {
   const [step, setStep] = React.useState(currentStep)
+  const [posterSlug, setPosterSlug] = React.useState('')
   const userId = user.sub
 
   const {readyState, lastJsonMessage} = useWebSocket(
@@ -42,7 +43,7 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
 
   React.useEffect(() => {
     if (lastJsonMessage) {
-      const {step} = lastJsonMessage as {step: PosterSteps}
+      const {step} = lastJsonMessage as {step: PosterSteps; posterSlug: string}
 
       setStep(step)
     }
@@ -54,8 +55,14 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
     return <span className="sr-only">Connecting to Websocket</span>
   }
 
-  if (step && step !== PosterSteps.FAILED) {
-    return <LoadingView step={step} wsDisconnected={isDisconnected} />
+  if (step) {
+    return (
+      <LoadingView
+        step={step}
+        wsDisconnected={isDisconnected}
+        posterSlug={posterSlug}
+      />
+    )
   }
 
   return <SelectYearsView userId={userId} setStep={setStep} />
@@ -66,7 +73,7 @@ export async function getServerSideProps({req, res}) {
 
   if (!session || !session.user) {
     res.writeHead(302, {
-      Location: createLoginUrl('/poster'),
+      Location: createLoginUrl('/posters/generate'),
     })
     res.end()
 
@@ -90,8 +97,12 @@ export async function getServerSideProps({req, res}) {
   const wsPayload = await wsPayloadPromise
 
   if (status?.step === PosterSteps.READY) {
+    if (!status.posterSlug) {
+      throw new Error('Could not find poster slug.')
+    }
+
     res.writeHead(302, {
-      Location: '/poster/ready',
+      Location: `/posters/${status.posterSlug}`,
     })
     res.end()
 

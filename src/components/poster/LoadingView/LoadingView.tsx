@@ -11,9 +11,14 @@ import {steps} from './LoadingView.utils'
 interface LoadingProps {
   step: PosterSteps
   wsDisconnected: boolean
+  posterSlug: string
 }
 
-const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
+const Loading: React.FC<LoadingProps> = ({
+  step,
+  wsDisconnected,
+  posterSlug,
+}) => {
   const isReady = step === PosterSteps.READY
   const title = steps[step].title
   const subtitle = steps[step].subtitle
@@ -59,7 +64,10 @@ const Loading: React.FC<LoadingProps> = ({step, wsDisconnected}) => {
         )}
 
         {isReady && (
-          <Link href="/poster/ready" passHref>
+          <Link
+            href={{pathname: '/posters/[slug]', query: {slug: posterSlug}}}
+            passHref
+          >
             <Button color="primary" size="large">
               Show My Death Star
             </Button>

@@ -9,7 +9,7 @@ import clsx from 'clsx'
 import {parseSVG} from 'svg-path-parser'
 import {useWindowSize} from 'react-use'
 
-import {Poster as StarSchema} from '@nebula/types/poster'
+import {Poster} from '@nebula/types/poster'
 import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
 import FollowersIcon from '@assets/svg/followers.svg'
@@ -22,7 +22,7 @@ import {commitColors, genPoints, linesColors, toRadians} from './Star.utils'
 const AXIS_LINE_AMOUNT = 30
 
 interface StarProps {
-  data: StarSchema
+  data: Poster
 
   width?: number
   height?: number
@@ -49,7 +49,7 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
   const barY = React.useMemo(
     () =>
       scaleRadial({
-        domain: [0, d3.max(data.weeks, d => d.total)],
+        domain: [0, d3.max(data.weeks, d => d.total)], // TODO: Improve scale
         range: [innerRadius, outerRadius],
       }),
     [data, outerRadius],
@@ -58,6 +58,8 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
   const axesOriginPoints = genPoints(AXIS_LINE_AMOUNT, innerRadius)
   const axesOuterPoints = genPoints(AXIS_LINE_AMOUNT, outerRadius)
   const isMobile = outerRadius < 300
+
+  console.log(data)
 
   return (
     <section
@@ -81,8 +83,9 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
 
           {/* Gradients */}
           <defs>
-            {data.weeks.map(d => {
-              const {week, lines, total, dominantLanguage} = d
+            {data.weeks.map((d, i) => {
+              const week = i + 1
+              const {lines, total, dominantLanguage} = d
 
               // Get each bar vector
               const path = arc({
@@ -105,7 +108,7 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
                   key={week}
                   id={`starGradient-${week}`}
                   from={'#000'}
-                  fromOffset={`${(lines / total) * 100}%`}
+                  fromOffset={`90%`} // TODO: improve the from offset
                   to={commitColors[dominantLanguage]}
                   toOffset="100%"
                   gradientUnits="userSpaceOnUse"
@@ -121,32 +124,32 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
           <Group>
             {/* Commit bars */}
             <Group>
-              {data.weeks.map(({week, total}) => (
+              {data.weeks.map(({total}, i) => (
                 <Arc
-                  key={week}
-                  id={`commit-bar-${week}`}
+                  key={i + 1}
+                  id={`commit-bar-${i + 1}`}
                   innerRadius={barY(0)}
                   outerRadius={barY(total)}
-                  startAngle={x(week)}
-                  endAngle={x(week) + x.bandwidth()}
+                  startAngle={x(i + 1)}
+                  endAngle={x(i + 1) + x.bandwidth()}
                   padAngle={anglePadding}
                   padRadius={innerRadius}
                   cornerRadius={9999}
-                  fill={`url(#starGradient-${week})`}
+                  fill={`url(#starGradient-${i + 1})`}
                 />
               ))}
             </Group>
 
             {/* Line bars */}
             <Group>
-              {data.weeks.map(({week, lines, dominantLanguage}) => (
+              {data.weeks.map(({lines, dominantLanguage}, i) => (
                 <Arc
-                  key={week}
+                  key={i + 1}
                   data={data}
                   innerRadius={barY(0)}
                   outerRadius={barY(lines)}
-                  startAngle={x(week)}
-                  endAngle={x(week) + x.bandwidth()}
+                  startAngle={x(i + 1)}
+                  endAngle={x(i + 1) + x.bandwidth()}
                   padAngle={anglePadding}
                   padRadius={innerRadius}
                   cornerRadius={9999}

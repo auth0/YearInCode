@@ -98,6 +98,7 @@
     "@types/parse-link-header": "^1.0.0",
     "@types/react": "17.0.0",
     "@types/svg-path-parser": "^1.1.1",
+    "@types/uuid": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "4.14.1",
     "@typescript-eslint/parser": "4.14.1",
     "@visx/gradient": "^1.0.0",

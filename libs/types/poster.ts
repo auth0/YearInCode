@@ -29,6 +29,8 @@ export enum PosterSteps {
 export interface PosterState {
   userId: string
   step: PosterSteps
+  posterSlug: string
+  posterData: string
 }
 
 export interface PosterDocument extends Document, PosterState {}
@@ -39,8 +41,13 @@ export interface ConnectionDocument extends Document {
 }
 
 export interface PosterStatusResponse {
-  status: Pick<PosterState, 'step'>
+  status: Pick<PosterState, 'step' | 'posterSlug'>
 }
+
+export interface PosterSlugResponse {
+  posterData: string
+}
+
 export interface PosterStatusDTO {
   userId: string
 }
@@ -56,4 +63,8 @@ export interface UnsealedWebSocketConnectDTO {
 
 export interface GetStatusDTO {
   userId: string
+}
+
+export interface GetBySlugDTO {
+  slug: string
 }

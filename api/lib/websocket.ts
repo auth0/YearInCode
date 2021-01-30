@@ -1,7 +1,7 @@
 import ApiGatewayManagementApi from 'aws-sdk/clients/apigatewaymanagementapi'
 
 import {logger} from '@nebula/log'
-import ConnectionModel from '@api/poster/connection.model'
+import ConnectionModel from '@api/posters/connection.model'
 
 export const sendMessageToClient = (
   apiGatewayManagementApiURL: string,

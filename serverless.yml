@@ -106,27 +106,35 @@ functions:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
   queuePoster:
-    handler: poster/queuePoster.queuePoster
+    handler: posters/queuePoster.queuePoster
     environment:
       SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
-          path: api/poster/queue
+          path: api/posters/queue
           method: post
           authorizer: authorize
           cors: true
 
   getStatus:
-    handler: poster/getStatus.getStatus
+    handler: posters/getStatus.getStatus
     events:
       - http:
-          path: api/poster/status
+          path: api/posters/status
           method: get
           authorizer: authorize
           cors: true
 
+  getPosterBySlug:
+    handler: posters/getPosterBySlug.getPosterBySlug
+    events:
+      - http:
+          path: api/posters/{slug}
+          method: get
+          cors: true
+
   connect:
-    handler: poster/connect.connect
+    handler: posters/connect.connect
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
     events:
@@ -138,13 +146,13 @@ functions:
               - 'route.request.querystring.wsPayload'
 
   disconnect:
-    handler: poster/disconnect.disconnect
+    handler: posters/disconnect.disconnect
     events:
       - websocket:
           route: $disconnect
 
   start:
-    handler: poster/start.start
+    handler: posters/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
     environment:
@@ -197,9 +205,18 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
+          - AttributeName: posterSlug
+            AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: posterSlugIndex
+            KeySchema:
+              - AttributeName: posterSlug
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
