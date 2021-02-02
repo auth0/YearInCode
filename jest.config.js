@@ -13,9 +13,9 @@ module.exports = {
     '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
   },
   moduleNameMapper: {
-    // Allow `@/` to map in Jest tests
     '@test/(.*)$': '<rootDir>/src/test/$1',
     '@lib/(.*)$': '<rootDir>/src/lib/$1',
+    '@nebula/(.*)$': '<rootDir>/libs/$1',
   },
   transformIgnorePatterns: [
     '/node_modules/',

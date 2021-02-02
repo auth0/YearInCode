@@ -2,6 +2,8 @@ import React from 'react'
 import clsx from 'clsx'
 import {AriaButtonProps} from '@react-types/button'
 
+import {Spinner} from '@components/ui'
+
 import {getButtonStylesByVariant} from './ButtonBase.utils'
 
 export interface ButtonBaseProps extends AriaButtonProps<'a' | 'button'> {
@@ -36,7 +38,13 @@ const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
       ? ('a' as React.ElementType)
       : ('button' as React.ElementType)
 
-    const content = loading ? 'Loading...' : children
+    const content = loading ? (
+      <div className="flex items-center space-x-2">
+        <Spinner size="small" aria-hidden /> <span>Loading...</span>
+      </div>
+    ) : (
+      children
+    )
 
     return (
       <Component
