@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {scaleBand, scaleRadial} from '@visx/scale'
+import {scaleBand, scaleLinear, scaleRadial, scaleSqrt} from '@visx/scale'
 import {Group} from '@visx/group'
 import {arc, Arc, Line} from '@visx/shape'
 import {ParentSize} from '@visx/responsive'
 import {LinearGradient} from '@visx/gradient'
 import * as d3 from 'd3-array'
 import clsx from 'clsx'
-import {parseSVG} from 'svg-path-parser'
+import {Command, parseSVG} from 'svg-path-parser'
 import {useWindowSize} from 'react-use'
 
 import {Poster} from '@nebula/types/poster'
@@ -46,10 +46,37 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
     [],
   )
 
+  const normalizeLines = React.useMemo(
+    () =>
+      scaleSqrt({
+        domain: [0, d3.max(data.weeks, d => d.lines)],
+        range: [0, 320],
+      }),
+    [data],
+  )
+
+  const normalizeCommits = React.useMemo(
+    () =>
+      scaleLinear({
+        domain: [
+          d3.min(data.weeks, d => d.commits),
+          d3.max(data.weeks, d => d.commits),
+        ],
+        range: [
+          normalizeLines.range()[0],
+          Math.abs(normalizeLines.range()[1] - outerRadius),
+        ],
+      }),
+    [data, outerRadius],
+  )
+
   const barY = React.useMemo(
     () =>
       scaleRadial({
-        domain: [0, d3.max(data.weeks, d => d.total)], // TODO: Improve scale
+        domain: [
+          normalizeLines.range()[0],
+          normalizeCommits.range()[1] + normalizeLines.range()[1],
+        ],
         range: [innerRadius, outerRadius],
       }),
     [data, outerRadius],
@@ -58,8 +85,6 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
   const axesOriginPoints = genPoints(AXIS_LINE_AMOUNT, innerRadius)
   const axesOuterPoints = genPoints(AXIS_LINE_AMOUNT, outerRadius)
   const isMobile = outerRadius < 300
-
-  console.log(data)
 
   return (
     <section
@@ -85,12 +110,14 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
           <defs>
             {data.weeks.map((d, i) => {
               const week = i + 1
-              const {lines, total, dominantLanguage} = d
+              const {lines, commits, dominantLanguage} = d
 
               // Get each bar vector
               const path = arc({
                 innerRadius: barY(0),
-                outerRadius: barY(total),
+                outerRadius: barY(
+                  normalizeCommits(commits) + normalizeLines(lines),
+                ),
                 startAngle: x(week),
                 endAngle: x(week) + x.bandwidth(),
                 padAngle: anglePadding,
@@ -98,24 +125,51 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
                 cornerRadius: 9999,
               })(d)
 
-              // extract vector points
-              const parsedPath = parseSVG(path).filter(({code}) =>
-                ['M', 'L'].includes(code),
-              ) as Array<{x: number; y: number}>
+              // parse vector points
+              const parsedPath = parseSVG(path) as Array<
+                Command & {
+                  x: number
+                  y: number
+                }
+              >
+
+              const movePathIndex = parsedPath.findIndex(
+                ({code}) => code === 'M',
+              )
+              const linePathIndex = parsedPath.findIndex(
+                ({code}) => code === 'L',
+              )
+
+              const movePath = parsedPath[movePathIndex]
+              const linePath = parsedPath[linePathIndex]
+
+              const x1 = (linePath.x + parsedPath[linePathIndex + 1].x) / 1.92
+              const y1 = (linePath.y + parsedPath[linePathIndex + 1].y) / 1.92
+
+              const x2 = (movePath.x + parsedPath[movePathIndex + 1].x) / 1.92
+              const y2 = (movePath.y + parsedPath[movePathIndex + 1].y) / 1.92
+
+              const shadowOffset = 1.005
+
+              const fromOffset = `${
+                (barY(normalizeLines(lines)) /
+                  barY(normalizeCommits(commits) + normalizeLines(lines))) *
+                95
+              }%`
 
               return (
                 <LinearGradient
                   key={week}
                   id={`starGradient-${week}`}
                   from={'#000'}
-                  fromOffset={`90%`} // TODO: improve the from offset
+                  fromOffset={fromOffset}
                   to={commitColors[dominantLanguage]}
                   toOffset="100%"
                   gradientUnits="userSpaceOnUse"
-                  x1={parsedPath[1].x}
-                  y1={parsedPath[1].y}
-                  x2={parsedPath[0].x}
-                  y2={parsedPath[0].y}
+                  x1={x1 * shadowOffset}
+                  y1={y1 * shadowOffset}
+                  x2={x2 * shadowOffset}
+                  y2={y2 * shadowOffset}
                 />
               )
             })}
@@ -124,12 +178,14 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
           <Group>
             {/* Commit bars */}
             <Group>
-              {data.weeks.map(({total}, i) => (
+              {data.weeks.map(({lines, commits}, i) => (
                 <Arc
                   key={i + 1}
                   id={`commit-bar-${i + 1}`}
                   innerRadius={barY(0)}
-                  outerRadius={barY(total)}
+                  outerRadius={barY(
+                    normalizeCommits(commits) + normalizeLines(lines),
+                  )}
                   startAngle={x(i + 1)}
                   endAngle={x(i + 1) + x.bandwidth()}
                   padAngle={anglePadding}
@@ -147,7 +203,7 @@ const Star: React.FC<StarProps> = ({data, width, height}) => {
                   key={i + 1}
                   data={data}
                   innerRadius={barY(0)}
-                  outerRadius={barY(lines)}
+                  outerRadius={barY(normalizeLines(lines))}
                   startAngle={x(i + 1)}
                   endAngle={x(i + 1) + x.bandwidth()}
                   padAngle={anglePadding}

@@ -117,7 +117,7 @@ function start(event: SQSEvent) {
       }
 
       let repositoriesStats: RepositoryStatistic[] = await mapLimit(
-        repositories.slice(0, 5),
+        repositories,
         10,
         async ({name: repositoryName, owner, language}, callback) => {
           const repositoryStats: RestEndpointMethodTypes['repos']['getContributorsStats']['response'] = (await retry(
@@ -343,7 +343,7 @@ async function getUserRepositoriesByPage(client: Octokit, page: number) {
 async function sendUpdateToClient(
   userId: string,
   step: PosterSteps,
-  postSlug = '',
+  posterSlug = '',
 ) {
   await PosterModel.update({userId}, {step})
 
@@ -362,7 +362,7 @@ async function sendUpdateToClient(
       const clientsPromises = result.map(async ({connectionId}) =>
         sendMessageToClient(websocketConnectionUrl, connectionId, {
           step,
-          postSlug,
+          posterSlug,
         }),
       )
 

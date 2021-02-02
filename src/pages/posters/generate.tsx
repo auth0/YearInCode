@@ -43,9 +43,13 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
 
   React.useEffect(() => {
     if (lastJsonMessage) {
-      const {step} = lastJsonMessage as {step: PosterSteps; posterSlug: string}
+      const {step, posterSlug} = lastJsonMessage as {
+        step: PosterSteps
+        posterSlug: string
+      }
 
       setStep(step)
+      setPosterSlug(posterSlug)
     }
   }, [lastJsonMessage])
 

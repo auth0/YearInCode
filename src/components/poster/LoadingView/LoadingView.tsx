@@ -64,10 +64,7 @@ const Loading: React.FC<LoadingProps> = ({
         )}
 
         {isReady && (
-          <Link
-            href={{pathname: '/posters/[slug]', query: {slug: posterSlug}}}
-            passHref
-          >
+          <Link href="/posters/[slug]" as={`/posters/${posterSlug}`} passHref>
             <Button color="primary" size="large">
               Show My Death Star
             </Button>
