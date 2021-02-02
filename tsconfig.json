@@ -8,6 +8,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -17,14 +18,14 @@
       "@components/*": ["src/components/*"],
       "@config/*": ["src/config/*"],
       "@assets/*": ["src/assets/*"],
-      "@test/*": ["src/test/*"],
+      "@tests/*": ["tests/*"],
+      "@nebula/*": ["libs/*"],
       "@lib/*": ["src/lib/*"],
       "@api/*": ["api/*"],
-      "@src/*": ["src/*"],
-      "@nebula/*": ["libs/*"]
+      "@src/*": ["src/*"]
     },
     "baseUrl": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "test/setupTests.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tests/setupTests.js"],
   "exclude": ["node_modules", "cypress"]
 }

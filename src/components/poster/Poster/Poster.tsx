@@ -17,7 +17,7 @@ import LanguageIcon from '@assets/svg/language.svg'
 import SittingPersonIcon from '@assets/svg/sitting-person.svg'
 import {Typography} from '@components/ui'
 
-import {commitColors, genPoints, linesColors, toRadians} from './Star.utils'
+import {commitColors, genPoints, linesColors, toRadians} from './Poster.utils'
 
 const AXIS_LINE_AMOUNT = 30
 

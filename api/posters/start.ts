@@ -7,7 +7,7 @@ import {Octokit, RestEndpointMethodTypes} from '@octokit/rest'
 import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
 import dayjs from 'dayjs'
-import weekOfYear from 'dayjs/plugin/weekOfYear'
+import * as weekOfYear from 'dayjs/plugin/weekOfYear'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
@@ -20,7 +20,7 @@ import {indexOfMax} from '@nebula/common/array'
 import PosterModel from './poster.model'
 import ConnectionModel from './connection.model'
 
-dayjs.extend(weekOfYear)
+dayjs.extend(weekOfYear.default)
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
@@ -285,10 +285,10 @@ function start(event: SQSEvent) {
           },
         )
 
-        logger.info(`Marked poster as failed for user (${userId})`)
+        logger.info(`Marked poster as FAILED for user (${userId})`)
       } catch (err) {
         logger.error(
-          `Error marking poster as failed for user (${userId}). Error details: ${err}`,
+          `Error marking poster as FAILED for user (${userId}). Error details: ${err}`,
         )
       }
 

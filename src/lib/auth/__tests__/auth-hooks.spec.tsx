@@ -2,7 +2,7 @@ import {renderHook} from '@testing-library/react-hooks'
 import {QueryClientProvider, QueryClient} from 'react-query'
 
 import {useFetchUser, UseFetchUserParams} from '@lib/auth'
-import {rest, server} from '@test/server'
+import {rest, server} from '@tests/server'
 import {constants} from '@lib/common'
 
 interface SetupUseFetchHookParams {

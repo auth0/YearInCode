@@ -1,6 +1,6 @@
 import {rest} from 'msw'
 
-import {buildUserProfile} from '@test/generate'
+import {buildUserProfile} from '@tests/generate'
 import {constants} from '@lib/common'
 
 const {api} = constants
