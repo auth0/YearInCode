@@ -24,11 +24,11 @@ jobs:
           node-version: '12.20.0'
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile     
+        run: yarn --frozen-lockfile
 
       - name: Deploy Lambda functions
         run: npx serverless deploy --stage production --profile '' --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_KEY }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}

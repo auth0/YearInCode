@@ -39,7 +39,7 @@ const client = jwksClient({
   jwksUri: process.env.JWKS_URI,
 })
 
-export const authorize = (
+export const authorizeWS = (
   params: SetQueryStringType<APIGatewayAuthorizerEvent, WebSocketConnectDTO>,
 ) => {
   const {wsPayload} = params.queryStringParameters
