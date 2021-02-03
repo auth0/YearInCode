@@ -23,7 +23,9 @@ provider:
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
-    DEATH_STAR_TABLE: ${self:custom.death-star-table}
+    POSTER_TABLE: ${self:custom.poster-table}
+    CONNECTION_TABLE: ${self:custom.connection-table}
+    STAGE: ${self:custom.stage}
   lambdaHashingVersion: 20201221
   apiGateway:
     shouldStartNameWithService: true
@@ -38,7 +40,7 @@ provider:
         - sqs:SendMessage
         - sqs:DeleteMessage
       Resource:
-        Fn::GetAtt: [StarQueue, Arn]
+        Fn::GetAtt: [PosterQueue, Arn]
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -52,11 +54,12 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
-  death-star-table: ${self:service}-death-star-${self:custom.stage}
+  poster-table: ${self:service}-poster-${self:custom.stage}
+  connection-table: ${self:service}-connection-${self:custom.stage}
   profiles:
-    dev: nebula-dev
-    staging: nebula-staging
-    prod: nebula-production
+    dev: nebulaDev
+    staging: nebulaStaging
+    prod: nebulaProduction
   logs:
     restApi: true
   serverless-offline:
@@ -81,8 +84,9 @@ custom:
     secretAccessKey: local
     skipCacheInvalidation: false
   dotenv:
-    path: .env.local
     logging: false
+    required:
+      file: true
   dynamodb: # DynamoDB Local Instance
     stages:
       - dev
@@ -94,35 +98,43 @@ custom:
 
 functions:
   authorize:
-    handler: auth/authorize.default
+    handler: auth/authorize.authorize
 
   authorizeWS:
-    handler: auth/authorizeWS.default
+    handler: auth/authorizeWS.authorizeWS
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
-  queueStar:
-    handler: death-star/queueStar.default
+  queuePoster:
+    handler: posters/queuePoster.queuePoster
     environment:
-      SQS_QUEUE_URL: {Ref: StarQueue}
+      SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
-          path: api/death-star/queue
+          path: api/posters/queue
           method: post
           authorizer: authorize
           cors: true
 
   getStatus:
-    handler: death-star/getStatus.default
+    handler: posters/getStatus.getStatus
     events:
       - http:
-          path: api/death-star/status
+          path: api/posters/status
           method: get
           authorizer: authorize
           cors: true
 
+  getPosterBySlug:
+    handler: posters/getPosterBySlug.getPosterBySlug
+    events:
+      - http:
+          path: api/posters/{slug}
+          method: get
+          cors: true
+
   connect:
-    handler: death-star/connect.default
+    handler: posters/connect.connect
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
     events:
@@ -134,13 +146,13 @@ functions:
               - 'route.request.querystring.wsPayload'
 
   disconnect:
-    handler: death-star/disconnect.default
+    handler: posters/disconnect.disconnect
     events:
       - websocket:
           route: $disconnect
 
   start:
-    handler: death-star/start.default
+    handler: posters/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
     environment:
@@ -156,37 +168,53 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt:
-              - StarQueue
+              - PosterQueue
               - Arn
 
 resources:
   Resources:
-    StarQueue:
+    PosterQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
-        QueueName: sqs-star-queue-${self:custom.stage}
+        QueueName: sqs-poster-queue-${self:custom.stage}
         VisibilityTimeout: 900
-    DeathStar:
+    ConnectionTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.death-star-table}
+        TableName: ${self:custom.connection-table}
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+    PosterTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.poster-table}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: connectionId
-            AttributeType: S
-          - AttributeName: connectionStatus
+          - AttributeName: posterSlug
             AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
         GlobalSecondaryIndexes:
-          - IndexName: connectionIdIndex
+          - IndexName: posterSlugIndex
             KeySchema:
-              - AttributeName: connectionId
+              - AttributeName: posterSlug
                 KeyType: HASH
-              - AttributeName: connectionStatus
-                KeyType: RANGE
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST

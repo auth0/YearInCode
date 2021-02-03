@@ -25,7 +25,7 @@ const Hero = () => {
       </header>
 
       <RippleArrow
-        href="#meet-death-star"
+        href="#meet-poster"
         aria-label="Learn more about Nebula"
         className="mb-16 mt-24 lg:mb-0 lg:mt-0"
       />

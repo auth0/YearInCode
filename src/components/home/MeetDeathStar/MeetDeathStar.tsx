@@ -7,7 +7,7 @@ import GitHubIcon from '@assets/svg/github-logo.svg'
 const MeetDeathStar = () => {
   return (
     <section
-      id="meet-death-star"
+      id="meet-poster"
       className="relative flex flex-1 flex-col items-center justify-around px-6 py-4 min-h-screen overflow-hidden"
     >
       <header className="flex flex-col items-center text-center space-y-16">
@@ -31,7 +31,7 @@ const MeetDeathStar = () => {
           </Typography>
         </div>
 
-        <Link href="/death-star" passHref>
+        <Link href="/posters/generate" passHref>
           <Button icon={<GitHubIcon />} color="primary" size="large">
             Connect with GitHub
           </Button>
