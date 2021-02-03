@@ -3,4 +3,8 @@ module.exports = {
   setupFiles: ['<rootDir>/tests/setupBeforeEnv.ts'],
   setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js'],
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
+  },
 }

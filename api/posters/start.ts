@@ -123,7 +123,7 @@ export function startImplementation(event: SQSEvent) {
         async ({name: repositoryName, owner, language}, callback) => {
           const repositoryStats: RestEndpointMethodTypes['repos']['getContributorsStats']['response'] = (await retry(
             {times: 5, interval: 3000},
-            async callback => {
+            async retryCallback => {
               const stats = await githubClient.repos.getContributorsStats({
                 owner: owner.login,
                 repo: repositoryName,
@@ -135,10 +135,10 @@ export function startImplementation(event: SQSEvent) {
                   `Repository (${repositoryName}) statistics cache data is not available. retrying.`,
                 )
 
-                return callback(new Error('Retrying fetch'))
+                return retryCallback(new Error('Retrying fetch'))
               }
 
-              callback(null, stats)
+              retryCallback(null, stats)
             },
           )) as any
 
@@ -188,7 +188,6 @@ export function startImplementation(event: SQSEvent) {
               }
 
               const weekNumber = dayjs(date).week() - 1
-              // TODO: Ask if we need to consider deletions as a plus for lines
               const lines = Math.abs(deletions) + additions
               const total = lines + commits
 
@@ -208,9 +207,9 @@ export function startImplementation(event: SQSEvent) {
               } else {
                 if (!repositoryWeeklyTotal[weekNumber][repository]) {
                   repositoryWeeklyTotal[weekNumber][repository] = total
+                } else {
+                  repositoryWeeklyTotal[weekNumber][repository] += total
                 }
-
-                repositoryWeeklyTotal[weekNumber][repository] += total
               }
 
               if (!repositoryLanguages[repository]) {
@@ -275,6 +274,8 @@ export function startImplementation(event: SQSEvent) {
 
       await sendUpdateToClient(userId, PosterSteps.READY, posterSlug)
       logger.info(`${userId} poster is ready!`)
+
+      return {posterSlug, posterData}
     } catch (e) {
       logger.error(e)
 

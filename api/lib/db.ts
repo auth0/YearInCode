@@ -1,6 +1,6 @@
 import * as dynamoose from 'dynamoose'
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.IS_OFFLINE) {
   dynamoose.aws.sdk.config.update({
     accessKeyId: 'AKID',
     secretAccessKey: 'SECRET',
@@ -8,6 +8,14 @@ if (process.env.NODE_ENV !== 'production') {
     sslEnabled: false,
   })
   dynamoose.aws.ddb.local('http://127.0.0.1:8000')
+}
+
+if (process.env.NODE_ENV === 'test') {
+  dynamoose.aws.sdk.config.update({
+    sslEnabled: false,
+    region: 'local',
+  })
+  dynamoose.aws.ddb.local(process.env.MOCK_DYNAMODB_ENDPOINT)
 }
 
 export default dynamoose

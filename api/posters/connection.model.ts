@@ -28,7 +28,7 @@ const ConnectionModel = dynamoose.model<ConnectionDocument>(
   process.env.CONNECTION_TABLE,
   schema,
   {
-    create: false,
+    create: process.env.NODE_ENV === 'test' ? true : false,
   },
 )
 

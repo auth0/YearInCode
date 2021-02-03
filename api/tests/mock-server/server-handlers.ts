@@ -6,27 +6,33 @@ import {
   buildGitHubRepo,
 } from '../generate'
 
-const githubURL = 'https://api.github.com'
+const githubBaseURL = 'https://api.github.com'
+const githubURLs = {
+  user: {
+    getAuthenticated: `${githubBaseURL}/user`,
+  },
+  repos: {
+    listForAuthenticatedUser: `${githubBaseURL}/user/repos`,
+    getContributions: `${githubBaseURL}/repos/:owner/:repo/stats/contributors`,
+  },
+}
 
 const handlers = [
-  rest.get(`${githubURL}/user`, async (req, res, ctx) => {
+  rest.get(githubURLs.user.getAuthenticated, async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(buildAuthenticatedGitHubUser()))
   }),
-  rest.get(`${githubURL}/user/repos`, async (req, res, ctx) => {
+  rest.get(githubURLs.repos.listForAuthenticatedUser, async (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json(new Array(100).fill(buildGitHubRepo())),
+      ctx.json(Array.from({length: 5}, () => buildGitHubRepo())),
     )
   }),
-  rest.get(
-    `${githubURL}/repos/:owner/:repo/stats/contributors`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json(new Array(100).fill(buildContributorStats())),
-      )
-    },
-  ),
+  rest.get(githubURLs.repos.getContributions, async (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json(new Array(5).fill(buildContributorStats())),
+    )
+  }),
 ]
 
-export {handlers}
+export {handlers, githubURLs}

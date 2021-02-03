@@ -35,7 +35,7 @@ const PosterModel = dynamoose.model<PosterDocument>(
   process.env.POSTER_TABLE,
   schema,
   {
-    create: false,
+    create: process.env.NODE_ENV === 'test' ? true : false,
   },
 )
 
