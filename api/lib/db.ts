@@ -5,11 +5,9 @@ if (process.env.NODE_ENV !== 'production') {
     accessKeyId: 'AKID',
     secretAccessKey: 'SECRET',
     region: 'us-east-1',
-  })
-  dynamoose.aws.ddb.local('http://127.0.0.1:8000')
-  dynamoose.aws.sdk.config.update({
     sslEnabled: false,
   })
+  dynamoose.aws.ddb.local('http://127.0.0.1:8000')
 }
 
 export default dynamoose

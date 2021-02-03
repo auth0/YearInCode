@@ -48,7 +48,7 @@ interface RepositoryStatistic {
 
 const YEAR_TO_ANALYZE = 2020
 
-function start(event: SQSEvent) {
+export function startImplementation(event: SQSEvent) {
   const recordPromises = event.Records.map(async (record: any) => {
     const {
       body: {userId},
@@ -72,6 +72,7 @@ function start(event: SQSEvent) {
       const githubClient = new Octokit({
         auth: githubToken,
       })
+
       const {
         data: {
           name: githubName,
@@ -373,6 +374,8 @@ async function sendUpdateToClient(
   }
 }
 
-const handler = middy(start).use(sqsJsonBodyParser()).use(sqsBatch())
+const handler = middy(startImplementation)
+  .use(sqsJsonBodyParser())
+  .use(sqsBatch())
 
 export {handler as start}

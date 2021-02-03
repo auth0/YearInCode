@@ -22,7 +22,7 @@
       "@nebula/*": ["libs/*"],
       "@lib/*": ["src/lib/*"],
       "@api/*": ["api/*"],
-      "@src/*": ["src/*"]
+      "@web/*": ["src/*"]
     },
     "baseUrl": "."
   },

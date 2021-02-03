@@ -9,13 +9,13 @@ beforeAll(() => {
   jest.spyOn(console, 'warn').mockImplementation(() => {})
 })
 
+afterEach(() => {
+  server.resetHandlers()
+  jest.clearAllMocks()
+})
+
 afterAll(() => {
   server.close()
   console.error.mockRestore()
   console.warn.mockRestore()
-})
-
-afterEach(() => {
-  server.resetHandlers()
-  jest.clearAllMocks()
 })
