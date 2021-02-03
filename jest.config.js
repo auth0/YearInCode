@@ -1,4 +1,9 @@
+const {pathsToModuleNameMapper} = require('ts-jest/utils')
+
+const {compilerOptions} = require('./tsconfig')
+
 module.exports = {
+  projects: ['<rootDir>/src', '<rootDir>/api'],
   moduleDirectories: ['node_modules', __dirname],
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
@@ -6,19 +11,11 @@ module.exports = {
     '!**/node_modules/**',
     '!**/*.stories.{js,jsx,ts,tsx}',
   ],
-  setupFiles: ['<rootDir>/tests/setupBeforeEnv.ts'],
-  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
-  moduleNameMapper: {
-    '@tests/(.*)$': '<rootDir>/tests/$1',
-    '@lib/(.*)$': '<rootDir>/src/lib/$1',
-    '@nebula/(.*)$': '<rootDir>/libs/$1',
-    '@api/(.*)$': '<rootDir>/api/$1',
-    '@web/(.*)$': '<rootDir>/src/$1',
-  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
   transformIgnorePatterns: [
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',

@@ -4,20 +4,11 @@ import {
   buildAuthenticatedGitHubUser,
   buildContributorStats,
   buildGitHubRepo,
-  buildUserProfile,
-} from '@tests/generate'
-import {constants} from '@web/lib/common'
+} from '../generate'
 
-const {api} = constants
 const githubURL = 'https://api.github.com'
 
-const frontEndHandlers = [
-  rest.get(`${api.url}/me`, async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(buildUserProfile()))
-  }),
-]
-
-const backEndHandlers = [
+const handlers = [
   rest.get(`${githubURL}/user`, async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(buildAuthenticatedGitHubUser()))
   }),
@@ -37,7 +28,5 @@ const backEndHandlers = [
     },
   ),
 ]
-
-const handlers = [...frontEndHandlers, ...backEndHandlers]
 
 export {handlers}

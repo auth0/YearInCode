@@ -18,7 +18,7 @@
       "@components/*": ["src/components/*"],
       "@config/*": ["src/config/*"],
       "@assets/*": ["src/assets/*"],
-      "@tests/*": ["tests/*"],
+      "@tests/*": ["src/tests/*"],
       "@nebula/*": ["libs/*"],
       "@lib/*": ["src/lib/*"],
       "@api/*": ["api/*"],
@@ -26,6 +26,11 @@
     },
     "baseUrl": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tests/setupTests.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/tests/setupTests.js"
+  ],
   "exclude": ["node_modules", "cypress"]
 }

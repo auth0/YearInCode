@@ -1,7 +1,3 @@
-/**
- * @jest-environment node
- */
-
 import {ManagementClient} from 'auth0'
 
 import ConnectionModel from '../connection.model'

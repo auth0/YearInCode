@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 
-import {server} from './server'
+import {server} from './mock-server'
 
 // enable API mocking in test runs using the same request handlers
 beforeAll(() => {
