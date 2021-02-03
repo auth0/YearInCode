@@ -1,10 +1,8 @@
 describe('Queue Star', () => {
   it('should queue on request', () => {
-    cy.request(
-      'POST',
-      `${Cypress.env('serverless_api_url')}/death-star/queue`,
-      {userId: 'github|1241'},
-    )
+    cy.request('POST', `${Cypress.env('serverless_api_url')}/poster/queue`, {
+      userId: 'github|1241',
+    })
       .its('body')
       .its('message')
       .should('include', 'QUEUED STAR WITH ID:')
@@ -14,7 +12,7 @@ describe('Queue Star', () => {
     cy.request({
       method: 'POST',
       failOnStatusCode: false,
-      url: `${Cypress.env('serverless_api_url')}/death-star/queue`,
+      url: `${Cypress.env('serverless_api_url')}/poster/queue`,
     }).then(({body, status}) => {
       expect(status).to.equal(400)
       expect(body).to.equal('Event object failed validation')
