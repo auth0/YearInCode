@@ -1,27 +1,29 @@
 import '@testing-library/jest-dom/extend-expect'
-import {startDb, stopDb, createTables, deleteTables} from 'jest-dynalite'
+import {startDb, stopDb, deleteTables} from 'jest-dynalite'
+
+import dynamoose from '@api/lib/db'
 
 import {server} from './mock-server'
 
 jest.setTimeout(30000)
 
 // enable API mocking in test runs using the same request handlers
-beforeAll(() => {
+beforeAll(async () => {
   server.listen()
   jest.spyOn(console, 'error').mockImplementation(() => {})
   jest.spyOn(console, 'warn').mockImplementation(() => {})
-  startDb()
+  await startDb()
 })
 
-afterEach(() => {
+afterEach(async () => {
   server.resetHandlers()
   jest.clearAllMocks()
-  deleteTables()
+  await deleteTables()
 })
 
-afterAll(() => {
+afterAll(async () => {
   server.close()
   console.error.mockRestore()
   console.warn.mockRestore()
-  stopDb()
+  await stopDb()
 })
