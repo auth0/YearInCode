@@ -105,6 +105,14 @@ functions:
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
+  testImage:
+    handler: posters/testImage.testImage
+    events:
+      - http:
+          path: api/posters/test-image
+          method: get
+          cors: true
+
   queuePoster:
     handler: posters/queuePoster.queuePoster
     environment:
