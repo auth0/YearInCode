@@ -26,12 +26,9 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
-      - name: Install Serverless Framework
-        run: yarn global add serverless
-
       - name: Deploy Lambda functions
-        run: sls deploy --stage staging --profile '' --verbose
+        run: npx serverless deploy --stage staging --profile '' --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_ACCESS_SECRET }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_KEY }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}

@@ -15,7 +15,7 @@ const Footer = () => {
       )}
     >
       <Typography variant="body1" className="order-3 opacity-60 lg:order-none">
-        © 2013 - 2020 Auth0® Inc. All Rights Reserved.
+        © 2013 - {new Date().getFullYear()} Auth0® Inc. All Rights Reserved.
       </Typography>
       <Socials className="order-1 mb-4 lg:order-none lg:mb-0" />
       <Links className="order-2 mb-4 lg:order-none lg:mb-0" />

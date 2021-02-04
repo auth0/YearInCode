@@ -18,21 +18,20 @@ module.exports = {
   target: `node`,
   mode: isLocal ? 'development' : 'production',
   externals: [nodeExternals()],
-  devtool: slsw.lib.webpack.isLocal
-    ? 'eval-cheap-module-source-map'
-    : 'source-map',
   resolve: {
     extensions: ['.js', '.json', '.ts'],
     symlinks: false,
     cacheWithContext: false,
     plugins: [new TsconfigPathsPlugin()],
   },
+  optimization: {
+    minimize: false,
+  },
   output: {
     libraryTarget: `commonjs`,
     path: outDir,
     filename: `[name].js`,
   },
-
   module: {
     rules: [
       {
@@ -56,25 +55,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new MinifyPlugin({
-      keepFnName: true,
-      keepClassName: true,
-      booleans: envProd,
-      deadcode: true,
-      evaluate: envProd,
-      flipComparisons: envProd,
-      mangle: false, // some of our debugging functions require variable names to remain intact
-      memberExpressions: envProd,
-      mergeVars: envProd,
-      numericLiterals: envProd,
-      propertyLiterals: envProd,
-      removeConsole: envProd,
-      removeDebugger: envProd,
-      simplify: envProd,
-      simplifyComparisons: envProd,
-      typeConstructors: envProd,
-      undefinedToVoid: envProd,
-    }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         diagnosticOptions: {

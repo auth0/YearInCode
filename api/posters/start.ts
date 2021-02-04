@@ -48,7 +48,10 @@ interface RepositoryStatistic {
 
 const YEAR_TO_ANALYZE = 2020
 
+// TODO: Calculate based on dynamic year
+// TODO: Extract nested functions
 export function startImplementation(event: SQSEvent) {
+  logger.info(`Received records: ${JSON.stringify(event.Records)}`)
   const recordPromises = event.Records.map(async (record: any) => {
     const {
       body: {userId},
@@ -101,66 +104,98 @@ export function startImplementation(event: SQSEvent) {
           Array.from({length: totalPages - 1}, (_, i) => i + 2),
           10,
           async (page, callback) => {
-            const {repositories} = await getUserRepositoriesByPage(
-              githubClient,
-              page,
-            )
+            try {
+              const {repositories} = await getUserRepositoriesByPage(
+                githubClient,
+                page,
+              )
 
-            if (!repositories) {
-              return callback(new Error("couldn't get repos"))
+              if (!repositories) {
+                return callback(new Error("couldn't get repositories"))
+              }
+
+              callback(null, repositories)
+            } catch (e) {
+              callback(new Error('Unexpected error ' + e))
             }
-
-            callback(null, repositories)
           },
         )) as any
 
         repositories = repositories.concat(arr)
       }
 
+      logger.info(
+        `Repositories are done! Analyzing ${repositories.length} repos`,
+      )
+
       let repositoriesStats: RepositoryStatistic[] = await mapLimit(
         repositories,
         10,
         async ({name: repositoryName, owner, language}, callback) => {
-          const repositoryStats: RestEndpointMethodTypes['repos']['getContributorsStats']['response'] = (await retry(
-            {times: 5, interval: 3000},
-            async retryCallback => {
-              const stats = await githubClient.repos.getContributorsStats({
-                owner: owner.login,
-                repo: repositoryName,
-              })
+          try {
+            const repositoryStats: RestEndpointMethodTypes['repos']['getContributorsStats']['response'] = (await retry(
+              {times: 20, interval: 6000},
+              async retryCallback => {
+                try {
+                  const stats = await githubClient.repos.getContributorsStats({
+                    owner: owner.login,
+                    repo: repositoryName,
+                  })
 
-              const IS_NOT_CACHED_STATUS_CODE = 202
-              if ((stats.status as number) === IS_NOT_CACHED_STATUS_CODE) {
-                logger.info(
-                  `Repository (${repositoryName}) statistics cache data is not available. retrying.`,
-                )
+                  const IS_NOT_CACHED_STATUS_CODE = 202
+                  if ((stats.status as number) === IS_NOT_CACHED_STATUS_CODE) {
+                    logger.info(
+                      `Repository (${repositoryName}) statistics cache data is not available. retrying.`,
+                    )
 
-                return retryCallback(new Error('Retrying fetch'))
-              }
+                    return retryCallback(new Error('Retrying fetch'))
+                  }
 
-              retryCallback(null, stats)
-            },
-          )) as any
+                  retryCallback(null, stats)
+                } catch (e) {
+                  retryCallback(new Error('Unexpected error ' + e))
+                }
+              },
+            )) as any
 
-          const userStats = repositoryStats.data.find(
-            ({author}) => author.login === githubLogin,
-          )
+            if (!Array.isArray(repositoryStats.data)) {
+              return callback(null, undefined)
+            }
 
-          if (!userStats) {
-            return callback(null, undefined)
+            const userStats = repositoryStats.data.find(
+              ({author}) => author.login === githubLogin,
+            )
+
+            if (!userStats) {
+              return callback(null, undefined)
+            }
+
+            const payload: RepositoryStatistic = {
+              repository: repositoryName,
+              language,
+              weeks: userStats.weeks,
+            }
+
+            callback(null, payload)
+          } catch (e) {
+            callback(new Error('Unexpected error ' + e))
           }
-
-          const payload: RepositoryStatistic = {
-            repository: repositoryName,
-            language,
-            weeks: userStats.weeks,
-          }
-
-          callback(null, payload)
         },
       )
 
+      logger.info(
+        `Repository stats are done! result without filter: ${JSON.stringify(
+          repositoriesStats,
+        )}`,
+      )
+
       repositoriesStats = repositoriesStats.filter(val => val !== undefined)
+
+      logger.info(
+        `Repository stats are done! result with filter: ${JSON.stringify(
+          repositoriesStats,
+        )}`,
+      )
 
       await sendUpdateToClient(userId, PosterSteps.LAST_TOUCHES)
       logger.info(`${userId} started step ${PosterSteps.LAST_TOUCHES}`)
@@ -177,65 +212,72 @@ export function startImplementation(event: SQSEvent) {
         repositoriesStats,
         10,
         async ({weeks: repositoryWeeks, repository, language}, callback) => {
-          await mapLimit(
-            repositoryWeeks,
-            3,
-            async ({w, a: additions, d: deletions, c: commits}, callback) => {
-              const date = unixTimestampToDate(Number(w))
+          try {
+            await mapLimit(
+              repositoryWeeks,
+              3,
+              async ({w, a: additions, d: deletions, c: commits}, callback) => {
+                try {
+                  const date = unixTimestampToDate(Number(w))
 
-              if (date.getFullYear() != YEAR_TO_ANALYZE) {
-                return callback(null, '')
-              }
+                  if (date.getFullYear() !== YEAR_TO_ANALYZE) {
+                    return callback(null, '')
+                  }
 
-              const weekNumber = dayjs(date).week() - 1
-              const lines = Math.abs(deletions) + additions
-              const total = lines + commits
+                  const weekNumber = dayjs(date).week() - 1
+                  const lines = Math.abs(deletions) + additions
+                  const total = lines + commits
 
-              if (!total) {
-                return callback(null, '')
-              }
+                  if (!total) {
+                    return callback(null, '')
+                  }
 
-              if (!repositoryOverallTotal[repository]) {
-                repositoryOverallTotal[repository] = total
-              } else {
-                repositoryOverallTotal[repository] += total
-              }
+                  if (!repositoryOverallTotal[repository]) {
+                    repositoryOverallTotal[repository] = total
+                  } else {
+                    repositoryOverallTotal[repository] += total
+                  }
 
-              if (!repositoryWeeklyTotal[weekNumber]) {
-                repositoryWeeklyTotal[weekNumber] = {}
-                repositoryWeeklyTotal[weekNumber][repository] = total
-              } else {
-                if (!repositoryWeeklyTotal[weekNumber][repository]) {
-                  repositoryWeeklyTotal[weekNumber][repository] = total
-                } else {
-                  repositoryWeeklyTotal[weekNumber][repository] += total
+                  if (!repositoryWeeklyTotal[weekNumber]) {
+                    repositoryWeeklyTotal[weekNumber] = {}
+                    repositoryWeeklyTotal[weekNumber][repository] = total
+                  } else {
+                    if (!repositoryWeeklyTotal[weekNumber][repository]) {
+                      repositoryWeeklyTotal[weekNumber][repository] = total
+                    } else {
+                      repositoryWeeklyTotal[weekNumber][repository] += total
+                    }
+                  }
+
+                  if (!repositoryLanguages[repository]) {
+                    repositoryLanguages[repository] = language
+                  }
+
+                  if (!languageCount[language]) {
+                    languageCount[language] = 1
+                  } else {
+                    languageCount[language] += 1
+                  }
+
+                  weeks[weekNumber] = {
+                    week: weekNumber + 1,
+                    lines,
+                    commits,
+                    total,
+                    dominantLanguage: '',
+                    dominantRepository: '',
+                  }
+
+                  callback(null, '')
+                } catch (e) {
+                  callback(new Error('Unexpected error ' + e))
                 }
-              }
-
-              if (!repositoryLanguages[repository]) {
-                repositoryLanguages[repository] = language
-              }
-
-              if (!languageCount[language]) {
-                languageCount[language] = 1
-              } else {
-                languageCount[language] += 1
-              }
-
-              weeks[weekNumber] = {
-                week: weekNumber + 1,
-                lines,
-                commits,
-                total,
-                dominantLanguage: '',
-                dominantRepository: '',
-              }
-
-              callback(null, '')
-            },
-          )
-
-          callback(null, '')
+              },
+            )
+            callback(null, '')
+          } catch (e) {
+            callback(new Error('Unexpected error ' + e))
+          }
         },
       )
 
@@ -294,7 +336,7 @@ export function startImplementation(event: SQSEvent) {
         )
       }
 
-      throw e
+      return Promise.reject(e)
     }
   })
 
