@@ -86,7 +86,7 @@ custom:
   dotenv:
     logging: false
     required:
-      file: true
+      file: false
   dynamodb: # DynamoDB Local Instance
     stages:
       - dev
