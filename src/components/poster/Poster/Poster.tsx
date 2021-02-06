@@ -3,6 +3,7 @@ import {ParentSize} from '@visx/responsive'
 import clsx from 'clsx'
 import {useWindowSize} from 'react-use'
 import {useTooltip, useTooltipInPortal, TooltipWithBounds} from '@visx/tooltip'
+import {AnimatePresence, motion} from 'framer-motion'
 
 import {Poster} from '@nebula/types/poster'
 import {Typography} from '@components/ui'
@@ -40,7 +41,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     tooltipData,
     tooltipOpen,
   } = useTooltip<PosterTooltipData>()
-  const {containerRef, containerBounds, TooltipInPortal} = useTooltipInPortal({
+  const {containerRef, containerBounds} = useTooltipInPortal({
     scroll: true,
     detectBounds: true,
   })
@@ -81,7 +82,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
   const handleMouseLeave = React.useCallback(() => {
     tooltipTimeout = window.setTimeout(() => {
       hideTooltip()
-    }, 200)
+    }, 100)
   }, [])
 
   return (
@@ -95,33 +96,45 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         data={data}
         width={width}
         height={height}
+        selectedIndex={tooltipData?.index}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleMouseLeave}
       />
 
-      {tooltipOpen && tooltipData && tooltipLeft != null && tooltipTop != null && (
-        <TooltipWithBounds
-          className="absolute z-30 px-3 py-2 w-full max-w-48 text-white font-light bg-black border border-gray-500 rounded-md"
-          left={tooltipLeft}
-          top={tooltipTop - 20}
-          unstyled
-        >
-          <TooltipRow icon={<CommitsIcon />}>
-            {tooltipData.commits} commits
-          </TooltipRow>
-          <TooltipRow icon={<LinesIcon />}>
-            {tooltipData.lines} lines
-          </TooltipRow>
-          <TooltipRow icon={<RepositoryIcon />}>
-            {tooltipData.dominantRepository}
-          </TooltipRow>
-          <TooltipRow className="text-flamingo-500" icon={<HashIcon />}>
-            {tooltipData.dominantLanguage}
-          </TooltipRow>
-        </TooltipWithBounds>
-      )}
+      <AnimatePresence>
+        {tooltipOpen &&
+          tooltipData &&
+          tooltipLeft != null &&
+          tooltipTop != null && (
+            <TooltipWithBounds
+              className="absolute z-30 px-3 py-2 w-full max-w-48 text-white font-light bg-black border border-gray-500 rounded-md"
+              left={tooltipLeft}
+              top={tooltipTop - 20}
+              unstyled
+            >
+              <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
+              >
+                <TooltipRow icon={<CommitsIcon />}>
+                  {tooltipData.commits} commits
+                </TooltipRow>
+                <TooltipRow icon={<LinesIcon />}>
+                  {tooltipData.lines} lines
+                </TooltipRow>
+                <TooltipRow icon={<RepositoryIcon />}>
+                  {tooltipData.dominantRepository}
+                </TooltipRow>
+                <TooltipRow className="text-flamingo-500" icon={<HashIcon />}>
+                  {tooltipData.dominantLanguage}
+                </TooltipRow>
+              </motion.div>
+            </TooltipWithBounds>
+          )}
+      </AnimatePresence>
 
       <div
         style={{

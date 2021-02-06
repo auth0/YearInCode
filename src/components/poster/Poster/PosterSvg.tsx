@@ -4,12 +4,10 @@ import {Group} from '@visx/group'
 import {arc, Arc, Line} from '@visx/shape'
 import {LinearGradient} from '@visx/gradient'
 import * as d3 from 'd3-array'
-import clsx from 'clsx'
 import {Command, parseSVG} from 'svg-path-parser'
 
 import {Poster} from '@nebula/types/poster'
 import SittingPersonIcon from '@assets/svg/sitting-person.svg'
-import {Typography} from '@components/ui'
 
 import {
   commitColors,
@@ -27,6 +25,7 @@ interface PosterSVGProps {
   width?: number
   height?: number
   className?: string
+  selectedIndex?: number
 
   onMouseMove?: (
     data: PosterTooltipData,
@@ -48,6 +47,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
   onTouchEnd,
   onTouchMove,
   className,
+  selectedIndex,
 }) => {
   const margin = {top: 20, right: 10, bottom: 20, left: 10}
   const xMax = width - margin.left - margin.right
@@ -195,7 +195,11 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                 id={`starGradient-${week}`}
                 from={'#000'}
                 fromOffset={fromOffset}
-                to={commitColors[dominantLanguage]}
+                to={
+                  selectedIndex === i || typeof selectedIndex === 'undefined'
+                    ? commitColors[dominantLanguage]
+                    : '#fff'
+                }
                 toOffset="100%"
                 gradientUnits="userSpaceOnUse"
                 x1={x1 ? x1 * shadowOffset : 0}
@@ -226,6 +230,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   cornerRadius={9999}
                   fill={`url(#starGradient-${i + 1})`}
                   onMouseMove={onMouseMove({
+                    index: i,
                     lines,
                     commits,
                     dominantLanguage,
@@ -233,6 +238,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   })}
                   onMouseLeave={onMouseLeave}
                   onTouchMove={onTouchMove({
+                    index: i,
                     lines,
                     commits,
                     dominantLanguage,
@@ -258,8 +264,13 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   padAngle={anglePadding}
                   padRadius={innerRadius}
                   cornerRadius={9999}
-                  fill={linesColors[dominantLanguage]}
+                  fill={
+                    selectedIndex === i || typeof selectedIndex === 'undefined'
+                      ? linesColors[dominantLanguage]
+                      : '#fff'
+                  }
                   onMouseMove={onMouseMove({
+                    index: i,
                     lines,
                     commits,
                     dominantLanguage,
@@ -267,6 +278,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   })}
                   onMouseLeave={onMouseLeave}
                   onTouchMove={onTouchMove({
+                    index: i,
                     lines,
                     commits,
                     dominantLanguage,

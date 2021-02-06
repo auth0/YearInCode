@@ -2,6 +2,7 @@ import {indexOfMax} from '@nebula/common/array'
 import {Poster} from '@nebula/types/poster'
 
 export interface PosterTooltipData {
+  index: number
   commits: number
   lines: number
   dominantLanguage: string
