@@ -11,7 +11,13 @@ import {Poster} from '@nebula/types/poster'
 import SittingPersonIcon from '@assets/svg/sitting-person.svg'
 import {Typography} from '@components/ui'
 
-import {commitColors, genPoints, linesColors, toRadians} from './Poster.utils'
+import {
+  commitColors,
+  genPoints,
+  linesColors,
+  PosterTooltipData,
+  toRadians,
+} from './Poster.utils'
 
 const AXIS_LINE_AMOUNT = 30
 
@@ -21,9 +27,15 @@ interface PosterSVGProps {
   width?: number
   height?: number
   className?: string
-  onMouseMove?: (event: React.MouseEvent<SVGPathElement, MouseEvent>) => void
+
+  onMouseMove?: (
+    data: PosterTooltipData,
+  ) => (event: React.MouseEvent<SVGPathElement, MouseEvent>) => void
   onMouseLeave?: (event: React.MouseEvent<SVGPathElement, MouseEvent>) => void
-  onTouchMove?: (event: React.TouchEvent<SVGPathElement>) => void
+
+  onTouchMove?: (
+    data: PosterTooltipData,
+  ) => (event: React.TouchEvent<SVGPathElement>) => void
   onTouchEnd?: (event: React.TouchEvent<SVGPathElement>) => void
 }
 
@@ -198,48 +210,72 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
         <Group>
           {/* Commit bars */}
           <Group>
-            {data.weeks.map(({lines, commits}, i) => (
-              <Arc
-                key={i + 1}
-                id={`commit-bar-${i + 1}`}
-                innerRadius={barY(0)}
-                outerRadius={barY(
-                  normalizeCommits(commits) + normalizeLines(lines),
-                )}
-                startAngle={x(i + 1)}
-                endAngle={x(i + 1) + x.bandwidth()}
-                padAngle={anglePadding}
-                padRadius={innerRadius}
-                cornerRadius={9999}
-                fill={`url(#starGradient-${i + 1})`}
-                onMouseMove={onMouseMove}
-                onMouseLeave={onMouseLeave}
-                onTouchMove={onTouchMove}
-                onTouchEnd={onTouchEnd}
-              />
-            ))}
+            {data.weeks.map(
+              ({lines, commits, dominantLanguage, dominantRepository}, i) => (
+                <Arc
+                  key={i + 1}
+                  id={`commit-bar-${i + 1}`}
+                  innerRadius={barY(0)}
+                  outerRadius={barY(
+                    normalizeCommits(commits) + normalizeLines(lines),
+                  )}
+                  startAngle={x(i + 1)}
+                  endAngle={x(i + 1) + x.bandwidth()}
+                  padAngle={anglePadding}
+                  padRadius={innerRadius}
+                  cornerRadius={9999}
+                  fill={`url(#starGradient-${i + 1})`}
+                  onMouseMove={onMouseMove({
+                    lines,
+                    commits,
+                    dominantLanguage,
+                    dominantRepository,
+                  })}
+                  onMouseLeave={onMouseLeave}
+                  onTouchMove={onTouchMove({
+                    lines,
+                    commits,
+                    dominantLanguage,
+                    dominantRepository,
+                  })}
+                  onTouchEnd={onTouchEnd}
+                />
+              ),
+            )}
           </Group>
 
           {/* Line bars */}
           <Group>
-            {data.weeks.map(({lines, dominantLanguage}, i) => (
-              <Arc
-                key={i + 1}
-                data={data}
-                innerRadius={barY(0)}
-                outerRadius={barY(normalizeLines(lines))}
-                startAngle={x(i + 1)}
-                endAngle={x(i + 1) + x.bandwidth()}
-                padAngle={anglePadding}
-                padRadius={innerRadius}
-                cornerRadius={9999}
-                fill={linesColors[dominantLanguage]}
-                onMouseMove={onMouseMove}
-                onMouseLeave={onMouseLeave}
-                onTouchMove={onTouchMove}
-                onTouchEnd={onTouchEnd}
-              />
-            ))}
+            {data.weeks.map(
+              ({lines, commits, dominantLanguage, dominantRepository}, i) => (
+                <Arc
+                  key={i + 1}
+                  data={data}
+                  innerRadius={barY(0)}
+                  outerRadius={barY(normalizeLines(lines))}
+                  startAngle={x(i + 1)}
+                  endAngle={x(i + 1) + x.bandwidth()}
+                  padAngle={anglePadding}
+                  padRadius={innerRadius}
+                  cornerRadius={9999}
+                  fill={linesColors[dominantLanguage]}
+                  onMouseMove={onMouseMove({
+                    lines,
+                    commits,
+                    dominantLanguage,
+                    dominantRepository,
+                  })}
+                  onMouseLeave={onMouseLeave}
+                  onTouchMove={onTouchMove({
+                    lines,
+                    commits,
+                    dominantLanguage,
+                    dominantRepository,
+                  })}
+                  onTouchEnd={onTouchEnd}
+                />
+              ),
+            )}
           </Group>
         </Group>
       </Group>
@@ -249,47 +285,6 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
         <SittingPersonIcon />
       </Group>
     </svg>
-  )
-}
-
-interface InfoBoxProps {
-  label: string
-  value: string
-  icon: React.ReactNode
-}
-
-const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
-  return (
-    <section className="flex items-center bg-black">
-      <div
-        aria-hidden
-        style={{
-          borderWidth: '0.5px',
-        }}
-        className={clsx(
-          'flex items-center justify-center p-2 w-1/4 h-full border-gray-600',
-          'xl:p-4',
-        )}
-      >
-        {icon}
-      </div>
-
-      <header className="flex flex-col justify-center p-4 w-3/4 h-full border border-gray-600 space-y-3">
-        <Typography
-          variant="caption"
-          as="h1"
-          style={{
-            letterSpacing: '0.2em',
-          }}
-          className="text-white text-opacity-40 uppercase"
-        >
-          {label}
-        </Typography>
-        <Typography variant="h5" className="font-light">
-          {value}
-        </Typography>
-      </header>
-    </section>
   )
 }
 

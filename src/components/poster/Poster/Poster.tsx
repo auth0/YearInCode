@@ -2,17 +2,21 @@ import * as React from 'react'
 import {ParentSize} from '@visx/responsive'
 import clsx from 'clsx'
 import {useWindowSize} from 'react-use'
-import {withTooltip, Tooltip} from '@visx/tooltip'
-import {WithTooltipProvidedProps} from '@visx/tooltip/lib/enhancers/withTooltip'
+import {useTooltip, useTooltipInPortal, TooltipWithBounds} from '@visx/tooltip'
 
 import {Poster} from '@nebula/types/poster'
+import {Typography} from '@components/ui'
 import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
 import FollowersIcon from '@assets/svg/followers.svg'
 import LanguageIcon from '@assets/svg/language.svg'
-import {Typography} from '@components/ui'
+import LinesIcon from '@assets/svg/lines.svg'
+import CommitsIcon from '@assets/svg/commits.svg'
+import HashIcon from '@assets/svg/hash.svg'
+import RepositoryIcon from '@assets/svg/repository.svg'
 
 import PosterSVG from './PosterSvg'
+import {PosterTooltipData} from './Poster.utils'
 
 interface PosterComponentProps {
   data: Poster
@@ -21,11 +25,26 @@ interface PosterComponentProps {
   height?: number
 }
 
+let tooltipTimeout: number
+
 const PosterComponent: React.FC<PosterComponentProps> = ({
   data,
   width,
   height,
 }) => {
+  const {
+    showTooltip,
+    hideTooltip,
+    tooltipLeft,
+    tooltipTop,
+    tooltipData,
+    tooltipOpen,
+  } = useTooltip<PosterTooltipData>()
+  const {containerRef, containerBounds, TooltipInPortal} = useTooltipInPortal({
+    scroll: true,
+    detectBounds: true,
+  })
+
   const margin = {top: 20, right: 10, bottom: 20, left: 10}
   const xMax = width - margin.left - margin.right
   const yMax = height - margin.top - margin.bottom
@@ -34,35 +53,40 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
   const isMobile = outerRadius < 300
 
   const handleMouseMove = React.useCallback(
-    (event: React.MouseEvent | React.TouchEvent) => {
-      console.log(event)
-      // if (tooltipTimeout) clearTimeout(tooltipTimeout);
-      // if (!svgRef.current) return;
+    (data: PosterTooltipData) => (event: React.MouseEvent) => {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout)
 
-      // // find the nearest polygon to the current mouse position
-      // const point = localPoint(svgRef.current, event);
-      // if (!point) return;
-      // const neighborRadius = 100;
-      // const closest = voronoiLayout.find(point.x, point.y, neighborRadius);
-      // if (closest) {
-      //   showTooltip({
-      //     tooltipLeft: xScale(x(closest.data)),
-      //     tooltipTop: yScale(y(closest.data)),
-      //     tooltipData: closest.data,
-      //   });
-      // }
+      showTooltip({
+        tooltipLeft: event.clientX - containerBounds.left,
+        tooltipTop: event.clientY - containerBounds.top,
+        tooltipData: data,
+      })
     },
-    [],
+    [showTooltip],
+  )
+
+  const handleTouchMove = React.useCallback(
+    (data: PosterTooltipData) => (event: React.TouchEvent) => {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout)
+
+      showTooltip({
+        tooltipLeft: event.touches[0].clientX - containerBounds.left,
+        tooltipTop: event.touches[0].clientY - containerBounds.top,
+        tooltipData: data,
+      })
+    },
+    [showTooltip],
   )
 
   const handleMouseLeave = React.useCallback(() => {
-    // tooltipTimeout = window.setTimeout(() => {
-    //   hideTooltip();
-    // }, 300);
+    tooltipTimeout = window.setTimeout(() => {
+      hideTooltip()
+    }, 200)
   }, [])
 
   return (
     <section
+      ref={containerRef}
       style={{marginBottom: margin.bottom}}
       className="relative flex flex-col items-center"
     >
@@ -73,9 +97,31 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         height={height}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        onTouchMove={handleMouseMove}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleMouseLeave}
       />
+
+      {tooltipOpen && tooltipData && tooltipLeft != null && tooltipTop != null && (
+        <TooltipWithBounds
+          className="absolute z-30 px-3 py-2 w-full max-w-48 text-white font-light bg-black border border-gray-500 rounded-md"
+          left={tooltipLeft}
+          top={tooltipTop - 20}
+          unstyled
+        >
+          <TooltipRow icon={<CommitsIcon />}>
+            {tooltipData.commits} commits
+          </TooltipRow>
+          <TooltipRow icon={<LinesIcon />}>
+            {tooltipData.lines} lines
+          </TooltipRow>
+          <TooltipRow icon={<RepositoryIcon />}>
+            {tooltipData.dominantRepository}
+          </TooltipRow>
+          <TooltipRow className="text-flamingo-500" icon={<HashIcon />}>
+            {tooltipData.dominantLanguage}
+          </TooltipRow>
+        </TooltipWithBounds>
+      )}
 
       <div
         style={{
@@ -119,6 +165,18 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     </section>
   )
 }
+
+interface TooltipRowProps {
+  icon: React.ReactNode
+  className?: string
+}
+
+const TooltipRow: React.FC<TooltipRowProps> = ({children, icon, className}) => (
+  <div className={clsx('flex items-center space-x-4', className)}>
+    <div className="w-6">{icon}</div>
+    <Typography variant="body1">{children}</Typography>
+  </div>
+)
 
 interface InfoBoxProps {
   label: string

@@ -1,6 +1,13 @@
 import {indexOfMax} from '@nebula/common/array'
 import {Poster} from '@nebula/types/poster'
 
+export interface PosterTooltipData {
+  commits: number
+  lines: number
+  dominantLanguage: string
+  dominantRepository: string
+}
+
 export const commitColors = new Proxy(
   {
     Python: '#001FBC',
@@ -67,6 +74,19 @@ function getRandomName() {
   return names[getRandomArbitrary(0, names.length)]
 }
 
+function getRandomRepository() {
+  const repositories = [
+    'react',
+    'vue',
+    'next.js',
+    'lock',
+    'auth0js',
+    'auth0-java',
+  ]
+
+  return repositories[getRandomArbitrary(0, repositories.length)]
+}
+
 export function getMockData(weekAmount = 52): Poster {
   const schema = {
     name: getRandomName(),
@@ -94,7 +114,7 @@ export function getMockData(weekAmount = 52): Poster {
         commits,
         lines,
         dominantLanguage,
-        dominantRepository: 'test',
+        dominantRepository: getRandomRepository(),
         total: commits + lines,
       }
     })
