@@ -1,269 +1,210 @@
 import * as React from 'react'
-import {scaleBand, scaleLinear, scaleRadial, scaleSqrt} from '@visx/scale'
-import {Group} from '@visx/group'
-import {arc, Arc, Line} from '@visx/shape'
 import {ParentSize} from '@visx/responsive'
-import {LinearGradient} from '@visx/gradient'
-import * as d3 from 'd3-array'
 import clsx from 'clsx'
-import {Command, parseSVG} from 'svg-path-parser'
 import {useWindowSize} from 'react-use'
+import {useTooltip, useTooltipInPortal, TooltipWithBounds} from '@visx/tooltip'
+import {AnimatePresence, motion} from 'framer-motion'
 
 import {Poster} from '@nebula/types/poster'
+import {Typography} from '@components/ui'
 import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
+import YearTooltipIcon from '@assets/svg/year-tooltip.svg'
 import FollowersIcon from '@assets/svg/followers.svg'
 import LanguageIcon from '@assets/svg/language.svg'
-import SittingPersonIcon from '@assets/svg/sitting-person.svg'
-import {Typography} from '@components/ui'
+import LinesIcon from '@assets/svg/lines.svg'
+import CommitsIcon from '@assets/svg/commits.svg'
+import HashIcon from '@assets/svg/hash.svg'
+import RepositoryIcon from '@assets/svg/repository.svg'
+import TotalLinesOfCodeIcon from '@assets/svg/total-lines.svg'
 
-import {commitColors, genPoints, linesColors, toRadians} from './Poster.utils'
+import PosterSVG from './PosterSvg'
+import {PosterTooltipData} from './Poster.utils'
 
-const AXIS_LINE_AMOUNT = 30
-
-interface StarProps {
+interface PosterComponentProps {
   data: Poster
 
   width?: number
   height?: number
 }
 
-const Star: React.FC<StarProps> = ({data, width, height}) => {
-  const margin = {top: 20, right: 10, bottom: 20, left: 10}
+let tooltipTimeout: number
+
+const PosterComponent: React.FC<PosterComponentProps> = ({
+  data,
+  width,
+  height,
+}) => {
+  const {
+    showTooltip,
+    hideTooltip,
+    tooltipLeft,
+    tooltipTop,
+    tooltipData,
+    tooltipOpen,
+  } = useTooltip<PosterTooltipData>()
+  const {containerRef, containerBounds} = useTooltipInPortal({
+    scroll: true,
+    detectBounds: true,
+  })
+
+  const margin = {top: 20, right: 10, bottom: 40, left: 10}
   const xMax = width - margin.left - margin.right
   const yMax = height - margin.top - margin.bottom
-  const innerRadius = 20
   const outerRadius = Math.min(xMax, yMax) / 2
-  const anglePadding = 0.07
 
-  const x = React.useMemo(
-    () =>
-      scaleBand({
-        domain: data.weeks.map((_, i) => i + 1),
-        range: [toRadians(-125), toRadians(125)],
-        align: 0,
-      }),
-    [],
-  )
-
-  const normalizeLines = React.useMemo(
-    () =>
-      scaleSqrt({
-        domain: [0, d3.max(data.weeks, d => d.lines)],
-        range: [0, 320],
-      }),
-    [data],
-  )
-
-  const normalizeCommits = React.useMemo(
-    () =>
-      scaleLinear({
-        domain: [
-          d3.min(data.weeks, d => d.commits),
-          d3.max(data.weeks, d => d.commits),
-        ],
-        range: [
-          normalizeLines.range()[0],
-          Math.abs(normalizeLines.range()[1] - outerRadius),
-        ],
-      }),
-    [data, outerRadius],
-  )
-
-  const barY = React.useMemo(
-    () =>
-      scaleRadial({
-        domain: [
-          normalizeLines.range()[0],
-          normalizeCommits.range()[1] + normalizeLines.range()[1],
-        ],
-        range: [innerRadius, outerRadius],
-      }),
-    [data, outerRadius],
-  )
-
-  const axesOriginPoints = genPoints(AXIS_LINE_AMOUNT, innerRadius)
-  const axesOuterPoints = genPoints(AXIS_LINE_AMOUNT, outerRadius)
   const isMobile = outerRadius < 300
+
+  const handleMouseMove = React.useCallback(
+    (data: PosterTooltipData) => (event: React.MouseEvent) => {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout)
+
+      showTooltip({
+        tooltipLeft: event.clientX - containerBounds.left,
+        tooltipTop: event.clientY - containerBounds.top,
+        tooltipData: data,
+      })
+    },
+    [showTooltip, containerBounds],
+  )
+
+  const handleTouchMove = React.useCallback(
+    (data: PosterTooltipData) => (event: React.TouchEvent) => {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout)
+
+      showTooltip({
+        tooltipLeft: event.touches[0].clientX - containerBounds.left,
+        tooltipTop: event.touches[0].clientY - containerBounds.top,
+        tooltipData: data,
+      })
+    },
+    [showTooltip, containerBounds],
+  )
+
+  const handleMouseLeave = React.useCallback(() => {
+    tooltipTimeout = window.setTimeout(() => {
+      hideTooltip()
+    }, 100)
+  }, [])
 
   return (
     <section
+      ref={containerRef}
       style={{marginBottom: margin.bottom}}
       className="relative flex flex-col items-center"
     >
-      <svg width={width} height={outerRadius * 2 + margin.top}>
-        <Group top={outerRadius + margin.top} left={width / 2}>
-          {/* Axis lines */}
-          <Group>
-            {[...new Array(AXIS_LINE_AMOUNT)].map((_, i) => (
-              <Line
-                key={i}
-                from={axesOriginPoints[i]}
-                to={axesOuterPoints[i]}
-                stroke="#fff"
-                strokeOpacity={0.3}
-              />
-            ))}
-          </Group>
+      <PosterSVG
+        className="z-10"
+        data={data}
+        width={width}
+        height={height}
+        selectedIndex={tooltipData?.index}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleMouseLeave}
+      />
 
-          {/* Gradients */}
-          <defs>
-            {data.weeks.map((d, i) => {
-              const week = i + 1
-              const {lines, commits, dominantLanguage} = d
-
-              // Get each bar vector
-              const path = arc({
-                innerRadius: barY(0),
-                outerRadius: barY(
-                  normalizeCommits(commits) + normalizeLines(lines),
-                ),
-                startAngle: x(week),
-                endAngle: x(week) + x.bandwidth(),
-                padAngle: anglePadding,
-                padRadius: innerRadius,
-                cornerRadius: 9999,
-              })(d)
-
-              // parse vector points
-              const parsedPath = parseSVG(path) as Array<
-                Command & {
-                  x: number
-                  y: number
-                }
+      <AnimatePresence>
+        {tooltipOpen &&
+          tooltipData &&
+          tooltipLeft != null &&
+          tooltipTop != null && (
+            <motion.div
+              className="z-30"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+            >
+              <TooltipWithBounds
+                className="absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1"
+                left={tooltipLeft + 20}
+                top={tooltipTop - 20}
+                unstyled
               >
-
-              const movePathIndex = parsedPath.findIndex(
-                ({code}) => code === 'M',
-              )
-              const linePathIndex = parsedPath.findIndex(
-                ({code}) => code === 'L',
-              )
-
-              const movePath = parsedPath[movePathIndex]
-              const linePath = parsedPath[linePathIndex]
-
-              const x1 = (linePath.x + parsedPath[linePathIndex + 1].x) / 1.92
-              const y1 = (linePath.y + parsedPath[linePathIndex + 1].y) / 1.92
-
-              const x2 = (movePath.x + parsedPath[movePathIndex + 1].x) / 1.92
-              const y2 = (movePath.y + parsedPath[movePathIndex + 1].y) / 1.92
-
-              const shadowOffset = 1.005
-
-              const fromOffset = `${
-                (barY(normalizeLines(lines)) /
-                  barY(normalizeCommits(commits) + normalizeLines(lines))) *
-                95
-              }%`
-
-              return (
-                <LinearGradient
-                  key={week}
-                  id={`starGradient-${week}`}
-                  from={'#000'}
-                  fromOffset={fromOffset}
-                  to={commitColors[dominantLanguage]}
-                  toOffset="100%"
-                  gradientUnits="userSpaceOnUse"
-                  x1={x1 * shadowOffset}
-                  y1={y1 * shadowOffset}
-                  x2={x2 * shadowOffset}
-                  y2={y2 * shadowOffset}
-                />
-              )
-            })}
-          </defs>
-
-          <Group>
-            {/* Commit bars */}
-            <Group>
-              {data.weeks.map(({lines, commits}, i) => (
-                <Arc
-                  key={i + 1}
-                  id={`commit-bar-${i + 1}`}
-                  innerRadius={barY(0)}
-                  outerRadius={barY(
-                    normalizeCommits(commits) + normalizeLines(lines),
-                  )}
-                  startAngle={x(i + 1)}
-                  endAngle={x(i + 1) + x.bandwidth()}
-                  padAngle={anglePadding}
-                  padRadius={innerRadius}
-                  cornerRadius={9999}
-                  fill={`url(#starGradient-${i + 1})`}
-                />
-              ))}
-            </Group>
-
-            {/* Line bars */}
-            <Group>
-              {data.weeks.map(({lines, dominantLanguage}, i) => (
-                <Arc
-                  key={i + 1}
-                  data={data}
-                  innerRadius={barY(0)}
-                  outerRadius={barY(normalizeLines(lines))}
-                  startAngle={x(i + 1)}
-                  endAngle={x(i + 1) + x.bandwidth()}
-                  padAngle={anglePadding}
-                  padRadius={innerRadius}
-                  cornerRadius={9999}
-                  fill={linesColors[dominantLanguage]}
-                />
-              ))}
-            </Group>
-          </Group>
-        </Group>
-
-        {/*Sitting person in center*/}
-        <Group top={outerRadius + margin.top - 60} left={width / 2 - 25.5}>
-          <SittingPersonIcon />
-        </Group>
-      </svg>
+                <TooltipRow icon={<YearTooltipIcon />}>
+                  Week {tooltipData.week}
+                </TooltipRow>
+                <TooltipRow icon={<CommitsIcon />}>
+                  {tooltipData.commits} commits
+                </TooltipRow>
+                <TooltipRow icon={<LinesIcon />}>
+                  {tooltipData.lines} lines
+                </TooltipRow>
+                <TooltipRow icon={<RepositoryIcon />}>
+                  {tooltipData.dominantRepository}
+                </TooltipRow>
+                <TooltipRow className="text-flamingo-500" icon={<HashIcon />}>
+                  {tooltipData.dominantLanguage}
+                </TooltipRow>
+              </TooltipWithBounds>
+            </motion.div>
+          )}
+      </AnimatePresence>
 
       <div
         style={{
-          height: isMobile
-            ? undefined
-            : height / 2 + outerRadius + margin.top * 2,
-          width: outerRadius * 1.5,
+          width: outerRadius * 2,
         }}
-        className={clsx('flex items-center', {
-          absolute: !isMobile,
-          'relative mt-6': isMobile,
+        className={clsx('relative flex items-center', {
+          '-mt-36': !isMobile,
+          'mt-6': isMobile,
         })}
       >
         <div
-          className={clsx('bottom-0 grid flex-1', {
-            'absolute grid-cols-2 grid-rows-2': !isMobile,
+          className={clsx('z-20 bottom-0 grid w-full', {
+            'grid-cols-3 grid-rows-2': !isMobile,
           })}
         >
           <InfoBox
             label="Name"
             value={data.name}
-            icon={<NameIcon className="w-full h-full" />}
-          />
-          <InfoBox
-            label="Year"
-            value={data.year.toString()}
-            icon={<YearIcon className="w-full h-full" />}
+            icon={<NameIcon className="w-8" />}
           />
           <InfoBox
             label="Followers"
             value={data.followers.toString()}
-            icon={<FollowersIcon className="w-full h-full" />}
+            icon={<FollowersIcon className="w-8" />}
           />
           <InfoBox
-            label="Dominant Language"
+            label="Year"
+            value={data.year.toString()}
+            icon={<YearIcon className="w-8" />}
+          />
+          <InfoBox
+            label="#1 Language"
             value={data.dominantLanguage}
-            icon={<LanguageIcon className="w-full h-full" />}
+            icon={<LanguageIcon className="w-8" />}
+          />
+          <InfoBox
+            label="#1 Repo"
+            value={data.dominantRepository}
+            icon={<RepositoryIcon style={{color: '#57585A'}} className="w-8" />}
+          />
+          <InfoBox
+            label="Lines of Code"
+            value={data.totalLinesOfCode
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+            icon={<TotalLinesOfCodeIcon className="w-8" />}
           />
         </div>
       </div>
     </section>
   )
 }
+
+interface TooltipRowProps {
+  icon: React.ReactNode
+  className?: string
+}
+
+const TooltipRow: React.FC<TooltipRowProps> = ({children, icon, className}) => (
+  <div className={clsx('flex items-center space-x-4', className)}>
+    <div className="w-6">{icon}</div>
+    <Typography variant="body1">{children}</Typography>
+  </div>
+)
 
 interface InfoBoxProps {
   label: string
@@ -280,14 +221,13 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
           borderWidth: '0.5px',
         }}
         className={clsx(
-          'flex items-center justify-center p-2 w-1/4 h-full border-gray-600',
-          'xl:p-4',
+          'flex items-center justify-center px-6 py-2 h-full border-gray-600',
         )}
       >
         {icon}
       </div>
 
-      <header className="flex flex-col justify-center p-4 w-3/4 h-full border border-gray-600 space-y-3">
+      <header className="flex flex-1 flex-col justify-center p-4 h-full border border-gray-600 space-y-3">
         <Typography
           variant="caption"
           as="h1"
@@ -306,7 +246,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   )
 }
 
-interface WrappedStarProps extends StarProps {
+interface WrappedStarProps extends PosterComponentProps {
   wrapperClassName: string
 
   screenWidth?: number
@@ -318,7 +258,9 @@ const WrappedStar: React.FC<WrappedStarProps> = props => {
 
   return (
     <ParentSize className={props.wrapperClassName}>
-      {({width}) => <Star width={width} height={height} {...props} />}
+      {({width}) => (
+        <PosterComponent width={width} height={height} {...props} />
+      )}
     </ParentSize>
   )
 }
