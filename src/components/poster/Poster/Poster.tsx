@@ -9,12 +9,14 @@ import {Poster} from '@nebula/types/poster'
 import {Typography} from '@components/ui'
 import NameIcon from '@assets/svg/name.svg'
 import YearIcon from '@assets/svg/year.svg'
+import YearTooltipIcon from '@assets/svg/year-tooltip.svg'
 import FollowersIcon from '@assets/svg/followers.svg'
 import LanguageIcon from '@assets/svg/language.svg'
 import LinesIcon from '@assets/svg/lines.svg'
 import CommitsIcon from '@assets/svg/commits.svg'
 import HashIcon from '@assets/svg/hash.svg'
 import RepositoryIcon from '@assets/svg/repository.svg'
+import TotalLinesOfCodeIcon from '@assets/svg/total-lines.svg'
 
 import PosterSVG from './PosterSvg'
 import {PosterTooltipData} from './Poster.utils'
@@ -46,7 +48,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     detectBounds: true,
   })
 
-  const margin = {top: 20, right: 10, bottom: 20, left: 10}
+  const margin = {top: 20, right: 10, bottom: 40, left: 10}
   const xMax = width - margin.left - margin.right
   const yMax = height - margin.top - margin.bottom
   const outerRadius = Math.min(xMax, yMax) / 2
@@ -108,17 +110,21 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
           tooltipData &&
           tooltipLeft != null &&
           tooltipTop != null && (
-            <TooltipWithBounds
-              className="absolute z-30 px-3 py-2 w-full max-w-48 text-white font-light bg-black border border-gray-500 rounded-md"
-              left={tooltipLeft}
-              top={tooltipTop - 20}
-              unstyled
+            <motion.div
+              className="z-30"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
             >
-              <motion.div
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                exit={{opacity: 0}}
+              <TooltipWithBounds
+                className="absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1"
+                left={tooltipLeft}
+                top={tooltipTop - 20}
+                unstyled
               >
+                <TooltipRow icon={<YearTooltipIcon />}>
+                  Week {tooltipData.week}
+                </TooltipRow>
                 <TooltipRow icon={<CommitsIcon />}>
                   {tooltipData.commits} commits
                 </TooltipRow>
@@ -131,47 +137,56 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
                 <TooltipRow className="text-flamingo-500" icon={<HashIcon />}>
                   {tooltipData.dominantLanguage}
                 </TooltipRow>
-              </motion.div>
-            </TooltipWithBounds>
+              </TooltipWithBounds>
+            </motion.div>
           )}
       </AnimatePresence>
 
       <div
         style={{
-          height: isMobile
-            ? undefined
-            : height / 2 + outerRadius + margin.top * 2,
-          width: outerRadius * 1.5,
+          width: outerRadius * 2,
         }}
-        className={clsx('flex items-center', {
-          absolute: !isMobile,
-          'relative mt-6': isMobile,
+        className={clsx('relative flex items-center', {
+          '-mt-36': !isMobile,
+          'mt-6': isMobile,
         })}
       >
         <div
-          className={clsx('z-20 bottom-0 grid flex-1', {
-            'absolute grid-cols-2 grid-rows-2': !isMobile,
+          className={clsx('z-20 bottom-0 grid w-full', {
+            'grid-cols-3 grid-rows-2': !isMobile,
           })}
         >
           <InfoBox
             label="Name"
             value={data.name}
-            icon={<NameIcon className="w-full h-full" />}
-          />
-          <InfoBox
-            label="Year"
-            value={data.year.toString()}
-            icon={<YearIcon className="w-full h-full" />}
+            icon={<NameIcon className="w-8" />}
           />
           <InfoBox
             label="Followers"
             value={data.followers.toString()}
-            icon={<FollowersIcon className="w-full h-full" />}
+            icon={<FollowersIcon className="w-8" />}
           />
           <InfoBox
-            label="Dominant Language"
+            label="Year"
+            value={data.year.toString()}
+            icon={<YearIcon className="w-8" />}
+          />
+          <InfoBox
+            label="#1 Language"
             value={data.dominantLanguage}
-            icon={<LanguageIcon className="w-full h-full" />}
+            icon={<LanguageIcon className="w-8" />}
+          />
+          <InfoBox
+            label="#1 Repo"
+            value={data.dominantRepository}
+            icon={<RepositoryIcon style={{color: '#57585A'}} className="w-8" />}
+          />
+          <InfoBox
+            label="Lines of Code"
+            value={data.totalLinesOfCode
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+            icon={<TotalLinesOfCodeIcon className="w-8" />}
           />
         </div>
       </div>
@@ -206,14 +221,13 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
           borderWidth: '0.5px',
         }}
         className={clsx(
-          'flex items-center justify-center p-2 w-1/4 h-full border-gray-600',
-          'xl:p-4',
+          'flex items-center justify-center px-6 py-2 h-full border-gray-600',
         )}
       >
         {icon}
       </div>
 
-      <header className="flex flex-col justify-center p-4 w-3/4 h-full border border-gray-600 space-y-3">
+      <header className="flex flex-1 flex-col justify-center p-4 h-full border border-gray-600 space-y-3">
         <Typography
           variant="caption"
           as="h1"

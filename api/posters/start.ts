@@ -90,6 +90,7 @@ export function startImplementation(event: SQSEvent) {
         year: YEAR_TO_ANALYZE,
         dominantLanguage: '',
         dominantRepository: '',
+        totalLinesOfCode: 0,
         weeks: [],
       }
       const {
@@ -231,6 +232,8 @@ export function startImplementation(event: SQSEvent) {
                   if (!total) {
                     return callback(null, '')
                   }
+
+                  posterData.totalLinesOfCode += total
 
                   if (!repositoryOverallTotal[repository]) {
                     repositoryOverallTotal[repository] = total

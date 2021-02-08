@@ -215,7 +215,10 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
           {/* Commit bars */}
           <Group>
             {data.weeks.map(
-              ({lines, commits, dominantLanguage, dominantRepository}, i) => (
+              (
+                {lines, commits, dominantLanguage, dominantRepository, week},
+                i,
+              ) => (
                 <Arc
                   key={i + 1}
                   id={`commit-bar-${i + 1}`}
@@ -231,6 +234,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   fill={`url(#starGradient-${i + 1})`}
                   onMouseMove={onMouseMove({
                     index: i,
+                    week,
                     lines,
                     commits,
                     dominantLanguage,
@@ -239,6 +243,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   onMouseLeave={onMouseLeave}
                   onTouchMove={onTouchMove({
                     index: i,
+                    week,
                     lines,
                     commits,
                     dominantLanguage,
@@ -253,7 +258,10 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
           {/* Line bars */}
           <Group>
             {data.weeks.map(
-              ({lines, commits, dominantLanguage, dominantRepository}, i) => (
+              (
+                {lines, commits, dominantLanguage, dominantRepository, week},
+                i,
+              ) => (
                 <Arc
                   key={i + 1}
                   data={data}
@@ -271,6 +279,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   }
                   onMouseMove={onMouseMove({
                     index: i,
+                    week,
                     lines,
                     commits,
                     dominantLanguage,
@@ -279,6 +288,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   onMouseLeave={onMouseLeave}
                   onTouchMove={onTouchMove({
                     index: i,
+                    week,
                     lines,
                     commits,
                     dominantLanguage,

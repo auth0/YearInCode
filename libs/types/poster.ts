@@ -14,6 +14,7 @@ export interface Poster {
   followers: number
   dominantLanguage: string
   dominantRepository: string
+  totalLinesOfCode: number
   weeks: PosterWeek[]
 }
 

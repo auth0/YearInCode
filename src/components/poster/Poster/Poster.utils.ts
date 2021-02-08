@@ -2,11 +2,17 @@ import {indexOfMax} from '@nebula/common/array'
 import {Poster} from '@nebula/types/poster'
 
 export interface PosterTooltipData {
-  index: number
+  index?: number
+  week: number
   commits: number
   lines: number
   dominantLanguage: string
   dominantRepository: string
+}
+
+export const tooltipVariants = {
+  visible: {opacity: 1},
+  hidden: {opacity: 0},
 }
 
 export const commitColors = new Proxy(
@@ -96,9 +102,11 @@ export function getMockData(weekAmount = 52): Poster {
     dominantLanguage: '',
     dominantRepository: '',
     weeks: [] as Poster['weeks'],
+    totalLinesOfCode: 0,
   }
 
   const languageCount: Record<string, number> = {}
+  const repositoryOverallTotal: Record<string, number> = {}
 
   const weeks: Poster['weeks'] = new Array(weekAmount)
     .fill(undefined)
@@ -106,6 +114,14 @@ export function getMockData(weekAmount = 52): Poster {
       const commits = getRandomArbitrary(1, 50)
       const lines = getRandomArbitrary(1, 100)
       const dominantLanguage = getRandomLanguage()
+      const dominantRepository = getRandomRepository()
+
+      const total = commits + lines
+      schema.totalLinesOfCode += total
+
+      if (!repositoryOverallTotal[dominantRepository])
+        repositoryOverallTotal[dominantRepository] = total
+      else repositoryOverallTotal[dominantRepository] += total
 
       if (!languageCount[dominantLanguage]) languageCount[dominantLanguage] = 1
       else languageCount[dominantLanguage] += 1
@@ -115,14 +131,17 @@ export function getMockData(weekAmount = 52): Poster {
         commits,
         lines,
         dominantLanguage,
-        dominantRepository: getRandomRepository(),
-        total: commits + lines,
+        dominantRepository,
+        total,
       }
     })
 
   schema.weeks = weeks
   schema.dominantLanguage = Object.keys(languageCount)[
     indexOfMax(Object.values(languageCount))
+  ]
+  schema.dominantRepository = Object.keys(repositoryOverallTotal)[
+    indexOfMax(Object.values(repositoryOverallTotal))
   ]
 
   return schema
