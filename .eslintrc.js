@@ -12,6 +12,7 @@ module.exports = {
     'plugin:import/typescript',
     'plugin:import/errors',
     'plugin:import/warnings',
+    'plugin:prettier/recommended',
     'prettier/react',
   ],
   plugins: ['import'],
