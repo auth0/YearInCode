@@ -1,14 +1,8 @@
-import dynamic from 'next/dynamic'
-
 import {LayoutNoBackdrop} from '@components/poster'
 import {PosterService} from '@lib/poster/poster-service'
 import {Poster} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
-
-const PosterComponent = dynamic(() => import('@components/poster/Poster'), {
-  ssr: false,
-})
-
+import PosterComponent from '@components/poster/Poster'
 interface PosterBySlugProps {
   posterData: Poster
 }

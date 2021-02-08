@@ -65,7 +65,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         tooltipData: data,
       })
     },
-    [showTooltip],
+    [showTooltip, containerBounds],
   )
 
   const handleTouchMove = React.useCallback(
@@ -78,7 +78,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         tooltipData: data,
       })
     },
-    [showTooltip],
+    [showTooltip, containerBounds],
   )
 
   const handleMouseLeave = React.useCallback(() => {
@@ -118,7 +118,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
             >
               <TooltipWithBounds
                 className="absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1"
-                left={tooltipLeft}
+                left={tooltipLeft + 20}
                 top={tooltipTop - 20}
                 unstyled
               >
