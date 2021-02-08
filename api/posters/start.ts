@@ -184,12 +184,6 @@ export function startImplementation(event: SQSEvent) {
         },
       )
 
-      logger.info(
-        `Repository stats are done! result without filter: ${JSON.stringify(
-          repositoriesStats,
-        )}`,
-      )
-
       repositoriesStats = repositoriesStats.filter(val => val !== undefined)
 
       logger.info(
@@ -225,7 +219,8 @@ export function startImplementation(event: SQSEvent) {
                     return callback(null, '')
                   }
 
-                  const weekNumber = dayjs(date).week() - 1
+                  const weekNumber = dayjs(date).week()
+                  const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
                   const total = lines + commits
 
@@ -241,14 +236,14 @@ export function startImplementation(event: SQSEvent) {
                     repositoryOverallTotal[repository] += total
                   }
 
-                  if (!repositoryWeeklyTotal[weekNumber]) {
-                    repositoryWeeklyTotal[weekNumber] = {}
-                    repositoryWeeklyTotal[weekNumber][repository] = total
+                  if (!repositoryWeeklyTotal[weekIndex]) {
+                    repositoryWeeklyTotal[weekIndex] = {}
+                    repositoryWeeklyTotal[weekIndex][repository] = total
                   } else {
-                    if (!repositoryWeeklyTotal[weekNumber][repository]) {
-                      repositoryWeeklyTotal[weekNumber][repository] = total
+                    if (!repositoryWeeklyTotal[weekIndex][repository]) {
+                      repositoryWeeklyTotal[weekIndex][repository] = total
                     } else {
-                      repositoryWeeklyTotal[weekNumber][repository] += total
+                      repositoryWeeklyTotal[weekIndex][repository] += total
                     }
                   }
 
@@ -262,11 +257,23 @@ export function startImplementation(event: SQSEvent) {
                     languageCount[language] += 1
                   }
 
-                  weeks[weekNumber] = {
-                    week: weekNumber + 1,
-                    lines,
-                    commits,
-                    total,
+                  const currentWeek = weeks[weekIndex]
+
+                  const currentWeekTotal = currentWeek?.total
+                    ? currentWeek?.total + total
+                    : total
+                  const currentWeekCommits = currentWeek?.commits
+                    ? currentWeek?.commits + commits
+                    : commits
+                  const currentWeekLines = currentWeek?.lines
+                    ? currentWeek?.lines + lines
+                    : lines
+
+                  weeks[weekIndex] = {
+                    week: weekNumber,
+                    lines: currentWeekLines,
+                    commits: currentWeekCommits,
+                    total: currentWeekTotal,
                     dominantLanguage: '',
                     dominantRepository: '',
                   }
