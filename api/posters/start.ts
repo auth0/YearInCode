@@ -218,7 +218,7 @@ export function startImplementation(event: SQSEvent) {
                   if (date.year() !== YEAR_TO_ANALYZE) {
                     return callback(null, '')
                   }
-
+                  console.log(date.toISOString())
                   const weekNumber = date.week()
                   const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
