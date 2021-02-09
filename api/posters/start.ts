@@ -8,7 +8,6 @@ import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
 import dayjs from 'dayjs'
 import * as weekOfYear from 'dayjs/plugin/weekOfYear'
-import utc from 'dayjs/plugin/utc'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
@@ -221,7 +220,11 @@ export function startImplementation(event: SQSEvent) {
                     return callback(null, '')
                   }
 
-                  const weekNumber = dayjs(date).startOf('day').week()
+                  const weekNumber = dayjs(
+                    `${date.getFullYear()}-${
+                      date.getMonth() + 1
+                    }-${date.getDate()}`,
+                  ).week()
                   const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
                   const total = lines + commits
