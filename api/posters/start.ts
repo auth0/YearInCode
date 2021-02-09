@@ -21,7 +21,6 @@ import PosterModel from './poster.model'
 import ConnectionModel from './connection.model'
 
 dayjs.extend(weekOfYear.default)
-dayjs.extend(utc)
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
