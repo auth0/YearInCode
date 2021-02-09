@@ -53,7 +53,6 @@
     "babel-plugin-inline-react-svg": "^1.1.2",
     "clsx": "^1.1.1",
     "d3-array": "^2.11.0",
-    "dayjs": "^1.10.4",
     "dynamoose": "^2.6.0",
     "fork-ts-checker-webpack-plugin": "^6.1.0",
     "framer-motion": "^3.3.0",
