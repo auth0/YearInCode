@@ -8,6 +8,7 @@ import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
 import dayjs from 'dayjs'
 import * as weekOfYear from 'dayjs/plugin/weekOfYear'
+import utc from 'dayjs/plugin/utc'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
@@ -21,6 +22,7 @@ import PosterModel from './poster.model'
 import ConnectionModel from './connection.model'
 
 dayjs.extend(weekOfYear.default)
+dayjs.extend(utc)
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
@@ -219,7 +221,7 @@ export function startImplementation(event: SQSEvent) {
                     return callback(null, '')
                   }
 
-                  const weekNumber = dayjs(date).week()
+                  const weekNumber = dayjs(date).startOf('day').week()
                   const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
                   const total = lines + commits
