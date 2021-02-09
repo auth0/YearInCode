@@ -214,8 +214,8 @@ export function startImplementation(event: SQSEvent) {
                   if (date.getFullYear() !== YEAR_TO_ANALYZE) {
                     return callback(null, '')
                   }
+
                   const weekNumber = getWeekNumber(date)
-                  console.log(date.toISOString(), weekNumber)
                   const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
                   const total = lines + commits
