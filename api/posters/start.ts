@@ -6,21 +6,17 @@ import sqsJsonBodyParser from '@middy/sqs-json-body-parser'
 import {Octokit, RestEndpointMethodTypes} from '@octokit/rest'
 import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
-import dayjs from 'dayjs'
-import * as weekOfYear from 'dayjs/plugin/weekOfYear'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
 import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
-import {unixTimestampToDate} from '@api/lib/time'
+import {getWeekNumber, unixTimestampToDate} from '@api/lib/time'
 import {indexOfMax} from '@nebula/common/array'
 
 import PosterModel from './poster.model'
 import ConnectionModel from './connection.model'
-
-dayjs.extend(weekOfYear.default)
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
@@ -215,10 +211,10 @@ export function startImplementation(event: SQSEvent) {
                 try {
                   const date = unixTimestampToDate(Number(w))
 
-                  if (date.year() !== YEAR_TO_ANALYZE) {
+                  if (date.getFullYear() !== YEAR_TO_ANALYZE) {
                     return callback(null, '')
                   }
-                  const weekNumber = date.week()
+                  const weekNumber = getWeekNumber(date)
                   console.log(date.toISOString(), weekNumber)
                   const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
