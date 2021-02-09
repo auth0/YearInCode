@@ -215,15 +215,11 @@ export function startImplementation(event: SQSEvent) {
                 try {
                   const date = unixTimestampToDate(Number(w))
 
-                  if (date.getFullYear() !== YEAR_TO_ANALYZE) {
+                  if (date.year() !== YEAR_TO_ANALYZE) {
                     return callback(null, '')
                   }
 
-                  const weekNumber = dayjs(
-                    `${date.getFullYear()}-${
-                      date.getMonth() + 1
-                    }-${date.getDate()}`,
-                  ).week()
+                  const weekNumber = date.week()
                   const weekIndex = weekNumber - 1
                   const lines = Math.abs(deletions) + additions
                   const total = lines + commits
