@@ -1,7 +1,5 @@
 import '@testing-library/jest-dom/extend-expect'
-import {startDb, stopDb, deleteTables} from 'jest-dynalite'
-
-import dynamoose from '@api/lib/db'
+import {startDb, stopDb} from 'jest-dynalite'
 
 import {server} from './mock-server'
 
@@ -18,7 +16,6 @@ beforeAll(async () => {
 afterEach(async () => {
   server.resetHandlers()
   jest.clearAllMocks()
-  await deleteTables()
 })
 
 afterAll(async () => {
