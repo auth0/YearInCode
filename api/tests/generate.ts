@@ -2,7 +2,7 @@ import {RestEndpointMethodTypes} from '@octokit/rest'
 import dayjs from 'dayjs'
 import faker from 'faker'
 
-import {dateToUnixTimeStamp} from '@api/lib/time'
+import {dateToUnixTimeStamp} from '@api/lib/date'
 
 type GitHubAuthenticatedUser = RestEndpointMethodTypes['users']['getAuthenticated']['response']['data']
 
