@@ -134,7 +134,6 @@
     "postcss": "^7",
     "postcss-nested": "4.2.3",
     "prettier": "^2.2.1",
-    "prettier-plugin-tailwind": "^2.2.8",
     "pretty-quick": "^3.1.0",
     "react-test-renderer": "^17.0.1",
     "serverless": "^2.22.0",

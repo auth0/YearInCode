@@ -25,8 +25,8 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({posterSlug}) => {
   return (
     <div
       className={clsx(
-        'flex flex-col justify-center space-y-4',
-        'sm:flex-row sm:items-center sm:space-x-6 sm:space-y-0',
+        'flex flex-col items-center justify-center space-y-4',
+        'sm:flex-row sm:space-x-6 sm:space-y-0',
       )}
     >
       <Button

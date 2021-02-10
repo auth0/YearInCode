@@ -9,6 +9,9 @@ module.exports = {
       maxWidth: {
         52: '13rem',
       },
+      minWidth: {
+        52: '13rem',
+      },
       height: {
         100: '28rem',
         '90vh': '90vh',
@@ -68,8 +71,8 @@ module.exports = {
       xl: ['1.25rem', {lineHeight: '2rem'}],
       '2xl': ['1.5rem', {lineHeight: '2rem'}],
       '3xl': ['1.875rem', {lineHeight: '2rem'}],
-      '4xl': ['2.25rem', {lineHeight: '2rem'}],
-      '5xl': ['3rem', {lineHeight: '5rem'}],
+      '4xl': ['2.7rem', {lineHeight: '3rem'}],
+      '5xl': ['3rem', {lineHeight: '3.5rem'}],
       '6xl': ['3.75rem', {lineHeight: '5rem'}],
       '7xl': ['4.5rem', {lineHeight: '5rem'}],
       '8xl': ['6rem', {lineHeight: '5rem'}],

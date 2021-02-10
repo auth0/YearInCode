@@ -33,7 +33,7 @@ export default function PosterBySlug({
 
       <DownloadPoster posterSlug={posterSlug} />
 
-      <section className="flex flex-1 flex-col items-center pb-12 px-4 overflow-hidden">
+      <section className="flex flex-1 flex-col items-center pb-12 px-4 overflow-auto">
         <PosterComponent wrapperClassName="mt-12" data={posterData} />
       </section>
     </>

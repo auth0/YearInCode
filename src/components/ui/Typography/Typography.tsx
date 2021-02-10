@@ -27,17 +27,17 @@ const defaultVariantMapping: Record<Variants, React.ElementType> = {
 const getStyles = (variant: Variants) => {
   switch (variant) {
     case 'h1':
-      return 'text-5xl sm:text-7xl'
+      return 'text-4xl sm:text-7xl'
     case 'h2':
-      return 'text-4xl sm:text-6xl'
+      return 'text-3xl sm:text-6xl'
     case 'h3':
-      return 'text-3xl sm:text-5xl'
+      return 'text-2xl sm:text-5xl'
     case 'h4':
-      return 'text-2xl sm:text-4xl'
+      return 'text-xl sm:text-4xl'
     case 'h5':
-      return 'text-xl sm:text-2xl'
+      return 'text-lg sm:text-2xl'
     case 'h6':
-      return 'text-lg sm:text-xl'
+      return 'text-md sm:text-xl'
     case 'body1':
       return 'text-base'
     case 'body2':
