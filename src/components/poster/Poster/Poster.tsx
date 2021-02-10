@@ -68,7 +68,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     [showTooltip, containerBounds],
   )
 
-  const handleTouchMove = React.useCallback(
+  const handleTouchStart = React.useCallback(
     (data: PosterTooltipData) => (event: React.TouchEvent) => {
       if (tooltipTimeout) clearTimeout(tooltipTimeout)
 
@@ -80,6 +80,12 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     },
     [showTooltip, containerBounds],
   )
+
+  const handleTouchEnd = React.useCallback(() => {
+    tooltipTimeout = window.setTimeout(() => {
+      hideTooltip()
+    }, 300)
+  }, [])
 
   const handleMouseLeave = React.useCallback(() => {
     tooltipTimeout = window.setTimeout(() => {
@@ -101,8 +107,8 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         selectedIndex={tooltipData?.index}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       />
 
       <AnimatePresence>

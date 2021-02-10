@@ -1,16 +1,14 @@
 {
-  "title": "Nebula",
-  "titleTemplate": "Nebula - Auth0",
-  "description": "<PENDING>",
+  "title": "Your Year In Code",
+  "titleTemplate": "%s - Auth0",
+  "description": "Auth0 loves developers and we wanted to create something that would reflect just how awesome the work you and your peers do every day is.",
   "openGraph": {
     "type": "website",
-    "locale": "en_IE",
-    "url": "<PENDING>",
-    "site_name": "Nebula"
+    "locale": "en_US",
+    "site_name": "Year In Code"
   },
   "twitter": {
     "handle": "<PENDING>",
-    "site": "<PENDING>",
-    "cardType": "<PENDING>"
+    "cardType": "summary_large_image"
   }
 }
