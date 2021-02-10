@@ -32,7 +32,7 @@ interface PosterSVGProps {
   ) => (event: React.MouseEvent<SVGPathElement, MouseEvent>) => void
   onMouseLeave?: (event: React.MouseEvent<SVGPathElement, MouseEvent>) => void
 
-  onTouchMove?: (
+  onTouchStart?: (
     data: PosterTooltipData,
   ) => (event: React.TouchEvent<SVGPathElement>) => void
   onTouchEnd?: (event: React.TouchEvent<SVGPathElement>) => void
@@ -45,7 +45,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
   onMouseLeave,
   onMouseMove,
   onTouchEnd,
-  onTouchMove,
+  onTouchStart,
   className,
   selectedIndex,
 }) => {
@@ -241,7 +241,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                     dominantRepository,
                   })}
                   onMouseLeave={onMouseLeave}
-                  onTouchMove={onTouchMove({
+                  onTouchStart={onTouchStart({
                     index: i,
                     week,
                     lines,
@@ -286,7 +286,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                     dominantRepository,
                   })}
                   onMouseLeave={onMouseLeave}
-                  onTouchMove={onTouchMove({
+                  onTouchStart={onTouchStart({
                     index: i,
                     week,
                     lines,

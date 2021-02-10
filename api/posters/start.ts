@@ -12,7 +12,7 @@ import {QueueDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
 import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
-import {getWeekNumber, unixTimestampToDate} from '@api/lib/time'
+import {getWeekNumber, unixTimestampToDate} from '@api/lib/date'
 import {indexOfMax} from '@nebula/common/array'
 
 import PosterModel from './poster.model'
@@ -81,7 +81,7 @@ export function startImplementation(event: SQSEvent) {
       } = await githubClient.users.getAuthenticated()
 
       const posterData: Poster = {
-        name: githubName.trim(),
+        name: githubName ? githubName.trim() : githubLogin,
         followers: githubFollowers,
         year: YEAR_TO_ANALYZE,
         dominantLanguage: '',

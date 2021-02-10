@@ -1,13 +1,30 @@
 import clsx from 'clsx'
+import {detect} from 'detect-browser'
+import dynamic from 'next/dynamic'
 
-import {Typography, Button} from '@components/ui'
-import TwitterIcon from '@assets/svg/twitter-logo.svg'
-import PrinterIcon from '@assets/svg/printer.svg'
+import {Button, Typography} from '@components/ui'
 import DownloadIcon from '@assets/svg/download.svg'
 
-const GetPoster = () => {
+import MobileShareButton from './MobileShareButton'
+
+const DesktopShareLinks = dynamic(() => import('./DesktopShareLinks'), {
+  ssr: false,
+})
+
+const browser = detect()
+interface GetPosterProps {
+  posterSlug: string
+}
+
+const GetPoster: React.FC<GetPosterProps> = ({posterSlug}) => {
+  const canMobileShare =
+    typeof window !== 'undefined' &&
+    navigator.share &&
+    browser.name !== 'edge-chromium' &&
+    browser.name !== 'safari'
+
   return (
-    <div className="z-10 flex flex-1 flex-col items-center justify-center -mt-28 space-y-12">
+    <section className="z-10 flex flex-1 flex-col items-center justify-center px-4 py-12 space-y-12">
       <header className="flex flex-col items-center text-center space-y-12">
         <Typography className="max-w-5xl font-semibold" variant="h1">
           Your journey is ready!
@@ -23,25 +40,25 @@ const GetPoster = () => {
         </Typography>
       </header>
 
-      <div
-        className={clsx(
-          'flex flex-col items-center justify-center space-y-4',
-          'md:flex-row md:items-center md:space-x-6 md:space-y-0',
+      <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
+        {canMobileShare ? (
+          <MobileShareButton posterSlug={posterSlug} />
+        ) : (
+          <DesktopShareLinks posterSlug={posterSlug} />
         )}
-      >
-        <Button href="#" icon={<PrinterIcon />}>
-          Print
-        </Button>
 
-        <Button href="#" icon={<DownloadIcon />}>
-          Download Pack — 5MB
-        </Button>
-
-        <Button href="#" icon={<TwitterIcon />}>
-          Share
-        </Button>
+        <div
+          className={clsx(
+            'flex flex-col items-center space-y-4',
+            'sm:flex-row sm:items-center sm:space-x-6 sm:space-y-0',
+          )}
+        >
+          <Button icon={<DownloadIcon aria-hidden />}>
+            Download Pack — 5MB
+          </Button>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
 
