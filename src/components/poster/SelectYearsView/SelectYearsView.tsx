@@ -8,6 +8,7 @@ import {
   Group,
   Alert,
 } from '@components/ui'
+import {arrayToObjectKeys} from '@lib/common'
 import {useQueueDeathStar} from '@lib/poster/poster-hooks'
 import {Years} from '@nebula/types/queue'
 import {PosterSteps} from '@nebula/types/poster'
@@ -21,14 +22,26 @@ interface SelectYearsProps {
 
 const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
   const {mutateAsync, isLoading, isSuccess, isError} = useQueueDeathStar()
-  const [selectedYear, setSelectedYear] = React.useState<Years[0]>()
+  const [selectedYears, setSelectedYears] = React.useState(() =>
+    arrayToObjectKeys(years),
+  )
 
-  const toggleYear = (year: Years[0]) => () => {
-    setSelectedYear(year)
+  // Get years that are toggled
+  const toggledYears = Object.keys(selectedYears).filter(
+    key => selectedYears[key],
+  ) as Years
+
+  const toggleYear = (year: string) => () => {
+    const newSelectedYears = {...selectedYears}
+    newSelectedYears[year] = !selectedYears[year]
+
+    setSelectedYears(newSelectedYears)
   }
 
   const submitToQueue = () => {
-    mutateAsync({userId, years: [selectedYear]})
+    // Get years that are toggled
+
+    mutateAsync({userId, years: toggledYears})
       .then(() => setStep(PosterSteps.PREPARING))
       .catch(console.error)
   }
@@ -63,7 +76,7 @@ const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
         {years.map(year => (
           <ToggleButton
             onPress={toggleYear(year)}
-            isSelected={selectedYear === year}
+            isSelected={selectedYears[year]}
             key={year}
           >
             {year}
@@ -73,7 +86,7 @@ const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
 
       <Button
         onPress={submitToQueue}
-        disabled={!selectedYear}
+        disabled={toggledYears.length === 0}
         loading={isLoading || isSuccess}
         color="primary"
         size="large"

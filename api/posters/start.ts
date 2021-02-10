@@ -8,7 +8,7 @@ import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
 
 import {SetBodyToType} from '@api/lib/types'
-import {QueueDTO, Years} from '@nebula/types/queue'
+import {QueueDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
 import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
@@ -42,16 +42,16 @@ interface RepositoryStatistic {
   }[]
 }
 
+const YEAR_TO_ANALYZE = 2020
+
 // TODO: Calculate based on dynamic year
 // TODO: Extract nested functions
 export function startImplementation(event: SQSEvent) {
   logger.info(`Received records: ${JSON.stringify(event.Records)}`)
   const recordPromises = event.Records.map(async (record: any) => {
     const {
-      body: {userId, years},
+      body: {userId},
     } = record as SetBodyToType<SQSRecord, QueueDTO>
-
-    const yearsToAnalyze = years.map(Number)
 
     try {
       await sendUpdateToClient(userId, PosterSteps.START)
@@ -83,7 +83,7 @@ export function startImplementation(event: SQSEvent) {
       const posterData: Poster = {
         name: githubName.trim(),
         followers: githubFollowers,
-        year: yearsToAnalyze[0], // TODO: show all years if team decides on having multiple years
+        year: YEAR_TO_ANALYZE,
         dominantLanguage: '',
         dominantRepository: '',
         totalLinesOfCode: 0,
@@ -92,7 +92,7 @@ export function startImplementation(event: SQSEvent) {
       const {
         repositories: initialRepositories,
         totalPages,
-      } = await getUserRepositoriesByPage(githubClient, 1, yearsToAnalyze)
+      } = await getUserRepositoriesByPage(githubClient, 1)
 
       let repositories = [...initialRepositories]
 
@@ -105,7 +105,6 @@ export function startImplementation(event: SQSEvent) {
               const {repositories} = await getUserRepositoriesByPage(
                 githubClient,
                 page,
-                yearsToAnalyze,
               )
 
               if (!repositories) {
@@ -212,7 +211,7 @@ export function startImplementation(event: SQSEvent) {
                 try {
                   const date = unixTimestampToDate(Number(w))
 
-                  if (!yearsToAnalyze.includes(date.getFullYear())) {
+                  if (date.getFullYear() !== YEAR_TO_ANALYZE) {
                     return callback(null, '')
                   }
 
@@ -314,7 +313,7 @@ export function startImplementation(event: SQSEvent) {
         indexOfMax(Object.values(languageCount))
       ]
 
-      const posterSlug = generatePosterSlug(githubLogin, yearsToAnalyze)
+      const posterSlug = generatePosterSlug(githubLogin)
 
       await PosterModel.update(
         {userId},
@@ -350,18 +349,14 @@ export function startImplementation(event: SQSEvent) {
   return Promise.allSettled(recordPromises)
 }
 
-function generatePosterSlug(userName: string, yearsToAnalyze: number[]) {
-  return `${userName.toLowerCase()}-poster-${yearsToAnalyze[0]}-${(
+function generatePosterSlug(userName: string) {
+  return `${userName.toLowerCase()}-poster-${YEAR_TO_ANALYZE}-${(
     (Math.random() * Math.pow(36, 6)) |
     0
   ).toString(36)}`
 }
 
-async function getUserRepositoriesByPage(
-  client: Octokit,
-  page: number,
-  yearsToAnalyze: number[],
-) {
+async function getUserRepositoriesByPage(client: Octokit, page: number) {
   logger.info(`Getting repository page ${page}`)
 
   const MAX_REPOSITORIES_PER_PAGE_ALLOWED = 100
@@ -369,7 +364,7 @@ async function getUserRepositoriesByPage(
     visibility: 'public',
     sort: 'pushed',
     per_page: MAX_REPOSITORIES_PER_PAGE_ALLOWED,
-    since: new Date(Math.min(...yearsToAnalyze), 0, 1).toISOString(),
+    since: new Date(YEAR_TO_ANALYZE, 0, 1).toISOString(),
     page,
   })
 
