@@ -81,7 +81,7 @@ export function startImplementation(event: SQSEvent) {
       } = await githubClient.users.getAuthenticated()
 
       const posterData: Poster = {
-        name: githubName.trim(),
+        name: githubName ? githubName.trim() : githubLogin,
         followers: githubFollowers,
         year: YEAR_TO_ANALYZE,
         dominantLanguage: '',
