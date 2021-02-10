@@ -14,20 +14,20 @@ const Hero = () => {
           variant="body2"
           className="font-semibold tracking-wide uppercase"
         >
-          Death Star — your journey
+          YOUR YEAR IN CODE
         </Typography>
         <Typography className="font-semibold" variant="h1">
           You’re the heart of innovation.
           <br />
-          Tell your journey today.
+          So share your journey.
         </Typography>
         <Typography
           variant="h6"
           as="p"
           className="max-w-2xl text-white leading-relaxed opacity-60"
         >
-          Auth0 appreciates the journey you as developer are on in constantly
-          improving your skill set to keep innovating in new ways.
+          Auth0 loves developers and we wanted to create something that would
+          reflect just how awesome the work you and your peers do every day is.
         </Typography>
       </header>
 

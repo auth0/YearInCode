@@ -16,7 +16,7 @@ const MeetDeathStar = () => {
             variant="body2"
             className="font-semibold tracking-wide uppercase"
           >
-            Death Star — your journey
+            YOUR YEAR IN CODE
           </Typography>
           <Typography className="font-semibold" variant="h1">
             Meet Death Star — the visual representation of your journey.

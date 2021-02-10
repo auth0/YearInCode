@@ -19,7 +19,7 @@ import RepositoryIcon from '@assets/svg/repository.svg'
 import TotalLinesOfCodeIcon from '@assets/svg/total-lines.svg'
 
 import PosterSVG from './PosterSvg'
-import {PosterTooltipData} from './Poster.utils'
+import {PosterTooltipData, separateNumber} from './Poster.utils'
 
 interface PosterComponentProps {
   data: Poster
@@ -123,7 +123,10 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
               exit={{opacity: 0}}
             >
               <TooltipWithBounds
-                className="absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1"
+                className={clsx(
+                  'absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1',
+                  'md:min-w-52 md:w-auto md:max-w-none',
+                )}
                 left={tooltipLeft + 20}
                 top={tooltipTop - 20}
                 unstyled
@@ -132,10 +135,10 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
                   Week {tooltipData.week}
                 </TooltipRow>
                 <TooltipRow icon={<CommitsIcon />}>
-                  {tooltipData.commits} commits
+                  {separateNumber(tooltipData.commits)} commits
                 </TooltipRow>
                 <TooltipRow icon={<LinesIcon />}>
-                  {tooltipData.lines} lines
+                  {separateNumber(tooltipData.lines)} lines
                 </TooltipRow>
                 <TooltipRow icon={<RepositoryIcon />}>
                   {tooltipData.dominantRepository}
@@ -158,42 +161,52 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         })}
       >
         <div
-          className={clsx('z-20 bottom-0 grid w-full', {
-            'grid-cols-3 grid-rows-2': !isMobile,
-          })}
+          className={clsx(
+            'z-20 bottom-0 flex flex-row flex-wrap w-full',
+            'md:flex-nowrap',
+            'lg:flex-col',
+          )}
         >
-          <InfoBox
-            label="Name"
-            value={data.name}
-            icon={<NameIcon className="w-8" />}
-          />
-          <InfoBox
-            label="Followers"
-            value={data.followers.toString()}
-            icon={<FollowersIcon className="w-8" />}
-          />
-          <InfoBox
-            label="Year"
-            value={data.year.toString()}
-            icon={<YearIcon className="w-8" />}
-          />
-          <InfoBox
-            label="#1 Language"
-            value={data.dominantLanguage}
-            icon={<LanguageIcon className="w-8" />}
-          />
-          <InfoBox
-            label="#1 Repo"
-            value={data.dominantRepository}
-            icon={<RepositoryIcon style={{color: '#57585A'}} className="w-8" />}
-          />
-          <InfoBox
-            label="Lines of Code"
-            value={data.totalLinesOfCode
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
-            icon={<TotalLinesOfCodeIcon className="w-8" />}
-          />
+          <div
+            className={clsx('flex flex-col flex-wrap w-full', 'lg:flex-row')}
+          >
+            <InfoBox
+              label="Name"
+              value={data.name}
+              icon={<NameIcon className="w-8" />}
+            />
+            <InfoBox
+              label="Followers"
+              value={data.followers.toString()}
+              icon={<FollowersIcon className="w-8" />}
+            />
+            <InfoBox
+              label="Year"
+              value={data.year.toString()}
+              icon={<YearIcon className="w-8" />}
+            />
+          </div>
+          <div
+            className={clsx('flex flex-col flex-wrap w-full', 'lg:flex-row')}
+          >
+            <InfoBox
+              label="#1 Language"
+              value={data.dominantLanguage}
+              icon={<LanguageIcon className="w-8" />}
+            />
+            <InfoBox
+              label="#1 Repo"
+              value={data.dominantRepository}
+              icon={
+                <RepositoryIcon style={{color: '#57585A'}} className="w-8" />
+              }
+            />
+            <InfoBox
+              label="Lines of Code"
+              value={separateNumber(data.totalLinesOfCode)}
+              icon={<TotalLinesOfCodeIcon className="w-8" />}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -220,7 +233,7 @@ interface InfoBoxProps {
 
 const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   return (
-    <section className="flex items-center bg-black">
+    <section className="flex items-center flex-1 bg-black">
       <div
         aria-hidden
         style={{
@@ -233,14 +246,14 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
         {icon}
       </div>
 
-      <header className="flex flex-1 flex-col justify-center p-4 h-full border border-gray-600 space-y-3">
+      <header className="flex flex-col justify-center flex-1 h-full p-4 space-y-3 border border-gray-600">
         <Typography
           variant="caption"
           as="h1"
           style={{
             letterSpacing: '0.2em',
           }}
-          className="text-white text-opacity-40 uppercase"
+          className="text-white uppercase text-opacity-40"
         >
           {label}
         </Typography>
