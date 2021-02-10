@@ -8,6 +8,7 @@ import {
 } from '@api/tests/generate'
 
 import {startImplementation as start} from '../start'
+import PosterModel from '../poster.model'
 
 jest.mock('auth0')
 
@@ -15,7 +16,13 @@ const mockedManagementClient = ManagementClient as jest.MockedClass<
   typeof ManagementClient
 >
 
-it.only('should generate user activity', async () => {
+const userId = 'MOCK_USER_ID'
+
+afterEach(async () => {
+  await PosterModel.delete(userId)
+})
+
+it('should generate user activity', async () => {
   const user = buildAuthenticatedGitHubUser()
   const repos = Array.from({length: 5}, () => buildGitHubRepo())
   const contributions = new Array(5).fill(buildContributorStats())
@@ -35,13 +42,12 @@ it.only('should generate user activity', async () => {
     }),
   )
 
-  const userId = 'MOCK_USER_ID'
-
   const event: any = {
     Records: [
       {
         body: {
           userId,
+          years: ['2020'],
         },
       },
     ],
@@ -88,5 +94,57 @@ it.only('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
     ],
+  })
+})
+
+it('should be able to generate based on selected year', async () => {
+  const user = buildAuthenticatedGitHubUser()
+  const repos = Array.from({length: 5}, () => buildGitHubRepo())
+  const contributions = new Array(5).fill(buildContributorStats())
+
+  server.use(
+    rest.get(githubURLs.user.getAuthenticated, (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(user))
+    }),
+    rest.get(
+      githubURLs.repos.listForAuthenticatedUser,
+      async (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(repos))
+      },
+    ),
+    rest.get(githubURLs.repos.getContributions, async (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(contributions))
+    }),
+  )
+
+  const userId = 'MOCK_USER_ID'
+
+  const event: any = {
+    Records: [
+      {
+        body: {
+          userId,
+          years: ['2018'],
+        },
+      },
+    ],
+  }
+
+  mockedManagementClient.prototype.getUser = jest.fn().mockResolvedValueOnce({
+    identities: [{provider: 'github', access_token: undefined}],
+  })
+
+  const results = await start(event)
+  const result = results[0].status === 'fulfilled' && results[0].value
+
+  expect(result.posterSlug).toContain(`${user.name.toLowerCase()}-poster-2018`)
+  expect(result.posterData).toEqual({
+    name: user.name,
+    followers: user.followers,
+    year: 2018,
+    dominantLanguage: undefined,
+    dominantRepository: undefined,
+    totalLinesOfCode: 0,
+    weeks: [],
   })
 })
