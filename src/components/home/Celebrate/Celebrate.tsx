@@ -10,17 +10,17 @@ const Hero = () => {
     >
       <header className="flex flex-col items-center text-center space-y-8">
         <Typography className="font-semibold" variant="h1">
-          We want to celebrate{' '}
-          <span className={s.underlineText}>Auth0 Actions</span> &{' '}
-          <span className={s.underlineText}>Github Integration</span> with you.{' '}
+          In a single year you generated a lot <br />
+          of beauty... see it all in one place below.
         </Typography>
         <Typography
           variant="h6"
           as="p"
           className="max-w-2xl text-white leading-relaxed opacity-60"
         >
-          We focused on presenting the work you do everyday — your journey. Are
-          you ready for yours?
+          Auth0 allows you to quickly connect any social provider to your
+          website, including github login. Authenticate using your github
+          account to generate a poster of your own. Your year in code :)
         </Typography>
       </header>
 

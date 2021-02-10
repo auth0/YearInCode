@@ -157,43 +157,45 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
           'mt-6': isMobile,
         })}
       >
-        <div
-          className={clsx('z-20 bottom-0 grid w-full', {
-            'grid-cols-3 grid-rows-2': !isMobile,
-          })}
-        >
-          <InfoBox
-            label="Name"
-            value={data.name}
-            icon={<NameIcon className="w-8" />}
-          />
-          <InfoBox
-            label="Followers"
-            value={data.followers.toString()}
-            icon={<FollowersIcon className="w-8" />}
-          />
-          <InfoBox
-            label="Year"
-            value={data.year.toString()}
-            icon={<YearIcon className="w-8" />}
-          />
-          <InfoBox
-            label="#1 Language"
-            value={data.dominantLanguage}
-            icon={<LanguageIcon className="w-8" />}
-          />
-          <InfoBox
-            label="#1 Repo"
-            value={data.dominantRepository}
-            icon={<RepositoryIcon style={{color: '#57585A'}} className="w-8" />}
-          />
-          <InfoBox
-            label="Lines of Code"
-            value={data.totalLinesOfCode
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
-            icon={<TotalLinesOfCodeIcon className="w-8" />}
-          />
+        <div className="z-20 bottom-0 flex flex-row w-full lg:flex-col">
+          <div className="flex flex-col flex-wrap w-full">
+            <InfoBox
+              label="Name"
+              value={data.name}
+              icon={<NameIcon className="w-8" />}
+            />
+            <InfoBox
+              label="Followers"
+              value={data.followers.toString()}
+              icon={<FollowersIcon className="w-8" />}
+            />
+            <InfoBox
+              label="Year"
+              value={data.year.toString()}
+              icon={<YearIcon className="w-8" />}
+            />
+          </div>
+          <div className="flex flex-col flex-wrap w-full">
+            <InfoBox
+              label="#1 Language"
+              value={data.dominantLanguage}
+              icon={<LanguageIcon className="w-8" />}
+            />
+            <InfoBox
+              label="#1 Repo"
+              value={data.dominantRepository}
+              icon={
+                <RepositoryIcon style={{color: '#57585A'}} className="w-8" />
+              }
+            />
+            <InfoBox
+              label="Lines of Code"
+              value={data.totalLinesOfCode
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+              icon={<TotalLinesOfCodeIcon className="w-8" />}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -220,7 +222,7 @@ interface InfoBoxProps {
 
 const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   return (
-    <section className="flex items-center bg-black">
+    <section className="flex flex-1 items-center bg-black">
       <div
         aria-hidden
         style={{

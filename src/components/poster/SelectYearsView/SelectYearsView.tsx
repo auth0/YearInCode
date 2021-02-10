@@ -59,9 +59,10 @@ const SelectYears: React.FC<SelectYearsProps> = ({userId, setStep}) => {
         </Typography>
       </header>
 
-      <Group className="flex space-x-4">
+      <Group className="flex flex-wrap justify-center">
         {years.map(year => (
           <ToggleButton
+            className="m-2"
             onPress={toggleYear(year)}
             isSelected={selectedYear === year}
             key={year}
