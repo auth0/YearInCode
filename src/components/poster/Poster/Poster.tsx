@@ -19,7 +19,7 @@ import RepositoryIcon from '@assets/svg/repository.svg'
 import TotalLinesOfCodeIcon from '@assets/svg/total-lines.svg'
 
 import PosterSVG from './PosterSvg'
-import {PosterTooltipData} from './Poster.utils'
+import {PosterTooltipData, separateNumber} from './Poster.utils'
 
 interface PosterComponentProps {
   data: Poster
@@ -125,7 +125,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
               <TooltipWithBounds
                 className={clsx(
                   'absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1',
-                  'md:w-auto md:min-w-52 md:max-w-none',
+                  'md:min-w-52 md:w-auto md:max-w-none',
                 )}
                 left={tooltipLeft + 20}
                 top={tooltipTop - 20}
@@ -135,10 +135,10 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
                   Week {tooltipData.week}
                 </TooltipRow>
                 <TooltipRow icon={<CommitsIcon />}>
-                  {tooltipData.commits} commits
+                  {separateNumber(tooltipData.commits)} commits
                 </TooltipRow>
                 <TooltipRow icon={<LinesIcon />}>
-                  {tooltipData.lines} lines
+                  {separateNumber(tooltipData.lines)} lines
                 </TooltipRow>
                 <TooltipRow icon={<RepositoryIcon />}>
                   {tooltipData.dominantRepository}
@@ -203,9 +203,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
             />
             <InfoBox
               label="Lines of Code"
-              value={data.totalLinesOfCode
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+              value={separateNumber(data.totalLinesOfCode)}
               icon={<TotalLinesOfCodeIcon className="w-8" />}
             />
           </div>
@@ -235,7 +233,7 @@ interface InfoBoxProps {
 
 const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   return (
-    <section className="flex flex-1 items-center bg-black">
+    <section className="flex items-center flex-1 bg-black">
       <div
         aria-hidden
         style={{
@@ -248,14 +246,14 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
         {icon}
       </div>
 
-      <header className="flex flex-1 flex-col justify-center p-4 h-full border border-gray-600 space-y-3">
+      <header className="flex flex-col justify-center flex-1 h-full p-4 space-y-3 border border-gray-600">
         <Typography
           variant="caption"
           as="h1"
           style={{
             letterSpacing: '0.2em',
           }}
-          className="text-white text-opacity-40 uppercase"
+          className="text-white uppercase text-opacity-40"
         >
           {label}
         </Typography>
