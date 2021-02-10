@@ -11,7 +11,7 @@ export function getWeekNumber(date: Date) {
 
 export function unixTimestampToDate(timestamp: number) {
   const date = new Date(timestamp * 1000)
-  date.setHours(0, 0, 0, 0)
+  console.log(date.toISOString(), getWeekNumber(date))
 
   return date
 }
