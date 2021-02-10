@@ -9,6 +9,9 @@ module.exports = {
       maxWidth: {
         52: '13rem',
       },
+      minWidth: {
+        52: '13rem',
+      },
       height: {
         100: '28rem',
         '90vh': '90vh',

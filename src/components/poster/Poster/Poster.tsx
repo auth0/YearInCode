@@ -123,7 +123,10 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
               exit={{opacity: 0}}
             >
               <TooltipWithBounds
-                className="absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1"
+                className={clsx(
+                  'absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1',
+                  'md:w-auto md:min-w-52 md:max-w-none',
+                )}
                 left={tooltipLeft + 20}
                 top={tooltipTop - 20}
                 unstyled
@@ -157,8 +160,16 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
           'mt-6': isMobile,
         })}
       >
-        <div className="z-20 bottom-0 flex flex-row w-full lg:flex-col">
-          <div className="flex flex-col flex-wrap w-full">
+        <div
+          className={clsx(
+            'z-20 bottom-0 flex flex-row flex-wrap w-full',
+            'md:flex-nowrap',
+            'lg:flex-col',
+          )}
+        >
+          <div
+            className={clsx('flex flex-col flex-wrap w-full', 'lg:flex-row')}
+          >
             <InfoBox
               label="Name"
               value={data.name}
@@ -175,7 +186,9 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
               icon={<YearIcon className="w-8" />}
             />
           </div>
-          <div className="flex flex-col flex-wrap w-full">
+          <div
+            className={clsx('flex flex-col flex-wrap w-full', 'lg:flex-row')}
+          >
             <InfoBox
               label="#1 Language"
               value={data.dominantLanguage}
