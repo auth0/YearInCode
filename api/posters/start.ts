@@ -8,7 +8,7 @@ import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
 
 import {SetBodyToType} from '@api/lib/types'
-import {QueueDTO, Years} from '@nebula/types/queue'
+import {QueueDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
 import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
