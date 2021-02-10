@@ -5,8 +5,9 @@ import TwitterIcon from '@assets/svg/twitter-logo.svg'
 import LinkedInLogo from '@assets/svg/linkedin-logo.svg'
 import FacebookLogo from '@assets/svg/facebook-logo.svg'
 import PrinterIcon from '@assets/svg/printer.svg'
+import {constants} from '@lib/common'
 
-import {encodedHashtags, siteUrl, encodedText} from './DownloadPoster.utils'
+import {encodedHashtags, encodedText} from './DownloadPoster.utils'
 import MobileShareButton from './MobileShareButton'
 
 interface DesktopShareLinksProps {
@@ -18,7 +19,7 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({posterSlug}) => {
   const canMobileShare = typeof window !== 'undefined' && navigator.share
 
   const encodedPosterUrl = encodeURIComponent(
-    `${siteUrl}/posters/${posterSlug}`,
+    `${constants.site.url}/posters/${posterSlug}`,
   )
 
   return (

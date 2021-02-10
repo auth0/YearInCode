@@ -5,6 +5,7 @@ import {PosterService} from '@lib/poster/poster-service'
 import {Poster} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import PosterComponent from '@components/poster/Poster'
+import {constants} from '@lib/common'
 
 interface PosterBySlugProps {
   posterSlug: string
@@ -15,12 +16,23 @@ export default function PosterBySlug({
   posterData,
   posterSlug,
 }: PosterBySlugProps) {
+  const siteUrl = `${constants.site.url}/posters/${posterSlug}`
+
   return (
     <>
-      <NextSeo title={`${posterData.name}'s Year in Code`} />
-      <section className="py-12">
-        <DownloadPoster posterSlug={posterSlug} />
-      </section>
+      <NextSeo
+        title={`${posterData.name}'s Year in Code`}
+        openGraph={{
+          site_name: siteUrl,
+          description: `Come and check out ${posterData.name}'s developer activity!`,
+        }}
+        twitter={{
+          site: siteUrl,
+        }}
+      />
+
+      <DownloadPoster posterSlug={posterSlug} />
+
       <section className="flex flex-1 flex-col items-center pb-12 px-4 overflow-hidden">
         <PosterComponent wrapperClassName="mt-12" data={posterData} />
       </section>

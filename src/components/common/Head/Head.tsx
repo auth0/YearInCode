@@ -1,9 +1,8 @@
 import NextHead from 'next/head'
 import {DefaultSeo} from 'next-seo'
 
+import {constants} from '@lib/common'
 import config from '@config/seo.json'
-
-const siteUrl = process.env.NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI
 
 const Head: React.FC = () => {
   return (
@@ -14,10 +13,10 @@ const Head: React.FC = () => {
         description={config.description}
         openGraph={{
           ...config.openGraph,
-          site_name: siteUrl,
-          images: [{url: siteUrl + '/img/poster-placeholder.png'}],
+          site_name: constants.site.url,
+          images: [{url: constants.site.url + '/img/poster-placeholder.png'}],
         }}
-        twitter={{...config.twitter, site: siteUrl}}
+        twitter={{...config.twitter, site: constants.site.url}}
       />
       <NextHead>
         <meta name="viewport" content="width=device-width, initial-scale=1" />

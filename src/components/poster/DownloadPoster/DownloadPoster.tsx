@@ -24,7 +24,7 @@ const GetPoster: React.FC<GetPosterProps> = ({posterSlug}) => {
     browser.name !== 'safari'
 
   return (
-    <div className="z-10 flex flex-1 flex-col items-center justify-center px-4 space-y-12">
+    <section className="z-10 flex flex-1 flex-col items-center justify-center px-4 py-12 space-y-12">
       <header className="flex flex-col items-center text-center space-y-12">
         <Typography className="max-w-5xl font-semibold" variant="h1">
           Your journey is ready!
@@ -58,7 +58,7 @@ const GetPoster: React.FC<GetPosterProps> = ({posterSlug}) => {
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 
