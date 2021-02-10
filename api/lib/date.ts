@@ -11,12 +11,15 @@ export function getWeekNumber(date: Date, dowOffset = 4) {
   let day = newYear.getDay() - dowOffset
   day = day >= 0 ? day : day + 7
 
+  const SIXTY_SECONDS = 60000
+  const ONE_HOUR = 86400000
   const dayNumber =
     Math.floor(
       (date.getTime() -
         newYear.getTime() -
-        (date.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) /
-        86400000,
+        (date.getTimezoneOffset() - newYear.getTimezoneOffset()) *
+          SIXTY_SECONDS) /
+        ONE_HOUR,
     ) + 1
 
   let weekNumber
