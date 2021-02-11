@@ -33,6 +33,10 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - s3:PutObject
+      Resource: arn:aws:s3:::${self:custom.posterBucketName}/*
+    - Effect: Allow
+      Action:
         - 'execute-api:Invoke'
       Resource:
         - 'arn:aws:execute-api:*:*:**/@connections/*'
