@@ -23,8 +23,9 @@ provider:
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
-    POSTER_TABLE: ${self:custom.poster-table}
-    CONNECTION_TABLE: ${self:custom.connection-table}
+    POSTER_TABLE: ${self:custom.posterTable}
+    CONNECTION_TABLE: ${self:custom.connectionTable}
+    POSTER_BUCKET: ${self:custom.posterBucketName}
     STAGE: ${self:custom.stage}
   lambdaHashingVersion: 20201221
   apiGateway:
@@ -54,8 +55,9 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
-  poster-table: ${self:service}-poster-${self:custom.stage}
-  connection-table: ${self:service}-connection-${self:custom.stage}
+  posterTable: ${self:service}-poster-${self:custom.stage}
+  connectionTable: ${self:service}-connection-${self:custom.stage}
+  posterBucketName: ${self:service}-poster-bucket-${self:provider.stage}
   profiles:
     dev: nebulaDev
     staging: nebulaStaging
@@ -95,6 +97,9 @@ custom:
       port: '8000' # the port of our Dynamo docker container
       noStart: true
       migrate: true
+  s3:
+    host: localhost
+    directory: api/tmp
 
 functions:
   authorize:
@@ -104,6 +109,14 @@ functions:
     handler: auth/authorizeWS.authorizeWS
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
+
+  testImage:
+    handler: posters/testImage.testImage
+    events:
+      - http:
+          path: api/posters/test-image
+          method: get
+          cors: true
 
   queuePoster:
     handler: posters/queuePoster.queuePoster
@@ -173,15 +186,18 @@ functions:
 
 resources:
   Resources:
+    # SQS
     PosterQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
         QueueName: sqs-poster-queue-${self:custom.stage}
         VisibilityTimeout: 900
+
+    # DynamoDB
     ConnectionTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.connection-table}
+        TableName: ${self:custom.connectionTable}
         AttributeDefinitions:
           - AttributeName: connectionId
             AttributeType: S
@@ -201,7 +217,7 @@ resources:
     PosterTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.poster-table}
+        TableName: ${self:custom.posterTable}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
@@ -218,6 +234,8 @@ resources:
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
+
+    # API Gateway
     GatewayResponse:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -239,10 +257,75 @@ resources:
           Ref: 'ApiGatewayRestApi'
         StatusCode: '401'
 
+    # S3
+    PosterBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.posterBucketName}
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: ['PUT']
+              AllowedOrigins: ['*'] # Update with domain when available
+    PosterBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: PosterBucket
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Action: s3:GetObject
+              Effect: 'Allow'
+              Resource: arn:aws:s3:::${self:custom.posterBucketName}/*
+              Principal: '*'
+    CloudFrontOriginAccessIdentity:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment:
+            'Identity for accessing CloudFront from S3 within stack
+            #{AWS::StackName}'
+    PosterCdnDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Origins:
+            # S3 origin for static content
+            - DomainName: '${self:custom.posterBucketName}.s3.amazonaws.com'
+              Id: PosterBucketS3Origin
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: https-only
+          Comment: CDN for poster photos.
+          Enabled: true
+          DefaultRootObject: index.html
+          HttpVersion: http2
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - DELETE
+              - GET
+              - HEAD
+              - OPTIONS
+              - PATCH
+              - POST
+              - PUT
+            Compress: true
+            TargetOriginId: PosterBucketS3Origin
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: redirect-to-https
+          PriceClass: PriceClass_100
+
 plugins:
   - serverless-dotenv-plugin
   - serverless-functions-base-path
   - serverless-webpack
+  - serverless-s3-local
   - serverless-dynamodb-local
   - serverless-offline-sqs
   - serverless-offline
