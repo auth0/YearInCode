@@ -3,7 +3,7 @@ import {Meta} from '@storybook/react/types-6-0'
 import ToggleButton from './ToggleButton'
 
 export default {
-  title: 'Toggle Button',
+  title: 'Front-End/Toggle Button',
   component: ToggleButton,
 } as Meta
 
