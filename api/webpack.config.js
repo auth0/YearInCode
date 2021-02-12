@@ -1,7 +1,6 @@
 const path = require(`path`)
 const slsw = require(`serverless-webpack`)
 const nodeExternals = require(`webpack-node-externals`)
-const MinifyPlugin = require(`babel-minify-webpack-plugin`)
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
@@ -19,7 +18,7 @@ module.exports = {
   mode: isLocal ? 'development' : 'production',
   externals: [nodeExternals()],
   resolve: {
-    extensions: ['.js', '.json', '.ts'],
+    extensions: ['.js', '.json', '.ts', '.tsx'],
     symlinks: false,
     cacheWithContext: false,
     plugins: [new TsconfigPathsPlugin()],
@@ -35,10 +34,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts|js)$/,
+        test: /\.(ts|js|tsx)$/,
         exclude: [
           [
-            path.resolve(__dirname, 'node_modules'),
+            path.resolve('..', __dirname, 'node_modules'),
             path.resolve('..', __dirname, '.serverless'),
             path.resolve(__dirname, '.dist'),
           ],
@@ -49,6 +48,28 @@ module.exports = {
             options: {
               transpileOnly: true,
             },
+          },
+        ],
+      },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        test: /\.css$/i,
+        use: [
+          {
+            loader: 'css-loader',
+            options: {
+              // Run `postcss-loader` on each CSS `@import`, do not forget that `sass-loader` compile non CSS `@import`'s into a single file
+              // If you need run `sass-loader` and `postcss-loader` on each CSS `@import` please set it to `2`
+              importLoaders: 1,
+              // Automatically enable css modules for files satisfying `/\.module\.\w+$/i` RegExp.
+              modules: {auto: true},
+            },
+          },
+          {
+            loader: 'postcss-loader',
           },
         ],
       },

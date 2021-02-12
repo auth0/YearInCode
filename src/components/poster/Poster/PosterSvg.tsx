@@ -232,23 +232,29 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   padRadius={innerRadius}
                   cornerRadius={9999}
                   fill={`url(#starGradient-${i + 1})`}
-                  onMouseMove={onMouseMove({
-                    index: i,
-                    week,
-                    lines,
-                    commits,
-                    dominantLanguage,
-                    dominantRepository,
-                  })}
+                  onMouseMove={
+                    onMouseMove &&
+                    onMouseMove({
+                      index: i,
+                      week,
+                      lines,
+                      commits,
+                      dominantLanguage,
+                      dominantRepository,
+                    })
+                  }
                   onMouseLeave={onMouseLeave}
-                  onTouchStart={onTouchStart({
-                    index: i,
-                    week,
-                    lines,
-                    commits,
-                    dominantLanguage,
-                    dominantRepository,
-                  })}
+                  onTouchStart={
+                    onTouchStart &&
+                    onTouchStart({
+                      index: i,
+                      week,
+                      lines,
+                      commits,
+                      dominantLanguage,
+                      dominantRepository,
+                    })
+                  }
                   onTouchEnd={onTouchEnd}
                 />
               ),
@@ -277,23 +283,29 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                       ? linesColors[dominantLanguage]
                       : '#fff'
                   }
-                  onMouseMove={onMouseMove({
-                    index: i,
-                    week,
-                    lines,
-                    commits,
-                    dominantLanguage,
-                    dominantRepository,
-                  })}
+                  onMouseMove={
+                    onMouseMove &&
+                    onMouseMove({
+                      index: i,
+                      week,
+                      lines,
+                      commits,
+                      dominantLanguage,
+                      dominantRepository,
+                    })
+                  }
                   onMouseLeave={onMouseLeave}
-                  onTouchStart={onTouchStart({
-                    index: i,
-                    week,
-                    lines,
-                    commits,
-                    dominantLanguage,
-                    dominantRepository,
-                  })}
+                  onTouchStart={
+                    onTouchStart &&
+                    onTouchStart({
+                      index: i,
+                      week,
+                      lines,
+                      commits,
+                      dominantLanguage,
+                      dominantRepository,
+                    })
+                  }
                   onTouchEnd={onTouchEnd}
                 />
               ),

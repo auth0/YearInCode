@@ -74,6 +74,8 @@ custom:
   webpack:
     webpackConfig: api/webpack.config.js
     includeModules:
+      forceExclude:
+        - chrome-aws-lambda
       forceInclude:
         - uuid
     packager: 'yarn'
@@ -105,6 +107,16 @@ custom:
     host: localhost
     directory: api/tmp
 
+layers:
+  puppeteer:
+    package:
+      artifact: api/layers/chrome_aws_lambda.zip
+    name: ${self:custom.stage}-chrome-aws-lambda
+    description: Layer to add puppeteer to Lambda functions.
+    retain: false
+    compatibleRuntimes:
+      - nodejs12.x
+
 functions:
   authorize:
     handler: auth/authorize.authorize
@@ -116,6 +128,8 @@ functions:
 
   testImage:
     handler: posters/testImage.testImage
+    layers:
+      - {Ref: PuppeteerLambdaLayer}
     events:
       - http:
           path: api/posters/test-image
