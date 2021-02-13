@@ -4,10 +4,6 @@ const nodeExternals = require(`webpack-node-externals`)
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
-const ENV =
-  (process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) ||
-  (process.env.NODE_ENV = `development`)
-const envProd = ENV === `production`
 const outDir = path.join(__dirname, `dist`)
 
 const isLocal = slsw.lib.webpack.isLocal
@@ -37,9 +33,9 @@ module.exports = {
         test: /\.(ts|js|tsx)$/,
         exclude: [
           [
-            path.resolve('..', __dirname, 'node_modules'),
-            path.resolve('..', __dirname, '.serverless'),
-            path.resolve(__dirname, '.dist'),
+            path.resolve(__dirname, '..', 'node_modules'),
+            path.resolve(__dirname, '..', '.serverless'),
+            path.resolve(__dirname, 'dist'),
           ],
         ],
         use: [

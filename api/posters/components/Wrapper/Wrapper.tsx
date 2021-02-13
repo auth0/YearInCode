@@ -1,10 +1,19 @@
 import React from 'react'
 
-const Wrapper: React.FC = ({children}) => {
+interface WrapperProps {
+  bodyStyle?: React.CSSProperties
+}
+
+const Wrapper: React.FC<WrapperProps> = ({children, bodyStyle}) => {
   return (
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body
         style={{
@@ -14,6 +23,8 @@ const Wrapper: React.FC = ({children}) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          fontFamily: 'Inter',
+          ...bodyStyle,
         }}
       >
         {children}

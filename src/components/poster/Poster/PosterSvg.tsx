@@ -27,6 +27,9 @@ interface PosterSVGProps {
   className?: string
   selectedIndex?: number
 
+  sittingPersonWidth?: number
+  sittingPersonHeight?: number
+
   onMouseMove?: (
     data: PosterTooltipData,
   ) => (event: React.MouseEvent<SVGPathElement, MouseEvent>) => void
@@ -48,6 +51,8 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
   onTouchStart,
   className,
   selectedIndex,
+  sittingPersonWidth = 51,
+  sittingPersonHeight = 82,
 }) => {
   const margin = {top: 20, right: 10, bottom: 20, left: 10}
   const xMax = width - margin.left - margin.right
@@ -315,8 +320,14 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
       </Group>
 
       {/*Sitting person in center*/}
-      <Group top={outerRadius + margin.top - 60} left={width / 2 - 25.5}>
-        <SittingPersonIcon />
+      <Group
+        left={width / 2 - sittingPersonWidth * 0.5}
+        top={outerRadius + margin.top - sittingPersonHeight * 0.7317}
+      >
+        <SittingPersonIcon
+          width={sittingPersonWidth}
+          height={sittingPersonHeight}
+        />
       </Group>
     </svg>
   )

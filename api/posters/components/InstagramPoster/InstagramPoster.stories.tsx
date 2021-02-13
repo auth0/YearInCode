@@ -3,8 +3,6 @@ import {Meta} from '@storybook/react/types-6-0'
 
 import {getMockData} from '@components/poster/Poster/Poster.utils'
 
-import Wrapper from '../Wrapper'
-
 import InstagramPoster from './InstagramPoster'
 
 export default {
@@ -12,11 +10,7 @@ export default {
   component: InstagramPoster,
 } as Meta
 
-const Template = args => (
-  <Wrapper>
-    <InstagramPoster {...args} />
-  </Wrapper>
-)
+const Template = args => <InstagramPoster {...args} />
 
 export const Basic = Template.bind({})
 

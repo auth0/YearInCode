@@ -14,6 +14,7 @@ import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
 import {getWeekNumber, unixTimestampToDate} from '@api/lib/date'
 import {indexOfMax} from '@nebula/common/array'
+import {getRandomString} from '@api/lib/random'
 
 import PosterModel from './poster.model'
 import ConnectionModel from './connection.model'
@@ -351,10 +352,9 @@ export function startImplementation(event: SQSEvent) {
 }
 
 function generatePosterSlug(userName: string, yearsToAnalyze: number[]) {
-  return `${userName.toLowerCase()}-poster-${yearsToAnalyze[0]}-${(
-    (Math.random() * Math.pow(36, 6)) |
-    0
-  ).toString(36)}`
+  return `${userName.toLowerCase()}-poster-${
+    yearsToAnalyze[0]
+  }-${getRandomString()}`
 }
 
 async function getUserRepositoriesByPage(
