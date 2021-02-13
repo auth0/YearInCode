@@ -33,7 +33,7 @@ const HighQualityPoster: React.FC<HighQualityPosterProps> = ({data}) => {
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           width: '100%',
           position: 'absolute',
           bottom: '5%',

@@ -27,11 +27,18 @@ export enum PosterSteps {
   READY = 'READY',
 }
 
+export interface PosterImageSizes {
+  instagram: string
+  openGraph: string
+  highQualityPoster: string
+}
+
 export interface PosterState {
   userId: string
   step: PosterSteps
   posterSlug: string
   posterData: string
+  posterImages: PosterImageSizes
 }
 
 export interface PosterDocument extends Document, PosterState {}

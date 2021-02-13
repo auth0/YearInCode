@@ -24,6 +24,14 @@ const schema = new dynamoose.Schema(
     posterData: {
       type: String,
     },
+    posterImages: {
+      type: Object,
+      schema: {
+        instagram: {type: String, required: true},
+        openGraph: {type: String, required: true},
+        highQualityPoster: {type: String, required: true},
+      },
+    },
   },
   {
     saveUnknown: false,

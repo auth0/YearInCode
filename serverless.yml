@@ -126,16 +126,6 @@ functions:
     environment:
       WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
 
-  testImage:
-    handler: posters/testImage.testImage
-    layers:
-      - {Ref: PuppeteerLambdaLayer}
-    events:
-      - http:
-          path: api/posters/test-image
-          method: get
-          cors: true
-
   queuePoster:
     handler: posters/queuePoster.queuePoster
     environment:
@@ -186,6 +176,8 @@ functions:
     handler: posters/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
+    layers:
+      - {Ref: PuppeteerLambdaLayer}
     environment:
       WEBSOCKET_API_ENDPOINT:
         Fn::Join:
