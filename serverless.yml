@@ -272,7 +272,7 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.posterBucketName}
-        AccessControl: PublicRead
+        AccessControl: Private
         CorsConfiguration:
           CorsRules:
             - AllowedHeaders: ['*']
@@ -285,11 +285,14 @@ resources:
           Ref: PosterBucket
         PolicyDocument:
           Statement:
-            - Sid: PublicReadGetObject
-              Action: s3:GetObject
+            - Action: s3:GetObject
               Effect: 'Allow'
               Resource: arn:aws:s3:::${self:custom.posterBucketName}/*
-              Principal: '*'
+              Principal:
+                CanonicalUser:
+                  Fn::GetAtt:
+                    - CloudFrontOriginAccessIdentity
+                    - S3CanonicalUserId
     CloudFrontOriginAccessIdentity:
       Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
       Properties:
@@ -305,10 +308,12 @@ resources:
             # S3 origin for static content
             - DomainName: '${self:custom.posterBucketName}.s3.amazonaws.com'
               Id: PosterBucketS3Origin
-              CustomOriginConfig:
-                HTTPPort: 80
-                HTTPSPort: 443
-                OriginProtocolPolicy: https-only
+              S3OriginConfig:
+                OriginAccessIdentity:
+                  Fn::Join:
+                    - ''
+                    - - 'origin-access-identity/cloudfront/'
+                      - Ref: CloudFrontOriginAccessIdentity
           Comment: CDN for poster photos.
           Enabled: true
           DefaultRootObject: index.html

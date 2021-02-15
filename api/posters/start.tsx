@@ -506,7 +506,7 @@ async function uploadScreenshot({
   viewport: Viewport
 }) {
   logger.info(`Setting page content for ${comment}...`)
-  await page.setContent(html)
+  await page.setContent(html, {waitUntil: 'networkidle0'})
   await page.setViewport(viewport)
 
   logger.info(`Starting screenshot generation for ${comment}...`)

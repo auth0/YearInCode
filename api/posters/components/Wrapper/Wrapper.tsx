@@ -14,6 +14,10 @@ const Wrapper: React.FC<WrapperProps> = ({children, bodyStyle}) => {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
           rel="stylesheet"
         />
+        <link
+          href="https://unpkg.com/modern-normalize@1.0.0/modern-normalize.css"
+          rel="stylesheet"
+        />
       </head>
       <body
         style={{
