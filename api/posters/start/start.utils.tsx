@@ -18,6 +18,7 @@ import {
 } from '../components'
 import PosterModel from '../poster.model'
 import ConnectionModel from '../connection.model'
+import TwitterPoster from '../components/TwitterPoster'
 
 export type Repositories = RestEndpointMethodTypes['repos']['listForAuthenticatedUser']['response']['data']
 
@@ -79,6 +80,10 @@ export async function generateImagesAndUploadToS3(
   posterSlug: string,
 ) {
   const dimensions = {
+    twitter: {
+      width: 1080,
+      height: 512,
+    },
     instagram: {
       width: 1080,
       height: 1080,
@@ -94,6 +99,7 @@ export async function generateImagesAndUploadToS3(
     },
   }
   const fileNames: PosterImageSizes = {
+    twitter: '',
     instagram: '',
     openGraph: '',
     highQualityPoster: '',
@@ -108,6 +114,16 @@ export async function generateImagesAndUploadToS3(
     ignoreHTTPSErrors: true,
   })
   const page = await browser.newPage()
+
+  const twitterPosterFileName = await uploadScreenshot({
+    page,
+    html: ReactDOMServer.renderToString(<TwitterPoster data={data} />),
+    viewport: dimensions.twitter,
+    fileName: `${posterSlug}-1080x512.png`,
+    comment: 'Twitter poster',
+  })
+
+  fileNames.twitter = twitterPosterFileName
 
   const instagramPosterFileName = await uploadScreenshot({
     page,

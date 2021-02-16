@@ -36,6 +36,7 @@ export async function generateDownloadPack(
 
   await Promise.all(promises)
 
+  zip.file('twitter-1080x512.png', imageMap.get('twitter'), {base64: true})
   zip.file('instagram-1080x1080.png', imageMap.get('instagram'), {base64: true})
   zip.file('card-1280x680.png', imageMap.get('openGraph'), {base64: true})
   zip.file('poster-1800x2400.png', imageMap.get('highQualityPoster'), {

@@ -23,6 +23,7 @@ const mockedGenerateImagesAndUploadToS3 = (startUtils.generateImagesAndUploadToS
 
 const userId = 'MOCK_USER_ID'
 const mockedPosterImages: PosterImageSizes = {
+  twitter: 'twitter.png',
   highQualityPoster: 'high-quality.png',
   instagram: 'instagram.png',
   openGraph: 'opengrapp.png',
@@ -82,7 +83,7 @@ test('should generate user activity', async () => {
     totalLinesOfCode: 5025,
     weeks: [
       {
-        week: 15,
+        week: 16,
         lines: 445,
         commits: 10,
         total: 455,
@@ -90,7 +91,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 28,
+        week: 30,
         lines: 635,
         commits: 30,
         total: 665,
@@ -98,7 +99,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 33,
+        week: 31,
         lines: 3885,
         commits: 20,
         total: 3905,

@@ -9,11 +9,11 @@ import Branding from '../Branding'
 
 import InfoBox from './InfoBox'
 
-interface OpenGraphPosterProps {
+interface TwitterPosterProps {
   data: Poster
 }
 
-const OpenGraphPoster: React.FC<OpenGraphPosterProps> = ({data}) => {
+const TwitterPoster: React.FC<TwitterPosterProps> = ({data}) => {
   return (
     <Wrapper
       bodyStyle={{flexDirection: 'row', justifyContent: 'space-between'}}
@@ -23,10 +23,10 @@ const OpenGraphPoster: React.FC<OpenGraphPosterProps> = ({data}) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '2.5rem 1rem 1rem 2.5rem',
+          padding: '2rem 1rem 1rem 2.5rem',
           alignSelf: 'flex-start',
           minHeight: '100vh',
-          width: '38vw',
+          width: '46vw',
         }}
       >
         <Branding style={{marginLeft: '-0.8rem'}} width={233} height={82} />
@@ -50,14 +50,14 @@ const OpenGraphPoster: React.FC<OpenGraphPosterProps> = ({data}) => {
         style={{
           position: 'absolute',
           right: 0,
-          top: '1.9rem',
-          transform: 'scale(1.06)',
+          top: '1rem',
+          transform: 'scale(1.1)',
         }}
       >
-        <PosterSVG data={data} width={750} height={750} />
+        <PosterSVG data={data} width={550} height={550} />
       </div>
     </Wrapper>
   )
 }
 
-export default OpenGraphPoster
+export default TwitterPoster

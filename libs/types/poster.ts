@@ -29,6 +29,7 @@ export enum PosterSteps {
 
 export interface PosterImageSizes {
   instagram: string
+  twitter: string
   openGraph: string
   highQualityPoster: string
 }

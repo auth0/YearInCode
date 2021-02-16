@@ -22,7 +22,7 @@ const InstagramPoster: React.FC<InstagramPosterProps> = ({data}) => {
         style={{position: 'absolute', top: '2%'}}
       />
 
-      <div style={{marginTop: '2rem'}}>
+      <div style={{marginTop: '4rem'}}>
         <PosterSVG data={data} width={900} height={900} />
       </div>
 

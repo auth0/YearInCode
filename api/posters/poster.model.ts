@@ -27,6 +27,7 @@ const schema = new dynamoose.Schema(
     posterImages: {
       type: Object,
       schema: {
+        twitter: {type: String, required: true},
         instagram: {type: String, required: true},
         openGraph: {type: String, required: true},
         highQualityPoster: {type: String, required: true},
