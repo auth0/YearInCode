@@ -106,6 +106,7 @@ custom:
   s3:
     host: localhost
     directory: api/tmp
+    cors: serverless-s3-local.xml
 
 layers:
   puppeteer:
