@@ -85,7 +85,7 @@ async function queuePoster(
 
     return response
   } catch (err) {
-    logger.info('error: Failed to send message: ' + err)
+    logger.info('error: Failed to send SQS message: ' + err)
 
     if (inDb) {
       try {

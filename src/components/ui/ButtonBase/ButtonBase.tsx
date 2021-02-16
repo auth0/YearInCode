@@ -62,7 +62,7 @@ const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
         disabled={loading || disabled}
         {...rest}
       >
-        {icon ? (
+        {icon && !loading ? (
           <>
             <span aria-hidden>{icon}</span> <span>{content}</span>
           </>

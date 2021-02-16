@@ -3,7 +3,7 @@ import {Meta} from '@storybook/react/types-6-0'
 import Alert from './Alert'
 
 export default {
-  title: 'Alert',
+  title: 'Front-End/Alert',
   component: Alert,
 } as Meta
 

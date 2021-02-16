@@ -9,7 +9,7 @@ import {
 import createHttpError from 'http-errors'
 
 import {SetPathParameterType} from '@api/lib/types'
-import {GetBySlugDTO, PosterState} from '@nebula/types/poster'
+import {GetBySlugDTO, PosterSlugResponse} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 
 import PosterModel from './poster.model'
@@ -19,11 +19,9 @@ async function getPosterBySlug(
 ) {
   try {
     const {slug} = event.pathParameters
-    const result: Pick<PosterState, 'posterData'>[] = await PosterModel.query(
-      'posterSlug',
-    )
+    const result: PosterSlugResponse[] = await PosterModel.query('posterSlug')
       .eq(slug)
-      .attributes(['posterData'])
+      .attributes(['posterData', 'posterImages'])
       .using('posterSlugIndex')
       .exec()
 
@@ -40,6 +38,7 @@ async function getPosterBySlug(
       statusCode: 200,
       body: JSON.stringify({
         posterData: result[0].posterData,
+        posterImages: result[0].posterImages,
       }),
     }
   } catch (error) {

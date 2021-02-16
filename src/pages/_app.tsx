@@ -4,6 +4,7 @@ import {QueryClientProvider, QueryClient} from 'react-query'
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {SSRProvider} from '@react-aria/ssr'
 import {ToastContainer} from 'react-toastify'
+
 import '@fontsource/inter/400.css' // Normal
 import '@fontsource/inter/600.css' // Semi-Bold
 import 'react-toastify/dist/ReactToastify.min.css'

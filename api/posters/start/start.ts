@@ -4,19 +4,24 @@ import {SQSEvent, SQSRecord} from 'aws-lambda'
 import sqsBatch from '@middy/sqs-partial-batch-failure'
 import sqsJsonBodyParser from '@middy/sqs-json-body-parser'
 import {Octokit, RestEndpointMethodTypes} from '@octokit/rest'
-import parseLinkHeader from 'parse-link-header'
 import {concatLimit, mapLimit, retry} from 'async'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
 import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
-import {sendMessageToClient} from '@api/lib/websocket'
 import {getWeekNumber, unixTimestampToDate} from '@api/lib/date'
 import {indexOfMax} from '@nebula/common/array'
 
-import PosterModel from './poster.model'
-import ConnectionModel from './connection.model'
+import PosterModel from '../poster.model'
+
+import {
+  generateImagesAndUploadToS3,
+  generatePosterSlug,
+  getUserRepositoriesByPage,
+  Repositories,
+  sendUpdateToClient,
+} from './start.utils'
 
 const auth0Management = new ManagementClient({
   domain: process.env.IS_OFFLINE
@@ -29,8 +34,6 @@ const auth0Management = new ManagementClient({
   scope: 'read:users read:user_idp_tokens',
 })
 
-type Repositories = RestEndpointMethodTypes['repos']['listForAuthenticatedUser']['response']['data']
-
 interface RepositoryStatistic {
   repository: string
   language: string
@@ -42,7 +45,6 @@ interface RepositoryStatistic {
   }[]
 }
 
-// TODO: Calculate based on dynamic year
 // TODO: Extract nested functions
 export function startImplementation(event: SQSEvent) {
   logger.info(`Received records: ${JSON.stringify(event.Records)}`)
@@ -316,9 +318,19 @@ export function startImplementation(event: SQSEvent) {
 
       const posterSlug = generatePosterSlug(githubLogin, yearsToAnalyze)
 
+      logger.info(`Uploading pictures for ${userId}`)
+      const fileNames = await generateImagesAndUploadToS3(
+        posterData,
+        posterSlug,
+      )
+
       await PosterModel.update(
         {userId},
-        {posterSlug, posterData: JSON.stringify(posterData)},
+        {
+          posterSlug,
+          posterData: JSON.stringify(posterData),
+          posterImages: fileNames,
+        },
       )
 
       await sendUpdateToClient(userId, PosterSteps.READY, posterSlug)
@@ -348,84 +360,6 @@ export function startImplementation(event: SQSEvent) {
   })
 
   return Promise.allSettled(recordPromises)
-}
-
-function generatePosterSlug(userName: string, yearsToAnalyze: number[]) {
-  return `${userName.toLowerCase()}-poster-${yearsToAnalyze[0]}-${(
-    (Math.random() * Math.pow(36, 6)) |
-    0
-  ).toString(36)}`
-}
-
-async function getUserRepositoriesByPage(
-  client: Octokit,
-  page: number,
-  yearsToAnalyze: number[],
-) {
-  logger.info(`Getting repository page ${page}`)
-
-  const MAX_REPOSITORIES_PER_PAGE_ALLOWED = 100
-  const result = await client.repos.listForAuthenticatedUser({
-    visibility: 'public',
-    sort: 'pushed',
-    per_page: MAX_REPOSITORIES_PER_PAGE_ALLOWED,
-    since: new Date(Math.min(...yearsToAnalyze), 0, 1).toISOString(),
-    page,
-  })
-
-  const payload: {repositories: Repositories; totalPages: number} = {
-    repositories: result.data,
-    totalPages: 1,
-  }
-
-  if (result.headers.link) {
-    const parsedPagination = parseLinkHeader(result.headers.link)
-    payload.totalPages = Number(parsedPagination.last?.page)
-  }
-
-  if (
-    Number(result.headers['x-ratelimit-limit']) <
-    payload.totalPages * MAX_REPOSITORIES_PER_PAGE_ALLOWED
-  ) {
-    throw new Error(
-      'Not enough rate limit left for User. Trying again in 15 minutes.',
-    )
-  }
-
-  return payload
-}
-
-async function sendUpdateToClient(
-  userId: string,
-  step: PosterSteps,
-  posterSlug = '',
-) {
-  await PosterModel.update({userId}, {step})
-
-  try {
-    const websocketConnectionUrl = process.env.IS_OFFLINE
-      ? 'http://localhost:3001'
-      : process.env.WEBSOCKET_API_ENDPOINT
-
-    const result = await ConnectionModel.query('userId')
-      .eq(userId)
-      .using('userIdIndex')
-      .exec()
-
-    if (result.length) {
-      // Send update to all devices
-      const clientsPromises = result.map(async ({connectionId}) =>
-        sendMessageToClient(websocketConnectionUrl, connectionId, {
-          step,
-          posterSlug,
-        }),
-      )
-
-      await Promise.all(clientsPromises)
-    }
-  } catch (error) {
-    logger.error(error)
-  }
 }
 
 const handler = middy(startImplementation)
