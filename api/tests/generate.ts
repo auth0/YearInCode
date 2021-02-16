@@ -62,7 +62,7 @@ export function buildContributorStats(
     weeks: [
       {
         w: dateToUnixTimeStamp(
-          dayjs().set('year', 2020).set('month', 3).toDate(),
+          dayjs().startOf('day').set('year', 2020).set('month', 3).toDate(),
         ).toString(),
         a: 12,
         d: 77,
@@ -70,7 +70,7 @@ export function buildContributorStats(
       },
       {
         w: dateToUnixTimeStamp(
-          dayjs().set('year', 2020).set('month', 6).toDate(),
+          dayjs().startOf('day').set('year', 2020).set('month', 6).toDate(),
         ).toString(),
         a: 50,
         d: 77,
@@ -78,7 +78,7 @@ export function buildContributorStats(
       },
       {
         w: dateToUnixTimeStamp(
-          dayjs().set('year', 2020).set('month', 7).toDate(),
+          dayjs().startOf('day').set('year', 2020).set('month', 7).toDate(),
         ).toString(),
         a: 700,
         d: 77,

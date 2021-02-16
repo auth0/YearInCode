@@ -26,7 +26,7 @@ const OpenGraphPoster: React.FC<OpenGraphPoster> = ({data}) => {
           padding: '2.5rem 1rem 1rem 2.5rem',
           alignSelf: 'flex-start',
           minHeight: '100vh',
-          width: '42vw',
+          width: '38vw',
         }}
       >
         <Branding style={{marginLeft: '-0.8rem'}} width={233} height={82} />
@@ -46,7 +46,14 @@ const OpenGraphPoster: React.FC<OpenGraphPoster> = ({data}) => {
         </div>
       </div>
 
-      <div style={{position: 'absolute', right: 0, top: '-0.2rem'}}>
+      <div
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: '1.9rem',
+          transform: 'scale(1.06)',
+        }}
+      >
         <PosterSVG data={data} width={750} height={750} />
       </div>
     </Wrapper>

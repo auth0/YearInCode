@@ -54,6 +54,7 @@ export interface PosterStatusResponse {
 
 export interface PosterSlugResponse {
   posterData: string
+  posterImages: PosterState['posterImages']
 }
 
 export interface PosterStatusDTO {

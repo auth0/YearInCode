@@ -6,23 +6,33 @@ import {
   buildContributorStats,
   buildGitHubRepo,
 } from '@api/tests/generate'
+import {PosterImageSizes} from '@nebula/types/poster'
 
-import {startImplementation as start} from '../start'
 import PosterModel from '../poster.model'
 
+import * as start from './start'
+import * as startUtils from './start.utils'
+
 jest.mock('auth0')
+jest.spyOn(startUtils, 'generateImagesAndUploadToS3')
 
 const mockedManagementClient = ManagementClient as jest.MockedClass<
   typeof ManagementClient
 >
+const mockedGenerateImagesAndUploadToS3 = (startUtils.generateImagesAndUploadToS3 as any) as jest.Mock
 
 const userId = 'MOCK_USER_ID'
+const mockedPosterImages: PosterImageSizes = {
+  highQualityPoster: 'high-quality.png',
+  instagram: 'instagram.png',
+  openGraph: 'opengrapp.png',
+}
 
 afterEach(async () => {
   await PosterModel.delete(userId)
 })
 
-it('should generate user activity', async () => {
+test('should generate user activity', async () => {
   const user = buildAuthenticatedGitHubUser()
   const repos = Array.from({length: 5}, () => buildGitHubRepo())
   const contributions = new Array(5).fill(buildContributorStats())
@@ -57,7 +67,9 @@ it('should generate user activity', async () => {
     identities: [{provider: 'github', access_token: undefined}],
   })
 
-  const results = await start(event)
+  mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
+
+  const results = await start.startImplementation(event)
   const result = results[0].status === 'fulfilled' && results[0].value
 
   expect(result.posterSlug).toContain(`${user.name.toLowerCase()}-poster-2020`)
@@ -86,7 +98,7 @@ it('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 32,
+        week: 33,
         lines: 3885,
         commits: 20,
         total: 3905,
@@ -97,7 +109,7 @@ it('should generate user activity', async () => {
   })
 })
 
-it('should be able to generate based on selected year', async () => {
+test('should be able to generate based on selected year', async () => {
   const user = buildAuthenticatedGitHubUser()
   const repos = Array.from({length: 5}, () => buildGitHubRepo())
   const contributions = new Array(5).fill(buildContributorStats())
@@ -117,8 +129,6 @@ it('should be able to generate based on selected year', async () => {
     }),
   )
 
-  const userId = 'MOCK_USER_ID'
-
   const event: any = {
     Records: [
       {
@@ -133,8 +143,9 @@ it('should be able to generate based on selected year', async () => {
   mockedManagementClient.prototype.getUser = jest.fn().mockResolvedValueOnce({
     identities: [{provider: 'github', access_token: undefined}],
   })
+  mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
 
-  const results = await start(event)
+  const results = await start.startImplementation(event)
   const result = results[0].status === 'fulfilled' && results[0].value
 
   expect(result.posterSlug).toContain(`${user.name.toLowerCase()}-poster-2018`)

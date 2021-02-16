@@ -173,7 +173,7 @@ functions:
           route: $disconnect
 
   start:
-    handler: posters/start.start
+    handler: posters/start/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
     layers:
@@ -276,7 +276,7 @@ resources:
         CorsConfiguration:
           CorsRules:
             - AllowedHeaders: ['*']
-              AllowedMethods: ['PUT']
+              AllowedMethods: ['PUT', 'GET']
               AllowedOrigins: ['*'] # Update with domain when available
     PosterBucketPolicy:
       Type: AWS::S3::BucketPolicy
@@ -320,16 +320,18 @@ resources:
           HttpVersion: http2
           DefaultCacheBehavior:
             AllowedMethods:
-              - DELETE
-              - GET
               - HEAD
+              - GET
               - OPTIONS
-              - PATCH
-              - POST
-              - PUT
             Compress: true
             TargetOriginId: PosterBucketS3Origin
             ForwardedValues:
+              Headers:
+                [
+                  'Access-Control-Request-Headers',
+                  'Access-Control-Request-Method',
+                  'Origin',
+                ]
               QueryString: false
               Cookies:
                 Forward: none

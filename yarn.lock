@@ -9102,6 +9102,11 @@ file-loader@^6.0.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
+
 file-system-cache@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/file-system-cache/-/file-system-cache-1.0.5.tgz#84259b36a2bbb8d3d6eb1021d3132ffe64cfff4f"
@@ -12082,7 +12087,7 @@ jsprim@^1.2.2:
     array-includes "^3.1.2"
     object.assign "^4.1.2"
 
-jszip@^3.2.2, jszip@^3.5.0:
+jszip@^3.2.2, jszip@^3.5.0, jszip@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.6.0.tgz#839b72812e3f97819cc13ac4134ffced95dd6af9"
   integrity sha512-jgnQoG9LKnWO3mnVNBnfhkh0QknICd1FGSrXcgrl67zioyJ4wgx25o9ZqwNtrROSflGBCGYnJfjrIyRIby1OoQ==
