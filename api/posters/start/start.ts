@@ -7,7 +7,7 @@ import {Octokit, RestEndpointMethodTypes} from '@octokit/rest'
 import {concatLimit, mapLimit, retry} from 'async'
 
 import {SetBodyToType} from '@api/lib/types'
-import {QueueDTO} from '@nebula/types/queue'
+import {QueueRecordDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
 import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 import {getWeekNumber, unixTimestampToDate} from '@api/lib/date'
@@ -17,7 +17,6 @@ import PosterModel from '../poster.model'
 
 import {
   generateImagesAndUploadToS3,
-  generatePosterSlug,
   getUserRepositoriesByPage,
   Repositories,
   sendUpdateToClient,
@@ -50,13 +49,11 @@ export function startImplementation(event: SQSEvent) {
   logger.info(`Received records: ${JSON.stringify(event.Records)}`)
   const recordPromises = event.Records.map(async (record: any) => {
     const {
-      body: {userId, years},
-    } = record as SetBodyToType<SQSRecord, QueueDTO>
-
-    const yearsToAnalyze = years.map(Number)
+      body: {userId, year, username, posterSlug},
+    } = record as SetBodyToType<SQSRecord, QueueRecordDTO>
 
     try {
-      await sendUpdateToClient(userId, PosterSteps.START)
+      await sendUpdateToClient(posterSlug, userId, PosterSteps.START)
       logger.info(`${userId} started step ${PosterSteps.START}`)
 
       const {identities} = await auth0Management.getUser({
@@ -67,7 +64,7 @@ export function startImplementation(event: SQSEvent) {
         identity => identity.provider === 'github',
       ).access_token
 
-      await sendUpdateToClient(userId, PosterSteps.GATHERING)
+      await sendUpdateToClient(posterSlug, userId, PosterSteps.GATHERING)
       logger.info(`${userId} started step ${PosterSteps.GATHERING}`)
 
       const githubClient = new Octokit({
@@ -75,17 +72,13 @@ export function startImplementation(event: SQSEvent) {
       })
 
       const {
-        data: {
-          name: githubName,
-          login: githubLogin,
-          followers: githubFollowers,
-        },
+        data: {name: githubName, followers: githubFollowers},
       } = await githubClient.users.getAuthenticated()
 
       const posterData: Poster = {
-        name: githubName ? githubName.trim() : githubLogin,
+        name: githubName ? githubName.trim() : username,
         followers: githubFollowers,
-        year: yearsToAnalyze[0], // TODO: show all years if team decides on having multiple years
+        year, // TODO: show all years if team decides on having multiple years
         dominantLanguage: '',
         dominantRepository: '',
         totalLinesOfCode: 0,
@@ -94,7 +87,7 @@ export function startImplementation(event: SQSEvent) {
       const {
         repositories: initialRepositories,
         totalPages,
-      } = await getUserRepositoriesByPage(githubClient, 1, yearsToAnalyze)
+      } = await getUserRepositoriesByPage(githubClient, 1, year)
 
       let repositories = [...initialRepositories]
 
@@ -107,7 +100,7 @@ export function startImplementation(event: SQSEvent) {
               const {repositories} = await getUserRepositoriesByPage(
                 githubClient,
                 page,
-                yearsToAnalyze,
+                year,
               )
 
               if (!repositories) {
@@ -163,7 +156,7 @@ export function startImplementation(event: SQSEvent) {
             }
 
             const userStats = repositoryStats.data.find(
-              ({author}) => author.login === githubLogin,
+              ({author}) => author.login === username,
             )
 
             if (!userStats) {
@@ -191,7 +184,7 @@ export function startImplementation(event: SQSEvent) {
         )}`,
       )
 
-      await sendUpdateToClient(userId, PosterSteps.LAST_TOUCHES)
+      await sendUpdateToClient(posterSlug, userId, PosterSteps.LAST_TOUCHES)
       logger.info(`${userId} started step ${PosterSteps.LAST_TOUCHES}`)
 
       const repositoryWeeklyTotal: Record<string, Record<string, number>> = {}
@@ -214,7 +207,7 @@ export function startImplementation(event: SQSEvent) {
                 try {
                   const date = unixTimestampToDate(Number(w))
 
-                  if (!yearsToAnalyze.includes(date.getFullYear())) {
+                  if (year !== date.getFullYear()) {
                     return callback(null, '')
                   }
 
@@ -316,8 +309,6 @@ export function startImplementation(event: SQSEvent) {
         indexOfMax(Object.values(languageCount))
       ]
 
-      const posterSlug = generatePosterSlug(githubLogin, yearsToAnalyze)
-
       logger.info(`Uploading pictures for ${userId}`)
       const fileNames = await generateImagesAndUploadToS3(
         posterData,
@@ -325,15 +316,14 @@ export function startImplementation(event: SQSEvent) {
       )
 
       await PosterModel.update(
-        {userId},
+        {posterSlug, userId},
         {
-          posterSlug,
           posterData: JSON.stringify(posterData),
           posterImages: fileNames,
         },
       )
 
-      await sendUpdateToClient(userId, PosterSteps.READY, posterSlug)
+      await sendUpdateToClient(posterSlug, userId, PosterSteps.READY)
       logger.info(`${userId} poster is ready!`)
 
       return {posterSlug, posterData}
@@ -342,7 +332,7 @@ export function startImplementation(event: SQSEvent) {
 
       try {
         await PosterModel.update(
-          {userId},
+          {posterSlug, userId},
           {
             step: PosterSteps.FAILED,
           },

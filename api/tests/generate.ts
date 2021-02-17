@@ -11,7 +11,7 @@ export function buildAuthenticatedGitHubUser(
 ): Partial<GitHubAuthenticatedUser> {
   return {
     name: 'TEST_USER',
-    login: 'TEST_USER',
+    login: 'MOCK_USER_NAME',
     followers: faker.random.number(50),
     ...overrides,
   }
@@ -25,7 +25,7 @@ export function buildGitHubRepo(
   return {
     name: faker.name.jobTitle(),
     owner: {
-      login: 'TEST_USER',
+      login: 'MOCK_USER_NAME',
       id: 1,
       node_id: 'MDQ6VXNlcjE=',
       avatar_url: 'https://github.com/images/error/octocat_happy.gif',
@@ -101,7 +101,7 @@ export function buildContributorStats(
       },
     ],
     author: {
-      login: 'TEST_USER',
+      login: 'MOCK_USER_NAME',
       id: 1,
       node_id: 'MDQ6VXNlcjE=',
       avatar_url: 'https://github.com/images/error/octocat_happy.gif',

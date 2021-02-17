@@ -6,6 +6,7 @@ import {logger} from '@nebula/log'
 import {owWithMessage} from '@lib/api'
 import {QueueDTO} from '@nebula/types/queue'
 import {PosterService} from '@lib/poster/poster-service'
+import {UserProfile} from '@lib/auth'
 
 async function queueStar(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -14,23 +15,13 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const {userId, years} = req.body as QueueDTO
+    const {year} = req.body as QueueDTO
 
     try {
       owWithMessage(
-        userId,
-        'The id is invalid. Please enter a valid id',
-        ow.string.minLength(1),
-      )
-      owWithMessage(
-        years,
+        year,
         'Please enter at least one valid year',
-        ow.array.includesAny('2017', '2018', '2019', '2020'),
-      )
-      owWithMessage(
-        years,
-        'There are only 4 years available. Please enter a valid years',
-        ow.array.maxLength(4),
+        ow.number.oneOf([2017, 2018, 2019, 2020]),
       )
     } catch (error) {
       logger.info(`Validation failed ${error.message}`)
@@ -39,8 +30,16 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const tokenCache = auth0.tokenCache(req, res)
+    const session = await auth0.getSession(req)
+    const user = session.user as UserProfile
+
     const {accessToken} = await tokenCache.getAccessToken()
-    const {data} = await PosterService.requestQueue(userId, years, accessToken)
+    const {data} = await PosterService.requestQueue(
+      user.sub,
+      user.nickname,
+      year,
+      accessToken,
+    )
 
     res.status(200).json(data)
   } catch (error) {

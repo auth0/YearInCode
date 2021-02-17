@@ -10,20 +10,19 @@ import {
 import {QueueDTO, QueueResponse} from '@nebula/types/queue'
 
 class PosterServiceImplementation {
-  public async queuePoster({userId, years}: QueueDTO) {
+  public async queuePoster({year}: {year: QueueDTO['year']}) {
     const {data} = await client.post<QueueResponse>('/posters/queue', {
-      userId,
-      years,
+      year,
     })
 
     return data
   }
 
-  public async getStatus(
+  public async getPosters(
     userId: PosterStatusDTO['userId'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/posters/status/?userId=${userId}`
+    const url = `${constants.api.lambdaUrl}/users/${userId}/posters/?userId=${userId}`
 
     const {data} = await axios.get<PosterStatusResponse>(url, {
       headers: {
@@ -43,15 +42,16 @@ class PosterServiceImplementation {
   }
 
   public async requestQueue(
-    userId: QueueDTO['userId'],
-    years: QueueDTO['years'],
+    userId: string,
+    username: string,
+    year: QueueDTO['year'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/posters/queue`
+    const url = `${constants.api.lambdaUrl}/users/${userId}/posters/queue`
 
     return axios.post<QueueResponse>(
       url,
-      {userId, years},
+      {username, year},
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

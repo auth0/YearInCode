@@ -41,6 +41,8 @@
     "@middy/sqs-partial-batch-failure": "^1.5.2",
     "@octokit/rest": "^18.0.15",
     "@react-aria/button": "^3.3.0",
+    "@react-aria/dialog": "^3.1.2",
+    "@react-aria/overlays": "^3.6.0",
     "@react-stately/toggle": "^3.2.1",
     "@svgr/webpack": "^5.5.0",
     "@visx/gradient": "^1.0.0",

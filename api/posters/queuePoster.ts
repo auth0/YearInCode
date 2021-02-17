@@ -10,11 +10,12 @@ import {
 } from 'middy/middlewares'
 import createHttpError from 'http-errors'
 
-import {SetBodyToType} from '@api/lib/types'
-import {QueueDTO} from '@nebula/types/queue'
-import {PosterSteps} from '@nebula/types/poster'
+import {SetBodyToType, SetPathParameterType} from '@api/lib/types'
+import {QueueDTO, QueueRecordDTO} from '@nebula/types/queue'
+import {PosterState, PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import {decodeToken, getTokenFromString} from '@api/lib/token'
+import {generatePosterSlug} from '@api/lib/random'
 
 import PosterModel from './poster.model'
 
@@ -35,10 +36,14 @@ const QUEUE_URL = IS_OFFLINE
 
 const sqs = new SQS(sqsConfig)
 
-async function queuePoster(
-  event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
+async function queuePosterImplementation(
+  event: SetPathParameterType<
+    SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
+    {userId: string}
+  >,
 ) {
-  const {userId, years} = event.body
+  const {userId} = event.pathParameters
+  const {year, username} = event.body
   const {Authorization} = event.headers
 
   const token = getTokenFromString(Authorization)
@@ -49,27 +54,48 @@ async function queuePoster(
   }
 
   let inDb = false
+  const posterSlug = generatePosterSlug(username, year)
 
   try {
-    const status = await PosterModel.get(userId)
+    const posters: PosterState[] = await PosterModel.query('userId')
+      .eq(userId)
+      .using('userIdIndex')
+      .exec()
 
-    if (status?.step === PosterSteps.PREPARING) {
+    const posterInPipeline = posters.find(
+      ({step}) => step !== PosterSteps.READY,
+    )
+
+    if (posterInPipeline) {
       return createHttpError(400, 'Already queued')
     }
 
+    const isAlreadyDone = posters.find(
+      ({year: posterYear}) => posterYear === year,
+    )
+
+    if (isAlreadyDone) {
+      return createHttpError(400, 'Poster for this year has already been made')
+    }
+
     await PosterModel.update(
-      {userId},
+      {posterSlug, userId},
       {
+        year,
         step: PosterSteps.PREPARING,
       },
     )
     inDb = true
 
+    const messageBody: QueueRecordDTO = {
+      username,
+      posterSlug,
+      userId,
+      year,
+    }
+
     const params = {
-      MessageBody: JSON.stringify({
-        userId,
-        years,
-      }),
+      MessageBody: JSON.stringify(messageBody),
       QueueUrl: QUEUE_URL,
     }
 
@@ -90,7 +116,7 @@ async function queuePoster(
     if (inDb) {
       try {
         await PosterModel.update(
-          {userId},
+          {posterSlug, userId},
           {
             step: PosterSteps.FAILED,
           },
@@ -109,32 +135,38 @@ async function queuePoster(
 const inputSchema = {
   type: 'object',
   properties: {
+    pathParameters: {
+      type: 'object',
+      properties: {
+        userId: {
+          type: 'string',
+        },
+      },
+      required: ['userId'],
+    },
     body: {
       type: 'object',
       properties: {
         userId: {
           type: 'string',
         },
-        years: {
-          type: 'array',
-          minItems: 1,
-          maxItems: 4,
-          items: {
-            type: 'string',
-            enum: ['2017', '2018', '2019', '2020'],
-          },
+        username: {
+          type: 'string',
+        },
+        year: {
+          enum: [2017, 2018, 2019, 2020],
         },
       },
-      required: ['userId', 'years'],
+      required: ['username', 'year'],
     },
   },
 }
 
-const handler = middy(queuePoster)
+const handler = middy(queuePosterImplementation)
   .use(httpSecurityHeaders())
   .use(doNotWaitForEmptyEventLoop())
   .use(jsonBodyParser())
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
 
-export {handler as queuePoster}
+export {handler as queuePoster, queuePosterImplementation}

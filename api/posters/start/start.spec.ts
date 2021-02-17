@@ -22,6 +22,8 @@ const mockedManagementClient = ManagementClient as jest.MockedClass<
 const mockedGenerateImagesAndUploadToS3 = (startUtils.generateImagesAndUploadToS3 as any) as jest.Mock
 
 const userId = 'MOCK_USER_ID'
+const username = 'MOCK_USER_NAME'
+const posterSlug = 'MOCK_POSTER_SLUG'
 const mockedPosterImages: PosterImageSizes = {
   twitter: 'twitter.png',
   highQualityPoster: 'high-quality.png',
@@ -30,7 +32,7 @@ const mockedPosterImages: PosterImageSizes = {
 }
 
 afterEach(async () => {
-  await PosterModel.delete(userId)
+  await PosterModel.delete({posterSlug, userId})
 })
 
 test('should generate user activity', async () => {
@@ -58,7 +60,9 @@ test('should generate user activity', async () => {
       {
         body: {
           userId,
-          years: ['2020'],
+          username,
+          posterSlug,
+          year: 2020,
         },
       },
     ],
@@ -73,7 +77,7 @@ test('should generate user activity', async () => {
   const results = await start.startImplementation(event)
   const result = results[0].status === 'fulfilled' && results[0].value
 
-  expect(result.posterSlug).toContain(`${user.name.toLowerCase()}-poster-2020`)
+  expect(result.posterSlug).toContain(posterSlug)
   expect(result.posterData).toEqual({
     name: user.name,
     followers: user.followers,
@@ -135,7 +139,9 @@ test('should be able to generate based on selected year', async () => {
       {
         body: {
           userId,
-          years: ['2018'],
+          username,
+          posterSlug,
+          year: 2018,
         },
       },
     ],
@@ -149,7 +155,7 @@ test('should be able to generate based on selected year', async () => {
   const results = await start.startImplementation(event)
   const result = results[0].status === 'fulfilled' && results[0].value
 
-  expect(result.posterSlug).toContain(`${user.name.toLowerCase()}-poster-2018`)
+  expect(result.posterSlug).toContain(posterSlug)
   expect(result.posterData).toEqual({
     name: user.name,
     followers: user.followers,

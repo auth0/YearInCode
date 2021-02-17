@@ -8,25 +8,27 @@ import {
 } from 'middy/middlewares'
 import createHttpError from 'http-errors'
 
-import {SetQueryStringType} from '@api/lib/types'
-import {GetStatusDTO} from '@nebula/types/poster'
+import {SetPathParameterType} from '@api/lib/types'
+import {GetPostersDTO, PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 
 import PosterModel from './poster.model'
 
-async function getStatus(
-  event: SetQueryStringType<APIGatewayEvent, GetStatusDTO>,
+async function getPosters(
+  event: SetPathParameterType<APIGatewayEvent, GetPostersDTO>,
 ) {
   try {
-    const {userId} = event.queryStringParameters
-    const userDocument = await PosterModel.get(userId, {
-      attributes: ['step', 'posterSlug'],
-    })
+    const {userId} = event.pathParameters
+    const userDocument = await PosterModel.query('userId')
+      .eq(userId)
+      .attributes(['step', 'posterSlug', 'year'])
+      .using('userIdIndex')
+      .exec()
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        status: userDocument ? userDocument.toJSON() : {},
+        posters: userDocument.length ? userDocument.toJSON() : [],
       }),
     }
   } catch (error) {
@@ -51,10 +53,10 @@ const inputSchema = {
   },
 }
 
-const handler = middy(getStatus)
+const handler = middy(getPosters)
   .use(httpSecurityHeaders())
   .use(doNotWaitForEmptyEventLoop())
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
 
-export {handler as getStatus}
+export {handler as getPosters}

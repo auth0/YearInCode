@@ -106,6 +106,7 @@ custom:
   s3:
     host: localhost
     directory: api/tmp
+    cors: api/serverless-s3-local.xml
 
 layers:
   puppeteer:
@@ -132,16 +133,16 @@ functions:
       SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
-          path: api/posters/queue
+          path: api/users/{userId}/posters/queue
           method: post
           authorizer: authorize
           cors: true
 
-  getStatus:
-    handler: posters/getStatus.getStatus
+  getPosters:
+    handler: posters/getPosters.getPosters
     events:
       - http:
-          path: api/posters/status
+          path: api/users/{userId}/posters
           method: get
           authorizer: authorize
           cors: true
@@ -234,12 +235,14 @@ resources:
           - AttributeName: posterSlug
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: posterSlug
             KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: posterSlugIndex
+          - IndexName: userIdIndex
             KeySchema:
-              - AttributeName: posterSlug
+              - AttributeName: userId
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
