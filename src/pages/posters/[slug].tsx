@@ -33,13 +33,11 @@ export default function PosterBySlug({
       <NextSeo
         title={`${posterData.name}'s ${posterData.year} Year in Code`}
         openGraph={{
-          site_name: siteUrl,
+          type: 'website',
           description: `Come take a look at the art generated from ${posterData.name}’s code in ${posterData.year}!`,
           images: [
             {
-              url: `${constants.site.cloudfront_url.trim()}/${
-                posterImages.openGraph
-              }`,
+              url: `${constants.site.cloudfront_url}/${posterImages.openGraph}`,
               width: 1280,
               height: 680,
             },

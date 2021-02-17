@@ -1,5 +1,5 @@
 import {Layout} from '@components/common'
-import {Celebrate, Hero, MeetDeathStar, ShowcaseGrid} from '@components/home'
+import {Celebrate, Hero, ShowcaseGrid} from '@components/home'
 
 export default function Home() {
   return (
