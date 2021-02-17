@@ -10,7 +10,7 @@ import {
 } from 'middy/middlewares'
 import createHttpError from 'http-errors'
 
-import {SetBodyToType} from '@api/lib/types'
+import {SetBodyToType, SetPathParameterType} from '@api/lib/types'
 import {QueueDTO, QueueRecordDTO, Year} from '@nebula/types/queue'
 import {PosterState, PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
@@ -37,9 +37,13 @@ const QUEUE_URL = IS_OFFLINE
 const sqs = new SQS(sqsConfig)
 
 async function queuePoster(
-  event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
+  event: SetPathParameterType<
+    SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
+    {userId: string}
+  >,
 ) {
-  const {userId, year, username} = event.body
+  const {userId} = event.pathParameters
+  const {year, username} = event.body
   const {Authorization} = event.headers
 
   const token = getTokenFromString(Authorization)
@@ -135,6 +139,15 @@ function generatePosterSlug(username: string, year: Year) {
 const inputSchema = {
   type: 'object',
   properties: {
+    pathParameters: {
+      type: 'object',
+      properties: {
+        userId: {
+          type: 'string',
+        },
+      },
+      required: ['userId'],
+    },
     body: {
       type: 'object',
       properties: {
@@ -148,7 +161,7 @@ const inputSchema = {
           enum: [2017, 2018, 2019, 2020],
         },
       },
-      required: ['userId', 'username', 'year'],
+      required: ['username', 'year'],
     },
   },
 }

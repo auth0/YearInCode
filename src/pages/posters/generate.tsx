@@ -106,7 +106,10 @@ export async function getServerSideProps({req, res, query}) {
 
   const posterInQueue = posters.find(({step}) => step !== PosterSteps.READY)
 
-  if (!query.new && !posterInQueue) {
+  if (
+    (!query.new && !posterInQueue && posters.length > 0) ||
+    posters.length === 4
+  ) {
     res.writeHead(302, {
       Location: `/posters/${posters[0].posterSlug}`,
     })

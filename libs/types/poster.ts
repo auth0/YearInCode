@@ -1,5 +1,7 @@
 import {Document} from 'dynamoose/dist/Document'
 
+import {Year} from './queue'
+
 export interface PosterWeek {
   week: number
   commits: number
@@ -36,7 +38,7 @@ export interface PosterImageSizes {
 
 export interface PosterState {
   userId: string
-  year: number
+  year: Year
   step: PosterSteps
   posterSlug: string
   posterData: string
@@ -55,8 +57,11 @@ export interface PosterStatusResponse {
 }
 
 export interface PosterSlugResponse {
+  year: Year
+  userId: string
   posterData: string
   posterImages: PosterState['posterImages']
+  otherPosters: Pick<PosterState, 'posterSlug' | 'year'>[]
 }
 
 export interface PosterStatusDTO {

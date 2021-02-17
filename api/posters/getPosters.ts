@@ -8,17 +8,17 @@ import {
 } from 'middy/middlewares'
 import createHttpError from 'http-errors'
 
-import {SetQueryStringType} from '@api/lib/types'
+import {SetPathParameterType} from '@api/lib/types'
 import {GetPostersDTO, PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 
 import PosterModel from './poster.model'
 
 async function getPosters(
-  event: SetQueryStringType<APIGatewayEvent, GetPostersDTO>,
+  event: SetPathParameterType<APIGatewayEvent, GetPostersDTO>,
 ) {
   try {
-    const {userId} = event.queryStringParameters
+    const {userId} = event.pathParameters
     const userDocument = await PosterModel.query('userId')
       .eq(userId)
       .attributes(['step', 'posterSlug', 'year'])

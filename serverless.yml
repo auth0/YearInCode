@@ -133,16 +133,16 @@ functions:
       SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
-          path: api/posters/queue
+          path: api/users/{userId}/posters/queue
           method: post
           authorizer: authorize
           cors: true
 
-  getPosts:
+  getPosters:
     handler: posters/getPosters.getPosters
     events:
       - http:
-          path: api/posters
+          path: api/users/{userId}/posters
           method: get
           authorizer: authorize
           cors: true

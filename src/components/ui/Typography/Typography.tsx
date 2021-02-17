@@ -56,6 +56,7 @@ interface Props {
   as?: React.ElementType
   className?: string
   children?: React.ReactNode
+  onClick?: (event: React.MouseEvent) => void
 }
 
 const Typography = React.forwardRef<React.ElementType, Props>((props, ref) => {

@@ -1,34 +1,44 @@
 import * as React from 'react'
-import clsx from 'clsx'
 import {detect} from 'detect-browser'
-import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import {toast} from 'react-toastify'
+import clsx from 'clsx'
 
 import {Button, Typography} from '@components/ui'
 import DownloadIcon from '@assets/svg/download.svg'
-import {PosterImageSizes} from '@nebula/types/poster'
-import {Spinner} from '@components/ui'
+import {PosterImageSizes, PosterSlugResponse} from '@nebula/types/poster'
+import {Year} from '@nebula/types/queue'
 
 import MobileShareButton from './MobileShareButton'
+import DesktopShareLinks from './DesktopShareLinks'
 import {generateDownloadPack} from './DownloadPoster.utils'
-
-const DesktopShareLinks = dynamic(() => import('./DesktopShareLinks'), {
-  ssr: false,
-})
+import SelectYearPopover from './SelectYearPopover'
 
 const browser = detect()
 interface GetPosterProps {
+  year: Year
   posterSlug: string
   posterImages: PosterImageSizes
+  otherPosters: PosterSlugResponse['otherPosters']
+  isLoggedIn: boolean
 }
 
-const GetPoster: React.FC<GetPosterProps> = ({posterSlug, posterImages}) => {
+const GetPoster: React.FC<GetPosterProps> = ({
+  year,
+  posterSlug,
+  posterImages,
+  otherPosters,
+  isLoggedIn,
+}) => {
   const [creatingZip, setCreatingZip] = React.useState(false)
   const canMobileShare =
     typeof window !== 'undefined' &&
     navigator.share &&
     browser.name !== 'edge-chromium' &&
     browser.name !== 'safari'
+
+  const canGenerateMorePosters = otherPosters.length !== 3
+  const sortedOtherPosters = otherPosters.sort((a, b) => a.year - b.year)
 
   const downloadImagePack = async () => {
     try {
@@ -44,8 +54,20 @@ const GetPoster: React.FC<GetPosterProps> = ({posterSlug, posterImages}) => {
   return (
     <section className="z-10 flex flex-col items-center justify-center flex-1 px-4 py-12 space-y-12">
       <header className="flex flex-col items-center space-y-12 text-center">
-        <Typography className="max-w-5xl font-semibold" variant="h1">
-          Your journey is ready!
+        <Typography
+          className={clsx(
+            'flex flex-col justify-center max-w-5xl font-semibold',
+            'lg:flex-row lg:space-x-4',
+          )}
+          variant="h1"
+        >
+          <span>Your</span>
+          {otherPosters.length ? (
+            <SelectYearPopover year={year} otherPosters={sortedOtherPosters} />
+          ) : (
+            <span>{year}</span>
+          )}
+          <span>journey is ready!</span>
         </Typography>
         <Typography
           variant="h6"
@@ -59,26 +81,25 @@ const GetPoster: React.FC<GetPosterProps> = ({posterSlug, posterImages}) => {
       </header>
 
       <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
+        {canGenerateMorePosters && isLoggedIn && (
+          <Link href="/posters/generate?new=true" passHref>
+            <Button color="primary">Generate another year</Button>
+          </Link>
+        )}
+
         {canMobileShare ? (
           <MobileShareButton posterSlug={posterSlug} />
         ) : (
           <DesktopShareLinks posterSlug={posterSlug} />
         )}
 
-        <div
-          className={clsx(
-            'flex flex-col items-center space-y-4',
-            'sm:flex-row sm:items-center sm:space-x-6 sm:space-y-0',
-          )}
+        <Button
+          loading={creatingZip}
+          onPress={downloadImagePack}
+          icon={<DownloadIcon aria-hidden />}
         >
-          <Button
-            loading={creatingZip}
-            onPress={downloadImagePack}
-            icon={<DownloadIcon aria-hidden />}
-          >
-            Download Pack — about 5MB
-          </Button>
-        </div>
+          Download Pack — about 5MB
+        </Button>
       </div>
     </section>
   )

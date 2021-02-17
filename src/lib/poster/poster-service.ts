@@ -22,7 +22,7 @@ class PosterServiceImplementation {
     userId: PosterStatusDTO['userId'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/posters/?userId=${userId}`
+    const url = `${constants.api.lambdaUrl}/users/${userId}/posters/?userId=${userId}`
 
     const {data} = await axios.get<PosterStatusResponse>(url, {
       headers: {
@@ -47,11 +47,11 @@ class PosterServiceImplementation {
     year: QueueDTO['year'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/posters/queue`
+    const url = `${constants.api.lambdaUrl}/users/${userId}/posters/queue`
 
     return axios.post<QueueResponse>(
       url,
-      {userId, username, year},
+      {username, year},
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

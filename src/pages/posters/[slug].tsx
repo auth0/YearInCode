@@ -6,17 +6,25 @@ import {Poster, PosterSlugResponse} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import PosterComponent from '@components/poster/Poster'
 import {constants} from '@lib/common'
+import {Year} from '@nebula/types/queue'
+import {auth0} from '@lib/auth'
 
 interface PosterBySlugProps {
+  year: Year
   posterSlug: string
   posterData: Poster
   posterImages: PosterSlugResponse['posterImages']
+  otherPosters: PosterSlugResponse['otherPosters']
+  isLoggedIn: boolean
 }
 
 export default function PosterBySlug({
+  year,
   posterData,
   posterImages,
   posterSlug,
+  otherPosters,
+  isLoggedIn,
 }: PosterBySlugProps) {
   const siteUrl = `${constants.site.url}/posters/${posterSlug}`
 
@@ -40,7 +48,13 @@ export default function PosterBySlug({
         }}
       />
 
-      <DownloadPoster posterImages={posterImages} posterSlug={posterSlug} />
+      <DownloadPoster
+        year={year}
+        isLoggedIn={isLoggedIn}
+        posterImages={posterImages}
+        posterSlug={posterSlug}
+        otherPosters={otherPosters}
+      />
 
       <section className="flex flex-col items-center flex-1 px-4 pb-12 overflow-auto">
         <PosterComponent wrapperClassName="mt-12" data={posterData} />
@@ -49,17 +63,27 @@ export default function PosterBySlug({
   )
 }
 
-export async function getServerSideProps({params, res}) {
+export async function getServerSideProps({params, res, req}) {
   try {
     const {slug} = params
 
-    const {posterData, posterImages} = await PosterService.getPosterBySlug(slug)
+    const session = await auth0.getSession(req)
+
+    const {
+      posterData,
+      posterImages,
+      year,
+      otherPosters,
+    } = await PosterService.getPosterBySlug(slug)
 
     return {
       props: {
+        year,
         posterSlug: slug,
         posterData: JSON.parse(posterData) as Poster,
         posterImages,
+        otherPosters,
+        isLoggedIn: Boolean(session),
       },
     }
   } catch (err) {
