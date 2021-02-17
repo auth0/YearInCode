@@ -7,7 +7,7 @@ import {logger} from '@nebula/log'
 import PosterComponent from '@components/poster/Poster'
 import {constants} from '@lib/common'
 import {Year} from '@nebula/types/queue'
-import {auth0} from '@lib/auth'
+import {auth0, UserProfile} from '@lib/auth'
 
 interface PosterBySlugProps {
   year: Year
@@ -15,7 +15,7 @@ interface PosterBySlugProps {
   posterData: Poster
   posterImages: PosterSlugResponse['posterImages']
   otherPosters: PosterSlugResponse['otherPosters']
-  isLoggedIn: boolean
+  user?: UserProfile
 }
 
 export default function PosterBySlug({
@@ -24,7 +24,7 @@ export default function PosterBySlug({
   posterImages,
   posterSlug,
   otherPosters,
-  isLoggedIn,
+  user,
 }: PosterBySlugProps) {
   const siteUrl = `${constants.site.url}/posters/${posterSlug}`
 
@@ -52,7 +52,8 @@ export default function PosterBySlug({
 
       <DownloadPoster
         year={year}
-        isLoggedIn={isLoggedIn}
+        user={user}
+        posterData={posterData}
         posterImages={posterImages}
         posterSlug={posterSlug}
         otherPosters={otherPosters}
@@ -85,7 +86,7 @@ export async function getServerSideProps({params, res, req}) {
         posterData: JSON.parse(posterData) as Poster,
         posterImages,
         otherPosters,
-        isLoggedIn: Boolean(session),
+        user: session.user,
       },
     }
   } catch (err) {

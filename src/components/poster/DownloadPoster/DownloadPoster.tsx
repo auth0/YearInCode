@@ -6,8 +6,13 @@ import clsx from 'clsx'
 
 import {Button, Typography} from '@components/ui'
 import DownloadIcon from '@assets/svg/download.svg'
-import {PosterImageSizes, PosterSlugResponse} from '@nebula/types/poster'
+import {
+  Poster,
+  PosterImageSizes,
+  PosterSlugResponse,
+} from '@nebula/types/poster'
 import {Year} from '@nebula/types/queue'
+import {UserProfile} from '@lib/auth'
 
 import MobileShareButton from './MobileShareButton'
 import DesktopShareLinks from './DesktopShareLinks'
@@ -19,8 +24,9 @@ interface GetPosterProps {
   year: Year
   posterSlug: string
   posterImages: PosterImageSizes
+  posterData: Poster
   otherPosters: PosterSlugResponse['otherPosters']
-  isLoggedIn: boolean
+  user: UserProfile
 }
 
 const GetPoster: React.FC<GetPosterProps> = ({
@@ -28,7 +34,8 @@ const GetPoster: React.FC<GetPosterProps> = ({
   posterSlug,
   posterImages,
   otherPosters,
-  isLoggedIn,
+  user,
+  posterData,
 }) => {
   const [creatingZip, setCreatingZip] = React.useState(false)
   const canMobileShare =
@@ -37,7 +44,9 @@ const GetPoster: React.FC<GetPosterProps> = ({
     browser.name !== 'edge-chromium' &&
     browser.name !== 'safari'
 
-  const canGenerateMorePosters = otherPosters.length !== 3
+  const canGenerateMorePosters =
+    otherPosters.length !== 3 &&
+    (user?.name === posterData.name || user?.nickname === posterData.name)
   const sortedOtherPosters = otherPosters.sort((a, b) => a.year - b.year)
 
   const downloadImagePack = async () => {
@@ -81,7 +90,7 @@ const GetPoster: React.FC<GetPosterProps> = ({
       </header>
 
       <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
-        {canGenerateMorePosters && isLoggedIn && (
+        {canGenerateMorePosters && (
           <Link href="/posters/generate?new=true" passHref>
             <Button color="primary">Generate another year</Button>
           </Link>
