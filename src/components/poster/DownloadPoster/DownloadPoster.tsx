@@ -74,9 +74,9 @@ const GetPoster: React.FC<GetPosterProps> = ({
           as="p"
           className="max-w-2xl leading-relaxed text-white opacity-60"
         >
-          Your Death Star presenting your developer’s journey. We gathered all
-          your projects and combined them into piece of art. You can print it
-          and hang on the wall, set as wallpaper, or share with friends.
+          Auth0 allows you to quickly connect any social provider to your
+          website, including github login. Authenticate using your github
+          account to generate a poster of your own. Your year in code :)
         </Typography>
       </header>
 
@@ -88,9 +88,9 @@ const GetPoster: React.FC<GetPosterProps> = ({
         )}
 
         {canMobileShare ? (
-          <MobileShareButton posterSlug={posterSlug} />
+          <MobileShareButton posterSlug={posterSlug} year={year} />
         ) : (
-          <DesktopShareLinks posterSlug={posterSlug} />
+          <DesktopShareLinks posterSlug={posterSlug} year={year} />
         )}
 
         <Button

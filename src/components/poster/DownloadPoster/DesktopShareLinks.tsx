@@ -6,15 +6,20 @@ import LinkedInLogo from '@assets/svg/linkedin-logo.svg'
 import FacebookLogo from '@assets/svg/facebook-logo.svg'
 import PrinterIcon from '@assets/svg/printer.svg'
 import {constants} from '@lib/common'
+import {Year} from '@nebula/types/queue'
 
 import {encodedHashtags, encodedText} from './DownloadPoster.utils'
 import MobileShareButton from './MobileShareButton'
 
 interface DesktopShareLinksProps {
   posterSlug: string
+  year: Year
 }
 
-const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({posterSlug}) => {
+const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({
+  posterSlug,
+  year,
+}) => {
   // Handle Safari and Edge Chromium edge cases
   const canMobileShare = typeof window !== 'undefined' && navigator.share
 
@@ -31,7 +36,9 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({posterSlug}) => {
     >
       <Button
         target="__blank"
-        href={`https://twitter.com/intent/tweet?text=${encodedText}&hashtags=${encodedHashtags}&url=${encodedPosterUrl}`}
+        href={`https://twitter.com/intent/tweet?text=${encodedText(
+          year,
+        )}&hashtags=${encodedHashtags}&url=${encodedPosterUrl}`}
         rel="noopener noreferrer"
         icon={<TwitterIcon aria-hidden />}
         aria-label=" Share on Twitter"
@@ -51,7 +58,9 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({posterSlug}) => {
         icon={<FacebookLogo aria-hidden />}
         aria-label="Share on Facebook"
       />
-      {canMobileShare && <MobileShareButton posterSlug={posterSlug} />}
+      {canMobileShare && (
+        <MobileShareButton posterSlug={posterSlug} year={year} />
+      )}
       <Button icon={<PrinterIcon aria-hidden />}>Print</Button>
     </div>
   )

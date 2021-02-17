@@ -31,10 +31,10 @@ export default function PosterBySlug({
   return (
     <>
       <NextSeo
-        title={`${posterData.name}'s Year in Code`}
+        title={`${posterData.name}'s ${posterData.year} Year in Code`}
         openGraph={{
           site_name: siteUrl,
-          description: `Come and check out ${posterData.name}'s developer activity!`,
+          description: `Come take a look at the art generated from ${posterData.name}’s code in ${posterData.year}!`,
           images: [
             {
               url: `${constants.site.cloudfront_url}/${posterImages.openGraph}`,

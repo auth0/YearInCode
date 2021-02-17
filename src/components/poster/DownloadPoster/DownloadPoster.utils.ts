@@ -4,9 +4,10 @@ import {saveAs} from 'file-saver'
 
 import {constants} from '@lib/common'
 import {PosterImageSizes} from '@nebula/types/poster'
+import {Year} from '@nebula/types/queue'
 
-export const text = 'Check out my Year in Code!'
-export const encodedText = encodeURIComponent(text)
+export const text = (year: Year) => `Check out my ${year} Year in Code!`
+export const encodedText = (year: Year) => encodeURIComponent(text(year))
 
 export const hashtags = 'yearincode,auth0'
 export const encodedHashtags = encodeURIComponent(hashtags)

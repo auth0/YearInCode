@@ -10,23 +10,20 @@ const ShowcaseGrid = () => {
   return (
     <section
       id="showcase"
-      className="relative flex flex-1 flex-col items-center px-6 py-4 min-h-screen overflow-hidden space-y-32"
+      className="relative flex flex-col items-center flex-1 min-h-screen px-6 py-4 space-y-32 overflow-hidden"
     >
-      <header className="flex flex-col items-center text-center space-y-16">
+      <header className="flex flex-col items-center space-y-16 text-center">
         <div className="flex flex-col items-center space-y-8">
           <Typography className="font-semibold" variant="h1">
-            We don’t want to keep secrets.
-            <br />
-            See how we build Death Star.
+            Want to see how we built this?
           </Typography>
           <Typography
             variant="h6"
             as="p"
             className="max-w-2xl text-white opacity-60"
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit sed eget
-            justo mauris. Proin egestas vehicula posuere. In sed erat ut lectus
-            hendrerit.
+            Checkout our github repo below to see how we utilized Next.js, Auth0
+            social login and github’s API to create your custom poster.
           </Typography>
         </div>
 
@@ -60,7 +57,7 @@ const ShowcaseGrid = () => {
 }
 
 const Grid: React.FC = () => (
-  <div className="flex -mt-28 space-x-12">
+  <div className="flex space-x-12 -mt-28">
     {new Array(4).fill(null).map((_, i) => (
       <Column className={clsx({'mt-16': (i + 1) % 2 === 0})} key={i} />
     ))}
@@ -74,7 +71,7 @@ interface ColumnProps {
 const Column: React.FC<ColumnProps> = ({className}) => (
   <div className={clsx('flex flex-col space-y-8', className)}>
     {new Array(4).fill(null).map((_, i) => (
-      <div key={i} style={{height: 424}} className="w-80 bg-gray-200"></div>
+      <div key={i} style={{height: 424}} className="bg-gray-200 w-80"></div>
     ))}
   </div>
 )
