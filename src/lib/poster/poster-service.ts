@@ -22,7 +22,7 @@ class PosterServiceImplementation {
     userId: PosterStatusDTO['userId'],
     accessToken: string,
   ) {
-    const url = `${constants.api.lambdaUrl}/users/${userId}/posters/?userId=${userId}`
+    const url = `${constants.api.lambdaUrl}/users/${userId}/posters`
 
     const {data} = await axios.get<PosterStatusResponse>(url, {
       headers: {

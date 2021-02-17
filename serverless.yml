@@ -61,7 +61,7 @@ custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
   posterTable: ${self:service}-poster-${self:custom.stage}
   connectionTable: ${self:service}-connection-${self:custom.stage}
-  posterBucketName: ${self:service}-poster-bucket-${self:provider.stage}
+  posterBucketName: ${self:service}-poster-bucket-${self:custom.stage}
   profiles:
     dev: nebulaDev
     staging: nebulaStaging
