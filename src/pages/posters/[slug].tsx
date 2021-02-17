@@ -84,7 +84,7 @@ export async function getServerSideProps({params, res, req}) {
         posterData: JSON.parse(posterData) as Poster,
         posterImages,
         otherPosters,
-        user: session.user,
+        user: session?.user,
       },
     }
   } catch (err) {
