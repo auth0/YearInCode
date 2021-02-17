@@ -11,10 +11,11 @@ import {
 import createHttpError from 'http-errors'
 
 import {SetBodyToType} from '@api/lib/types'
-import {QueueDTO} from '@nebula/types/queue'
-import {PosterSteps} from '@nebula/types/poster'
+import {QueueDTO, QueueRecordDTO, Year} from '@nebula/types/queue'
+import {PosterState, PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import {decodeToken, getTokenFromString} from '@api/lib/token'
+import {getRandomString} from '@api/lib/random'
 
 import PosterModel from './poster.model'
 
@@ -38,7 +39,7 @@ const sqs = new SQS(sqsConfig)
 async function queuePoster(
   event: SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
 ) {
-  const {userId, years} = event.body
+  const {userId, year, username} = event.body
   const {Authorization} = event.headers
 
   const token = getTokenFromString(Authorization)
@@ -49,27 +50,48 @@ async function queuePoster(
   }
 
   let inDb = false
+  const posterSlug = generatePosterSlug(username, year)
 
   try {
-    const status = await PosterModel.get(userId)
+    const posters: PosterState[] = await PosterModel.query('userId')
+      .eq(userId)
+      .using('userIdIndex')
+      .exec()
 
-    if (status?.step === PosterSteps.PREPARING) {
+    const posterInPipeline = posters.find(
+      ({step}) => step !== PosterSteps.READY,
+    )
+
+    if (posterInPipeline) {
       return createHttpError(400, 'Already queued')
     }
 
+    const isAlreadyDone = posters.find(
+      ({year: posterYear}) => posterYear === year,
+    )
+
+    if (isAlreadyDone) {
+      return createHttpError(400, 'Poster for this year has already been made')
+    }
+
     await PosterModel.update(
-      {userId},
+      {posterSlug, userId},
       {
+        year,
         step: PosterSteps.PREPARING,
       },
     )
     inDb = true
 
+    const messageBody: QueueRecordDTO = {
+      username,
+      posterSlug,
+      userId,
+      year,
+    }
+
     const params = {
-      MessageBody: JSON.stringify({
-        userId,
-        years,
-      }),
+      MessageBody: JSON.stringify(messageBody),
       QueueUrl: QUEUE_URL,
     }
 
@@ -90,7 +112,7 @@ async function queuePoster(
     if (inDb) {
       try {
         await PosterModel.update(
-          {userId},
+          {posterSlug, userId},
           {
             step: PosterSteps.FAILED,
           },
@@ -106,6 +128,10 @@ async function queuePoster(
   }
 }
 
+function generatePosterSlug(username: string, year: Year) {
+  return `${username.toLowerCase()}-poster-${year}-${getRandomString()}`
+}
+
 const inputSchema = {
   type: 'object',
   properties: {
@@ -115,17 +141,14 @@ const inputSchema = {
         userId: {
           type: 'string',
         },
-        years: {
-          type: 'array',
-          minItems: 1,
-          maxItems: 4,
-          items: {
-            type: 'string',
-            enum: ['2017', '2018', '2019', '2020'],
-          },
+        username: {
+          type: 'string',
+        },
+        year: {
+          enum: [2017, 2018, 2019, 2020],
         },
       },
-      required: ['userId', 'years'],
+      required: ['userId', 'username', 'year'],
     },
   },
 }

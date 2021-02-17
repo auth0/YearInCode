@@ -36,6 +36,7 @@ export interface PosterImageSizes {
 
 export interface PosterState {
   userId: string
+  year: number
   step: PosterSteps
   posterSlug: string
   posterData: string
@@ -50,7 +51,7 @@ export interface ConnectionDocument extends Document {
 }
 
 export interface PosterStatusResponse {
-  status: Pick<PosterState, 'step' | 'posterSlug'>
+  posters: Pick<PosterState, 'step' | 'posterSlug' | 'year'>[]
 }
 
 export interface PosterSlugResponse {
@@ -71,7 +72,7 @@ export interface UnsealedWebSocketConnectDTO {
   userId: string
 }
 
-export interface GetStatusDTO {
+export interface GetPostersDTO {
   userId: string
 }
 

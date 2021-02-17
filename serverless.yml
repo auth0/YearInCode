@@ -106,7 +106,7 @@ custom:
   s3:
     host: localhost
     directory: api/tmp
-    cors: serverless-s3-local.xml
+    cors: api/serverless-s3-local.xml
 
 layers:
   puppeteer:
@@ -138,11 +138,11 @@ functions:
           authorizer: authorize
           cors: true
 
-  getStatus:
-    handler: posters/getStatus.getStatus
+  getPosts:
+    handler: posters/getPosters.getPosters
     events:
       - http:
-          path: api/posters/status
+          path: api/posters
           method: get
           authorizer: authorize
           cors: true
@@ -235,12 +235,14 @@ resources:
           - AttributeName: posterSlug
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: posterSlug
             KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: posterSlugIndex
+          - IndexName: userIdIndex
             KeySchema:
-              - AttributeName: posterSlug
+              - AttributeName: userId
                 KeyType: HASH
             Projection:
               ProjectionType: ALL

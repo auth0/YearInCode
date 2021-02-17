@@ -9,7 +9,7 @@ import AWS from 'aws-sdk'
 import {logger} from '@nebula/log'
 import {Poster, PosterImageSizes, PosterSteps} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
-import {getRandomString} from '@api/lib/random'
+import {Year} from '@nebula/types/queue'
 
 import {
   InstagramPoster,
@@ -31,16 +31,10 @@ const S3 = new AWS.S3({
   }),
 })
 
-export function generatePosterSlug(userName: string, yearsToAnalyze: number[]) {
-  return `${userName.toLowerCase()}-poster-${
-    yearsToAnalyze[0]
-  }-${getRandomString()}`
-}
-
 export async function getUserRepositoriesByPage(
   client: Octokit,
   page: number,
-  yearsToAnalyze: number[],
+  year: Year,
 ) {
   logger.info(`Getting repository page ${page}`)
 
@@ -49,7 +43,7 @@ export async function getUserRepositoriesByPage(
     visibility: 'public',
     sort: 'pushed',
     per_page: MAX_REPOSITORIES_PER_PAGE_ALLOWED,
-    since: new Date(Math.min(...yearsToAnalyze), 0, 1).toISOString(),
+    since: new Date(year, 0, 1).toISOString(),
     page,
   })
 
@@ -195,11 +189,11 @@ async function uploadScreenshot({
 }
 
 export async function sendUpdateToClient(
+  posterSlug: string,
   userId: string,
   step: PosterSteps,
-  posterSlug = '',
 ) {
-  await PosterModel.update({userId}, {step})
+  await PosterModel.update({posterSlug, userId}, {step})
 
   try {
     const websocketConnectionUrl = process.env.IS_OFFLINE

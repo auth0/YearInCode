@@ -22,7 +22,6 @@ async function getPosterBySlug(
     const result: PosterSlugResponse[] = await PosterModel.query('posterSlug')
       .eq(slug)
       .attributes(['posterData', 'posterImages'])
-      .using('posterSlugIndex')
       .exec()
 
     if (!result.length) {
@@ -36,10 +35,7 @@ async function getPosterBySlug(
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        posterData: result[0].posterData,
-        posterImages: result[0].posterImages,
-      }),
+      body: JSON.stringify(result[0]),
     }
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
