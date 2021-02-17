@@ -9,22 +9,28 @@ import {
 import createHttpError from 'http-errors'
 
 import {SetPathParameterType} from '@api/lib/types'
-import {GetBySlugDTO, PosterState} from '@nebula/types/poster'
+import {
+  GetBySlugDTO,
+  PosterSlugResponse,
+  PosterState,
+} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 
 import PosterModel from './poster.model'
+
+type PosterSlugQueryResult = Pick<
+  PosterState,
+  'posterImages' | 'year' | 'userId' | 'posterData'
+>[]
 
 async function getPosterBySlug(
   event: SetPathParameterType<APIGatewayEvent, GetBySlugDTO>,
 ) {
   try {
     const {slug} = event.pathParameters
-    const result: Pick<PosterState, 'posterData'>[] = await PosterModel.query(
-      'posterSlug',
-    )
+    const result: PosterSlugQueryResult = await PosterModel.query('posterSlug')
       .eq(slug)
-      .attributes(['posterData'])
-      .using('posterSlugIndex')
+      .attributes(['posterData', 'posterImages', 'year', 'userId'])
       .exec()
 
     if (!result.length) {
@@ -36,11 +42,31 @@ async function getPosterBySlug(
       }
     }
 
+    const otherPosters: PosterSlugResponse['otherPosters'] = await PosterModel.query(
+      'userId',
+    )
+      .eq(result[0].userId)
+      .attributes(['year', 'posterSlug'])
+      .using('userIdIndex')
+      .exec()
+
+    if (!otherPosters.length) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Couldn't get user",
+        }),
+      }
+    }
+
+    const payload: PosterSlugResponse = {
+      ...result[0],
+      otherPosters: otherPosters.filter(({posterSlug}) => slug !== posterSlug),
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        posterData: result[0].posterData,
-      }),
+      body: JSON.stringify(payload),
     }
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)

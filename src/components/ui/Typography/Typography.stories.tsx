@@ -4,7 +4,7 @@ import {Meta} from '@storybook/react/types-6-0'
 import Typography, {Variants} from './Typography'
 
 export default {
-  title: 'Typography',
+  title: 'Front-End/Typography',
   component: Typography,
 } as Meta
 

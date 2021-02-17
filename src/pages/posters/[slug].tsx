@@ -2,19 +2,29 @@ import {NextSeo} from 'next-seo'
 
 import {LayoutNoBackdrop, DownloadPoster} from '@components/poster'
 import {PosterService} from '@lib/poster/poster-service'
-import {Poster} from '@nebula/types/poster'
+import {Poster, PosterSlugResponse} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import PosterComponent from '@components/poster/Poster'
 import {constants} from '@lib/common'
+import {Year} from '@nebula/types/queue'
+import {auth0} from '@lib/auth'
 
 interface PosterBySlugProps {
+  year: Year
   posterSlug: string
   posterData: Poster
+  posterImages: PosterSlugResponse['posterImages']
+  otherPosters: PosterSlugResponse['otherPosters']
+  isLoggedIn: boolean
 }
 
 export default function PosterBySlug({
+  year,
   posterData,
+  posterImages,
   posterSlug,
+  otherPosters,
+  isLoggedIn,
 }: PosterBySlugProps) {
   const siteUrl = `${constants.site.url}/posters/${posterSlug}`
 
@@ -25,31 +35,55 @@ export default function PosterBySlug({
         openGraph={{
           site_name: siteUrl,
           description: `Come and check out ${posterData.name}'s developer activity!`,
+          images: [
+            {
+              url: `${constants.site.cloudfront_url}/${posterImages.openGraph}`,
+              width: 1280,
+              height: 680,
+            },
+          ],
         }}
         twitter={{
           site: siteUrl,
         }}
       />
 
-      <DownloadPoster posterSlug={posterSlug} />
+      <DownloadPoster
+        year={year}
+        isLoggedIn={isLoggedIn}
+        posterImages={posterImages}
+        posterSlug={posterSlug}
+        otherPosters={otherPosters}
+      />
 
-      <section className="flex flex-1 flex-col items-center pb-12 px-4 overflow-auto">
+      <section className="flex flex-col items-center flex-1 px-4 pb-12 overflow-auto">
         <PosterComponent wrapperClassName="mt-12" data={posterData} />
       </section>
     </>
   )
 }
 
-export async function getServerSideProps({params, res}) {
+export async function getServerSideProps({params, res, req}) {
   try {
     const {slug} = params
 
-    const {posterData} = await PosterService.getPosterBySlug(slug)
+    const session = await auth0.getSession(req)
+
+    const {
+      posterData,
+      posterImages,
+      year,
+      otherPosters,
+    } = await PosterService.getPosterBySlug(slug)
 
     return {
       props: {
+        year,
         posterSlug: slug,
         posterData: JSON.parse(posterData) as Poster,
+        posterImages,
+        otherPosters,
+        isLoggedIn: Boolean(session),
       },
     }
   } catch (err) {

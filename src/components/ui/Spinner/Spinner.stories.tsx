@@ -3,7 +3,7 @@ import {Meta} from '@storybook/react/types-6-0'
 import Spinner from './Spinner'
 
 export default {
-  title: 'Spinner',
+  title: 'Front-End/Spinner',
   component: Spinner,
 } as Meta
 

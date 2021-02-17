@@ -1,5 +1,7 @@
 import {Document} from 'dynamoose/dist/Document'
 
+import {Year} from './queue'
+
 export interface PosterWeek {
   week: number
   commits: number
@@ -27,11 +29,20 @@ export enum PosterSteps {
   READY = 'READY',
 }
 
+export interface PosterImageSizes {
+  instagram: string
+  twitter: string
+  openGraph: string
+  highQualityPoster: string
+}
+
 export interface PosterState {
   userId: string
+  year: Year
   step: PosterSteps
   posterSlug: string
   posterData: string
+  posterImages: PosterImageSizes
 }
 
 export interface PosterDocument extends Document, PosterState {}
@@ -42,11 +53,15 @@ export interface ConnectionDocument extends Document {
 }
 
 export interface PosterStatusResponse {
-  status: Pick<PosterState, 'step' | 'posterSlug'>
+  posters: Pick<PosterState, 'step' | 'posterSlug' | 'year'>[]
 }
 
 export interface PosterSlugResponse {
+  year: Year
+  userId: string
   posterData: string
+  posterImages: PosterState['posterImages']
+  otherPosters: Pick<PosterState, 'posterSlug' | 'year'>[]
 }
 
 export interface PosterStatusDTO {
@@ -62,7 +77,7 @@ export interface UnsealedWebSocketConnectDTO {
   userId: string
 }
 
-export interface GetStatusDTO {
+export interface GetPostersDTO {
   userId: string
 }
 

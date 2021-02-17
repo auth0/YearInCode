@@ -50,7 +50,7 @@ const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
       <Component
         className={clsx(
           'flex items-center text-xs font-semibold tracking-widest rounded uppercase transition-colors duration-200 ease-out',
-          'disabled:opacity-80 disabled:cursor-not-allowed',
+          'disabled:opacity-70 disabled:cursor-not-allowed',
           {
             'space-x-4': icon && content,
           },
@@ -62,7 +62,7 @@ const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
         disabled={loading || disabled}
         {...rest}
       >
-        {icon ? (
+        {icon && !loading ? (
           <>
             <span aria-hidden>{icon}</span> <span>{content}</span>
           </>

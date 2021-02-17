@@ -51,8 +51,8 @@ export const linesColors = new Proxy(
   },
 )
 
-export function separateNumber(n: Number) {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+export function separateNumber(n: Number, separator = ' ') {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator)
 }
 
 export function toRadians(deg: number) {

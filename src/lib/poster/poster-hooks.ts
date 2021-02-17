@@ -4,6 +4,8 @@ import {QueueDTO} from '@nebula/types/queue'
 
 import {PosterService} from './poster-service'
 
-export function useQueueDeathStar() {
-  return useMutation((dto: QueueDTO) => PosterService.queuePoster(dto))
+export function useQueuePoster() {
+  return useMutation((dto: {year: QueueDTO['year']}) =>
+    PosterService.queuePoster(dto),
+  )
 }

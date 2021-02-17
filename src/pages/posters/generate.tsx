@@ -3,22 +3,26 @@ import useWebSocket, {ReadyState} from 'react-use-websocket'
 import * as Iron from '@hapi/iron'
 import nProgress from 'nprogress'
 
-import {auth0, UserProfile} from '@lib/auth'
+import {auth0} from '@lib/auth'
 import {createLoginUrl} from '@lib/common'
 import {Layout, LoadingView, SelectYearsView} from '@components/poster'
 import {PosterSteps} from '@nebula/types/poster'
 import {PosterService} from '@lib/poster/poster-service'
+import {Year} from '@nebula/types/queue'
 
 interface Props {
-  user: UserProfile
   wsPayload: string
   currentStep: PosterSteps | ''
+  completedYears: Year[]
 }
 
-export default function Loading({user, wsPayload, currentStep}: Props) {
+export default function Loading({
+  completedYears,
+  wsPayload,
+  currentStep,
+}: Props) {
   const [step, setStep] = React.useState(currentStep)
   const [posterSlug, setPosterSlug] = React.useState('')
-  const userId = user.sub
 
   const {readyState, lastJsonMessage} = useWebSocket(
     process.env.NEXT_PUBLIC_API_WEBSOCKET_URL,
@@ -69,10 +73,10 @@ export default function Loading({user, wsPayload, currentStep}: Props) {
     )
   }
 
-  return <SelectYearsView userId={userId} setStep={setStep} />
+  return <SelectYearsView completedYears={completedYears} setStep={setStep} />
 }
 
-export async function getServerSideProps({req, res}) {
+export async function getServerSideProps({req, res, query}) {
   const session = await auth0.getSession(req)
 
   if (!session || !session.user) {
@@ -87,7 +91,7 @@ export async function getServerSideProps({req, res}) {
   const tokenCache = auth0.tokenCache(req, res)
   const {accessToken} = await tokenCache.getAccessToken()
 
-  const getStatusPromise = PosterService.getStatus(
+  const getPostersPromise = PosterService.getPosters(
     session.user.sub as string,
     accessToken,
   )
@@ -97,27 +101,30 @@ export async function getServerSideProps({req, res}) {
     Iron.defaults,
   )
 
-  const {status} = await getStatusPromise
+  const {posters} = await getPostersPromise
   const wsPayload = await wsPayloadPromise
 
-  if (status?.step === PosterSteps.READY) {
-    if (!status.posterSlug) {
-      throw new Error('Could not find poster slug.')
-    }
+  const posterInQueue = posters.find(({step}) => step !== PosterSteps.READY)
 
+  if (
+    (!query.new && !posterInQueue && posters.length > 0) ||
+    posters.length === 4
+  ) {
     res.writeHead(302, {
-      Location: `/posters/${status.posterSlug}`,
+      Location: `/posters/${posters[0].posterSlug}`,
     })
     res.end()
 
     return {props: {}}
   }
 
+  const years = posters.map(({year}) => year)
+
   return {
     props: {
-      user: session.user,
       wsPayload,
-      currentStep: status?.step ?? '',
+      currentStep: posterInQueue?.step ?? '',
+      completedYears: years,
     },
   }
 }

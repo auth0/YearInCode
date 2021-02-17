@@ -3,7 +3,7 @@ import {Meta} from '@storybook/react/types-6-0'
 import RippleArrow from './RippleArrow'
 
 export default {
-  title: 'Ripple Arrow',
+  title: 'Front-End/Ripple Arrow',
   component: RippleArrow,
 } as Meta
 

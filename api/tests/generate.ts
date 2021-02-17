@@ -11,7 +11,7 @@ export function buildAuthenticatedGitHubUser(
 ): Partial<GitHubAuthenticatedUser> {
   return {
     name: 'TEST_USER',
-    login: 'TEST_USER',
+    login: 'MOCK_USER_NAME',
     followers: faker.random.number(50),
     ...overrides,
   }
@@ -25,7 +25,7 @@ export function buildGitHubRepo(
   return {
     name: faker.name.jobTitle(),
     owner: {
-      login: 'TEST_USER',
+      login: 'MOCK_USER_NAME',
       id: 1,
       node_id: 'MDQ6VXNlcjE=',
       avatar_url: 'https://github.com/images/error/octocat_happy.gif',
@@ -62,7 +62,12 @@ export function buildContributorStats(
     weeks: [
       {
         w: dateToUnixTimeStamp(
-          dayjs().set('year', 2020).set('month', 3).toDate(),
+          dayjs()
+            .set('day', 2)
+            .startOf('day')
+            .set('year', 2020)
+            .set('month', 3)
+            .toDate(),
         ).toString(),
         a: 12,
         d: 77,
@@ -70,7 +75,12 @@ export function buildContributorStats(
       },
       {
         w: dateToUnixTimeStamp(
-          dayjs().set('year', 2020).set('month', 6).toDate(),
+          dayjs()
+            .set('day', 12)
+            .startOf('day')
+            .set('year', 2020)
+            .set('month', 6)
+            .toDate(),
         ).toString(),
         a: 50,
         d: 77,
@@ -78,7 +88,12 @@ export function buildContributorStats(
       },
       {
         w: dateToUnixTimeStamp(
-          dayjs().set('year', 2020).set('month', 7).toDate(),
+          dayjs()
+            .set('day', 18)
+            .startOf('day')
+            .set('year', 2020)
+            .set('month', 7)
+            .toDate(),
         ).toString(),
         a: 700,
         d: 77,
@@ -86,7 +101,7 @@ export function buildContributorStats(
       },
     ],
     author: {
-      login: 'TEST_USER',
+      login: 'MOCK_USER_NAME',
       id: 1,
       node_id: 'MDQ6VXNlcjE=',
       avatar_url: 'https://github.com/images/error/octocat_happy.gif',

@@ -135,10 +135,10 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
                   Week {tooltipData.week}
                 </TooltipRow>
                 <TooltipRow icon={<CommitsIcon />}>
-                  {separateNumber(tooltipData.commits)} commits
+                  {separateNumber(tooltipData.commits, ',')} commits
                 </TooltipRow>
                 <TooltipRow icon={<LinesIcon />}>
-                  {separateNumber(tooltipData.lines)} lines
+                  {separateNumber(tooltipData.lines, ',')} lines
                 </TooltipRow>
                 <TooltipRow icon={<RepositoryIcon />}>
                   {tooltipData.dominantRepository}
