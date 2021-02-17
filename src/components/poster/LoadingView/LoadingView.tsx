@@ -25,17 +25,17 @@ const Loading: React.FC<LoadingProps> = ({
   const completionPercent = steps[step].percent
 
   return (
-    <section className="flex flex-1 flex-col items-center px-4">
+    <section className="flex flex-col items-center flex-1 px-4">
       {wsDisconnected && !isReady && (
         <Alert type="warning" className="my-12 animate-fade-in">
           Disconnected. Please Reload!
         </Alert>
       )}
 
-      <div className="flex flex-1 flex-col items-center justify-center space-y-12">
+      <div className="flex flex-col items-center justify-center flex-1 space-y-12">
         <ProgressBar className="max-w-md" max={100} value={completionPercent} />
 
-        <header className="flex flex-col items-center text-center whitespace-pre-wrap space-y-12">
+        <header className="flex flex-col items-center space-y-12 text-center whitespace-pre-wrap">
           <Typography
             className="max-w-5xl font-semibold animate-fade-in"
             variant="h1"
@@ -45,7 +45,7 @@ const Loading: React.FC<LoadingProps> = ({
           <Typography
             variant="h6"
             as="p"
-            className="max-w-2xl text-white leading-relaxed opacity-60 animate-fade-in"
+            className="max-w-2xl leading-relaxed text-white opacity-60 animate-fade-in"
           >
             {subtitle}
           </Typography>
@@ -66,7 +66,7 @@ const Loading: React.FC<LoadingProps> = ({
         {isReady && (
           <Link href="/posters/[slug]" as={`/posters/${posterSlug}`} passHref>
             <Button color="primary" size="large">
-              Show My Death Star
+              Show My Year in Code
             </Button>
           </Link>
         )}
@@ -74,8 +74,8 @@ const Loading: React.FC<LoadingProps> = ({
 
       {!isReady && (
         <Alert type="warning" className="my-12">
-          Creating your Death Star can take around one hour. We&apos;ll email
-          you when it’s ready!
+          Creating your Year in Code can take one hour. We&apos;ll email you
+          when it’s ready!
         </Alert>
       )}
     </section>

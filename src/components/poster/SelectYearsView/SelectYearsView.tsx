@@ -55,7 +55,7 @@ const SelectYears: React.FC<SelectYearsProps> = ({setStep, completedYears}) => {
           as="p"
           className="max-w-2xl leading-relaxed text-white opacity-60"
         >
-          You can select more than one but it’ll take more time to generate.
+          You will be able to generate more years after this one.
         </Typography>
       </header>
 
