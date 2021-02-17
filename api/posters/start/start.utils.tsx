@@ -69,6 +69,44 @@ export async function getUserRepositoriesByPage(
   return payload
 }
 
+const SES = new AWS.SES({
+  region: 'us-east-1',
+  ...(process.env.IS_OFFLINE && {endpoint: 'http://localhost:9001'}),
+})
+
+export async function sendPosterMail({
+  sendTo = 'success@simulator.amazonses.com',
+}: {
+  sendTo: string
+}) {
+  const params: AWS.SES.SendEmailRequest = {
+    Destination: {
+      ToAddresses: [sendTo],
+    },
+    Source: 'jfelix@stackbuilders.com',
+    Message: {
+      Subject: {
+        Data: `[Name], your year in code poster is ready!`,
+      },
+      Body: {
+        Text: {
+          Data: `Thank you for taking the time to create your poster and sharing your creativity with the world. At Auth0 we love developers and we appreciate the work you do every day in creating a more convenient and secure world. 
+
+          To download your poster: click here
+          To share your poster on social media: click here
+          
+          A note from our benevolent sponsors at Auth0:
+          
+          Auth0 makes securing your apps simple, and secure even as you scale to the moon. Developers at 
+          `,
+        },
+      },
+    },
+  }
+
+  await SES.sendEmail(params)
+}
+
 export async function generateImagesAndUploadToS3(
   data: Poster,
   posterSlug: string,

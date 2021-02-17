@@ -119,6 +119,14 @@ layers:
       - nodejs12.x
 
 functions:
+  testMail:
+    handler: posters/testMail.testMail
+    events:
+      - http:
+          path: api/testMail
+          method: get
+          cors: true
+
   authorize:
     handler: auth/authorize.authorize
 
