@@ -61,7 +61,6 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({
       {canMobileShare && (
         <MobileShareButton posterSlug={posterSlug} year={year} />
       )}
-      <Button icon={<PrinterIcon aria-hidden />}>Print</Button>
     </div>
   )
 }
