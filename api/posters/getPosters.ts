@@ -18,7 +18,9 @@ async function getPosters(
   event: SetPathParameterType<APIGatewayEvent, GetPostersDTO>,
 ) {
   try {
-    const {userId} = event.pathParameters
+    const {userId: encodedUserId} = event.pathParameters
+    const userId = decodeURIComponent(encodedUserId)
+
     const userDocument = await PosterModel.query('userId')
       .eq(userId)
       .attributes(['step', 'posterSlug', 'year'])

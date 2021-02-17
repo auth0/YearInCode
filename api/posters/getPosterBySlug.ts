@@ -27,7 +27,9 @@ async function getPosterBySlug(
   event: SetPathParameterType<APIGatewayEvent, GetBySlugDTO>,
 ) {
   try {
-    const {slug} = event.pathParameters
+    const {slug: encodedSlug} = event.pathParameters
+    const slug = decodeURIComponent(encodedSlug)
+
     const result: PosterSlugQueryResult = await PosterModel.query('posterSlug')
       .eq(slug)
       .attributes(['posterData', 'posterImages', 'year', 'userId'])

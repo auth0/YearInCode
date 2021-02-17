@@ -42,10 +42,15 @@ async function queuePosterImplementation(
     {userId: string}
   >,
 ) {
-  const {userId} = event.pathParameters
+  const {userId: encodedUserId} = event.pathParameters
   const {year, username} = event.body
   const {Authorization} = event.headers
 
+  const userId = decodeURIComponent(encodedUserId)
+
+  logger.info(
+    `Received request from user (${userId} - ${username}) to generate ${year} poster`,
+  )
   const token = getTokenFromString(Authorization)
   const decoded = decodeToken(token)
 
@@ -61,6 +66,8 @@ async function queuePosterImplementation(
       .eq(userId)
       .using('userIdIndex')
       .exec()
+
+    logger.info(`User ${userId} has posters: ${JSON.stringify(posters)}`)
 
     const posterInPipeline = posters.find(
       ({step}) => step !== PosterSteps.READY,

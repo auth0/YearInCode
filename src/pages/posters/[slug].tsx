@@ -37,7 +37,9 @@ export default function PosterBySlug({
           description: `Come take a look at the art generated from ${posterData.name}’s code in ${posterData.year}!`,
           images: [
             {
-              url: `${constants.site.cloudfront_url}/${posterImages.openGraph}`,
+              url: `${constants.site.cloudfront_url.trim()}/${
+                posterImages.openGraph
+              }`,
               width: 1280,
               height: 680,
             },
