@@ -11,11 +11,11 @@ import {
 import createHttpError from 'http-errors'
 
 import {SetBodyToType, SetPathParameterType} from '@api/lib/types'
-import {QueueDTO, QueueRecordDTO, Year} from '@nebula/types/queue'
+import {QueueDTO, QueueRecordDTO} from '@nebula/types/queue'
 import {PosterState, PosterSteps} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 import {decodeToken, getTokenFromString} from '@api/lib/token'
-import {getRandomString} from '@api/lib/random'
+import {generatePosterSlug} from '@api/lib/random'
 
 import PosterModel from './poster.model'
 
@@ -36,7 +36,7 @@ const QUEUE_URL = IS_OFFLINE
 
 const sqs = new SQS(sqsConfig)
 
-async function queuePoster(
+async function queuePosterImplementation(
   event: SetPathParameterType<
     SetBodyToType<APIGatewayProxyEvent, QueueDTO>,
     {userId: string}
@@ -132,10 +132,6 @@ async function queuePoster(
   }
 }
 
-function generatePosterSlug(username: string, year: Year) {
-  return `${username.toLowerCase()}-poster-${year}-${getRandomString()}`
-}
-
 const inputSchema = {
   type: 'object',
   properties: {
@@ -166,11 +162,11 @@ const inputSchema = {
   },
 }
 
-const handler = middy(queuePoster)
+const handler = middy(queuePosterImplementation)
   .use(httpSecurityHeaders())
   .use(doNotWaitForEmptyEventLoop())
   .use(jsonBodyParser())
   .use(validator({inputSchema}))
   .use(httpErrorHandler())
 
-export {handler as queuePoster}
+export {handler as queuePoster, queuePosterImplementation}

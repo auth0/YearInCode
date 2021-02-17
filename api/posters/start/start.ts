@@ -332,7 +332,7 @@ export function startImplementation(event: SQSEvent) {
 
       try {
         await PosterModel.update(
-          {userId},
+          {posterSlug, userId},
           {
             step: PosterSteps.FAILED,
           },
