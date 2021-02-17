@@ -41,7 +41,7 @@ async function getPosters(
 const inputSchema = {
   type: 'object',
   properties: {
-    queryStringParameters: {
+    pathParameters: {
       type: 'object',
       properties: {
         userId: {
