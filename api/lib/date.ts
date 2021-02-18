@@ -6,7 +6,7 @@
  * @param Date date
  * @return int
  */
-export function getWeekNumber(date: Date, dowOffset = 4) {
+export function getWeekNumber(date: Date, dowOffset = 0) {
   const newYear = new Date(date.getFullYear(), 0, 1)
   let day = newYear.getDay() - dowOffset
   day = day >= 0 ? day : day + 7
