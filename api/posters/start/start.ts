@@ -310,6 +310,8 @@ export function startImplementation(event: SQSEvent) {
         indexOfMax(Object.values(languageCount))
       ]
 
+      logger.info(`Poster is done! result: ${JSON.stringify(posterData)}`)
+
       logger.info(`Uploading pictures for ${userId}`)
       const fileNames = await generateImagesAndUploadToS3(
         posterData,
@@ -329,7 +331,7 @@ export function startImplementation(event: SQSEvent) {
 
       await sendPosterMail({name: posterData.name, posterSlug, sendTo: email})
 
-      return {posterSlug, posterData}
+      return Promise.resolve({posterSlug, posterData})
     } catch (e) {
       logger.error(e)
 

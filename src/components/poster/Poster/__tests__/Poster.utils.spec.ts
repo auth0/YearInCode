@@ -1,3 +1,5 @@
+import faker from 'faker'
+
 import * as posterUtils from '../Poster.utils'
 
 describe('posterUtils.genPoints', () => {
@@ -27,5 +29,16 @@ describe('posterUtils.separateNumber', () => {
 
   it('should separate number with given separator', () => {
     expect(posterUtils.separateNumber(1000, ',')).toEqual('1,000')
+  })
+})
+
+describe('posterUtils.numberOrZero', () => {
+  it('should return 0 when number is undefined', () => {
+    expect(posterUtils.numberOrZero(undefined)).toBe(0)
+  })
+
+  it("should return number if it's not undefined", () => {
+    const number = faker.random.number()
+    expect(posterUtils.numberOrZero(number)).toBe(number)
   })
 })

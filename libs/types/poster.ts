@@ -45,7 +45,9 @@ export interface PosterState {
   posterImages: PosterImageSizes
 }
 
-export interface PosterDocument extends Document, PosterState {}
+export interface PosterDocument extends Document, PosterState {
+  updatedAt: Date
+}
 
 export interface ConnectionDocument extends Document {
   userId: string

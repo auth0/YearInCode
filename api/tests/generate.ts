@@ -13,6 +13,7 @@ export function buildAuthenticatedGitHubUser(
     name: 'TEST_USER',
     login: 'MOCK_USER_NAME',
     followers: faker.random.number(50),
+    email: faker.internet.email(),
     ...overrides,
   }
 }

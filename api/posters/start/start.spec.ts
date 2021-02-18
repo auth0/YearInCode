@@ -6,7 +6,7 @@ import {
   buildContributorStats,
   buildGitHubRepo,
 } from '@api/tests/generate'
-import {PosterImageSizes} from '@nebula/types/poster'
+import {PosterImageSizes, PosterSteps} from '@nebula/types/poster'
 
 import PosterModel from '../poster.model'
 
@@ -14,12 +14,15 @@ import * as start from './start'
 import * as startUtils from './start.utils'
 
 jest.mock('auth0')
-jest.spyOn(startUtils, 'generateImagesAndUploadToS3')
+const mockedGenerateImagesAndUploadToS3 = jest.spyOn(
+  startUtils,
+  'generateImagesAndUploadToS3',
+)
+const mockedSendPosterMail = jest.spyOn(startUtils, 'sendPosterMail')
 
 const mockedManagementClient = ManagementClient as jest.MockedClass<
   typeof ManagementClient
 >
-const mockedGenerateImagesAndUploadToS3 = (startUtils.generateImagesAndUploadToS3 as any) as jest.Mock
 
 const userId = 'MOCK_USER_ID'
 const username = 'MOCK_USER_NAME'
@@ -73,9 +76,33 @@ test('should generate user activity', async () => {
   })
 
   mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
+  mockedSendPosterMail.mockResolvedValueOnce()
 
   const results = await start.startImplementation(event)
   const result = results[0].status === 'fulfilled' && results[0].value
+  const databaseResult = await PosterModel.get({posterSlug, userId})
+
+  expect(databaseResult).toMatchObject({
+    posterSlug: result.posterSlug,
+    posterData: JSON.stringify(result.posterData),
+    userId,
+    updatedAt: expect.any(Date),
+    step: PosterSteps.READY,
+    posterImages: mockedPosterImages,
+  })
+
+  expect(mockedGenerateImagesAndUploadToS3).toHaveBeenCalledTimes(1)
+  expect(mockedSendPosterMail).toHaveBeenCalledTimes(1)
+
+  expect(mockedGenerateImagesAndUploadToS3).toHaveBeenCalledWith(
+    result.posterData,
+    result.posterSlug,
+  )
+  expect(mockedSendPosterMail).toHaveBeenCalledWith({
+    name: result.posterData.name,
+    posterSlug: result.posterSlug,
+    sendTo: user.email,
+  })
 
   expect(result.posterSlug).toContain(posterSlug)
   expect(result.posterData).toEqual({
@@ -95,7 +122,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 30,
+        week: 31,
         lines: 635,
         commits: 30,
         total: 665,
@@ -103,7 +130,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 31,
+        week: 32,
         lines: 3885,
         commits: 20,
         total: 3905,
@@ -151,6 +178,7 @@ test('should be able to generate based on selected year', async () => {
     identities: [{provider: 'github', access_token: undefined}],
   })
   mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
+  mockedSendPosterMail.mockResolvedValueOnce()
 
   const results = await start.startImplementation(event)
   const result = results[0].status === 'fulfilled' && results[0].value

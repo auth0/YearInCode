@@ -6,8 +6,8 @@ describe('date.getWeekNumber', () => {
     expect(date.getWeekNumber(firstWeekOfJan)).toBe(1)
   })
 
-  it.only('should display 52 for the last week of december', () => {
-    const lastWeekOfDecember = new Date('01 December 2020')
+  it('should display 53 for the last week of december when it collides with new year', () => {
+    const lastWeekOfDecember = new Date('31 December 2020')
     expect(date.getWeekNumber(lastWeekOfDecember)).toBe(52)
   })
 })
