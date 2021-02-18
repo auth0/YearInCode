@@ -180,11 +180,15 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
             const movePath = parsedPath[movePathIndex]
             const linePath = parsedPath[linePathIndex]
 
-            const x1 = (linePath.x + parsedPath[linePathIndex + 1].x) / 1.92
-            const y1 = (linePath.y + parsedPath[linePathIndex + 1].y) / 1.92
+            const x1 =
+              (linePath.x + (parsedPath[linePathIndex + 1]?.x ?? 0)) / 1.92
+            const y1 =
+              (linePath.y + (parsedPath[linePathIndex + 1]?.y ?? 0)) / 1.92
 
-            const x2 = (movePath.x + parsedPath[movePathIndex + 1].x) / 1.92
-            const y2 = (movePath.y + parsedPath[movePathIndex + 1].y) / 1.92
+            const x2 =
+              (movePath.x + (parsedPath[movePathIndex + 1]?.x ?? 0)) / 1.92
+            const y2 =
+              (movePath.y + (parsedPath[movePathIndex + 1]?.y ?? 0)) / 1.92
 
             const shadowOffset = 1.005
 
