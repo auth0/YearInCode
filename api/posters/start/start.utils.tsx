@@ -69,6 +69,56 @@ export async function getUserRepositoriesByPage(
   return payload
 }
 
+const SES = new AWS.SES({
+  region: 'us-east-1',
+  ...(process.env.IS_OFFLINE && {endpoint: 'http://localhost:9001'}),
+})
+
+export async function sendPosterMail({
+  name,
+  posterSlug,
+  sendTo = 'success@simulator.amazonses.com',
+}: {
+  name: string
+  posterSlug: string
+  sendTo?: string
+}) {
+  try {
+    logger.info(`Sending email to ${name}...`)
+    const siteUrl = process.env.SITE_URL
+
+    const downloadPosterLink = `${siteUrl}/posters/${posterSlug}`
+    const params: AWS.SES.SendEmailRequest = {
+      Destination: {
+        ToAddresses: [sendTo],
+      },
+      Source: process.env.AWS_SOURCE_EMAIL,
+      Message: {
+        Subject: {
+          Data: `${name}, your year in code poster is ready!`,
+        },
+        Body: {
+          Html: {
+            Data: `
+            <p>Thank you for taking the time to create your poster and sharing your creativity with the world. At Auth0 we love developers and we appreciate the work you do every day in creating a more convenient and secure world.</p> 
+  
+            <p>To download your poster: <a href="${downloadPosterLink}">click here</a></p> 
+            
+            <p>A note from our benevolent sponsors at Auth0:</p>
+            
+            <p>Auth0 makes securing your apps simple, and secure even as you scale to the moon.</p>
+            `,
+          },
+        },
+      },
+    }
+
+    await SES.sendEmail(params).promise()
+  } catch (e) {
+    logger.error(`Failed sending email to ${name}.`)
+  }
+}
+
 export async function generateImagesAndUploadToS3(
   data: Poster,
   posterSlug: string,

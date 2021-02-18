@@ -33,6 +33,17 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - ses:SendEmail
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:ses:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':identity/*'
+    - Effect: Allow
+      Action:
         - s3:PutObject
       Resource: arn:aws:s3:::${self:custom.posterBucketName}/*
     - Effect: Allow
@@ -107,6 +118,12 @@ custom:
     host: localhost
     directory: api/tmp
     cors: api/serverless-s3-local.xml
+  ses:
+    stages:
+      - dev
+    port: 9001
+    outputDir: api/output
+    clean: true
 
 layers:
   puppeteer:
@@ -119,6 +136,14 @@ layers:
       - nodejs12.x
 
 functions:
+  testMail:
+    handler: posters/testMail.testMail
+    events:
+      - http:
+          path: api/testMail
+          method: get
+          cors: true
+
   authorize:
     handler: auth/authorize.authorize
 
@@ -181,6 +206,11 @@ functions:
     layers:
       - {Ref: PuppeteerLambdaLayer}
     environment:
+      SOURCE_EMAIL:
+        ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
+      SITE_URL:
+        ${ssm:/${self:custom.stage}/site/url,
+        env:NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI}
       WEBSOCKET_API_ENDPOINT:
         Fn::Join:
           - ''
@@ -345,6 +375,7 @@ resources:
 plugins:
   - serverless-dotenv-plugin
   - serverless-functions-base-path
+  - serverless-offline-ses
   - serverless-webpack
   - serverless-s3-local
   - serverless-dynamodb-local

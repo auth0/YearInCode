@@ -51,6 +51,10 @@ export const linesColors = new Proxy(
   },
 )
 
+export function numberOrZero(n: number) {
+  return n ?? 0
+}
+
 export function separateNumber(n: Number, separator = ' ') {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator)
 }

@@ -148,6 +148,7 @@
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-functions-base-path": "^1.0.32",
     "serverless-offline": "^6.8.0",
+    "serverless-offline-ses": "^0.0.6",
     "serverless-offline-sqs": "^4.1.1",
     "serverless-s3-local": "^0.6.7",
     "serverless-webpack": "^5.3.5",

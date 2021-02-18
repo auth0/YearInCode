@@ -42,3 +42,4 @@ cypress/videos
 # Serverless directories
 .serverless
 api/tmp
+api/output
