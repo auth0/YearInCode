@@ -44,9 +44,12 @@ const GetPoster: React.FC<GetPosterProps> = ({
     browser.name !== 'edge-chromium' &&
     browser.name !== 'safari'
 
-  const canGenerateMorePosters =
-    otherPosters.length !== 3 &&
-    (user?.name === posterData.name || user?.nickname === posterData.name)
+  const isUserPoster =
+    user?.name.trim() === posterData.name.trim() ||
+    user?.nickname.trim() === posterData.name.trim()
+
+  const canGenerateMorePosters = otherPosters.length < 3 && isUserPoster
+
   const sortedOtherPosters = otherPosters.sort((a, b) => a.year - b.year)
 
   const downloadImagePack = async () => {

@@ -19,6 +19,7 @@ import {
   generateImagesAndUploadToS3,
   getUserRepositoriesByPage,
   Repositories,
+  sendPosterMail,
   sendUpdateToClient,
 } from './start.utils'
 
@@ -72,7 +73,7 @@ export function startImplementation(event: SQSEvent) {
       })
 
       const {
-        data: {name: githubName, followers: githubFollowers},
+        data: {name: githubName, followers: githubFollowers, email},
       } = await githubClient.users.getAuthenticated()
 
       const posterData: Poster = {
@@ -325,6 +326,8 @@ export function startImplementation(event: SQSEvent) {
 
       await sendUpdateToClient(posterSlug, userId, PosterSteps.READY)
       logger.info(`${userId} poster is ready!`)
+
+      await sendPosterMail({name: posterData.name, posterSlug, sendTo: email})
 
       return {posterSlug, posterData}
     } catch (e) {

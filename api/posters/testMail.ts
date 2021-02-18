@@ -2,13 +2,13 @@ import createHttpError from 'http-errors'
 import AWS from 'aws-sdk'
 
 import {logger} from '@nebula/log'
-
+console.log(process.env)
 const SES = new AWS.SES({
   region: 'us-east-1',
   ...(process.env.IS_OFFLINE && {endpoint: 'http://localhost:9001'}),
 })
 
-async function testMail() {
+export async function testMail() {
   try {
     const params: AWS.SES.SendEmailRequest = {
       Destination: {
@@ -35,12 +35,16 @@ async function testMail() {
       },
     }
 
-    await SES.sendEmail(params)
+    const res = await SES.sendEmail(params).promise()
+
+    console.log(res)
+
+    return {
+      statusCode: 200,
+    }
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
 
     return createHttpError(500, 'ERROR getting status')
   }
 }
-
-export {testMail}
