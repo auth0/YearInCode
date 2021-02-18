@@ -177,6 +177,7 @@ functions:
     handler: posters/start/start.start
     timeout: 900
     reservedConcurrency: 8 # No more than 8 concurrent invocations
+    memorySize: 2048
     layers:
       - {Ref: PuppeteerLambdaLayer}
     environment:
