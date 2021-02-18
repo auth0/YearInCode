@@ -88,12 +88,11 @@ export async function sendPosterMail({
     const siteUrl = process.env.SITE_URL
 
     const downloadPosterLink = `${siteUrl}/posters/${posterSlug}`
-
     const params: AWS.SES.SendEmailRequest = {
       Destination: {
         ToAddresses: [sendTo],
       },
-      Source: 'jfelix@stackbuilders.com',
+      Source: process.env.AWS_SOURCE_EMAIL,
       Message: {
         Subject: {
           Data: `${name}, your year in code poster is ready!`,

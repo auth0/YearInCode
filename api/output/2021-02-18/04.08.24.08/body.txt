@@ -1,9 +1,0 @@
-Thank you for taking the time to create your poster and sharing your creativity with the world. At Auth0 we love developers and we appreciate the work you do every day in creating a more convenient and secure world. 
-  
-            To download your poster: click here
-            To share your poster on social media: click here
-            
-            A note from our benevolent sponsors at Auth0:
-            
-            Auth0 makes securing your apps simple, and secure even as you scale to the moon. Developers at 
-            
