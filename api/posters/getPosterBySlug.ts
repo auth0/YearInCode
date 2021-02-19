@@ -73,7 +73,7 @@ async function getPosterBySlug(
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
 
-    return createHttpError(500, 'ERROR getting status')
+    return createHttpError(500, 'ERROR getting poster by slug')
   }
 }
 

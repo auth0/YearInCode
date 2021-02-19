@@ -97,7 +97,7 @@ export async function getServerSideProps({params, res, req}) {
       posterImages,
       year,
       otherPosters,
-    } = await PosterService.getPosterBySlug(slug)
+    } = await PosterService._getPosterBySlug(slug)
 
     return {
       props: {

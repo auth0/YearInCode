@@ -9,7 +9,7 @@ import {
 import createHttpError from 'http-errors'
 
 import {SetPathParameterType} from '@api/lib/types'
-import {GetPostersDTO, PosterSteps} from '@nebula/types/poster'
+import {GetPostersDTO} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
 
 import PosterModel from './poster.model'
@@ -36,7 +36,7 @@ async function getPosters(
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
 
-    return createHttpError(500, 'ERROR getting status')
+    return createHttpError(500, 'ERROR getting posters')
   }
 }
 

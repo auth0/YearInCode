@@ -1,12 +1,19 @@
 import clsx from 'clsx'
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import {Typography, Button} from '@components/ui'
 import GitHubIcon from '@assets/svg/github-logo.svg'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
+import {PosterGalleryResponse} from '@nebula/types/poster'
+import {constants} from '@lib/common'
 
-const ShowcaseGrid = () => {
+interface ShowcaseGridProps {
+  galleryPosters: PosterGalleryResponse
+}
+
+const ShowcaseGrid: React.FC<ShowcaseGridProps> = ({galleryPosters}) => {
   return (
     <section
       id="showcase"
@@ -50,28 +57,44 @@ const ShowcaseGrid = () => {
           </Button>
         </Link>
 
-        <Grid />
+        <Grid posters={galleryPosters} />
       </div>
     </section>
   )
 }
 
-const Grid: React.FC = () => (
+interface GridProps {
+  posters: PosterGalleryResponse
+}
+
+const Grid: React.FC<GridProps> = ({posters}) => (
   <div className="flex space-x-12 -mt-28">
     {new Array(4).fill(null).map((_, i) => (
-      <Column className={clsx({'mt-16': (i + 1) % 2 === 0})} key={i} />
+      <Column
+        posters={posters.slice(i * 4, (i + 1) * 4)}
+        className={clsx({'mt-16': (i + 1) % 2 === 0})}
+        key={i}
+      />
     ))}
   </div>
 )
 
 interface ColumnProps {
   className: string
+  posters: PosterGalleryResponse
 }
 
-const Column: React.FC<ColumnProps> = ({className}) => (
+const Column: React.FC<ColumnProps> = ({className, posters}) => (
   <div className={clsx('flex flex-col space-y-6', className)}>
     {new Array(4).fill(null).map((_, i) => (
-      <div key={i} style={{height: 424}} className="bg-gray-200 w-80"></div>
+      <div className="border border-gray-400 rounded-sm" key={i}>
+        <Image
+          src={`${constants.site.cloudfront_url}/${posters[i]?.posterImages?.highQualityPoster}`}
+          width={320}
+          height={424}
+          objectFit="cover"
+        />
+      </div>
     ))}
   </div>
 )

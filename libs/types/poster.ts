@@ -66,6 +66,8 @@ export interface PosterSlugResponse {
   otherPosters: Pick<PosterState, 'posterSlug' | 'year'>[]
 }
 
+export type PosterGalleryResponse = Pick<PosterState, 'posterImages'>[]
+
 export interface PosterStatusDTO {
   userId: string
 }

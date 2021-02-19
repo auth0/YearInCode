@@ -34,7 +34,7 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
     const user = session.user as UserProfile
 
     const {accessToken} = await tokenCache.getAccessToken()
-    const {data} = await PosterService.requestQueue(
+    const {data} = await PosterService._requestQueue(
       user.sub,
       user.nickname,
       year,

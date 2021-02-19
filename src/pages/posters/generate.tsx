@@ -113,7 +113,7 @@ export async function getServerSideProps({req, res, query}) {
   const tokenCache = auth0.tokenCache(req, res)
   const {accessToken} = await tokenCache.getAccessToken()
 
-  const getPostersPromise = PosterService.getPosters(
+  const getPostersPromise = PosterService._getPosters(
     session.user.sub as string,
     accessToken,
   )

@@ -136,14 +136,6 @@ layers:
       - nodejs12.x
 
 functions:
-  testMail:
-    handler: posters/testMail.testMail
-    events:
-      - http:
-          path: api/testMail
-          method: get
-          cors: true
-
   authorize:
     handler: auth/authorize.authorize
 
@@ -177,6 +169,14 @@ functions:
     events:
       - http:
           path: api/posters/{slug}
+          method: get
+          cors: true
+
+  getGalleryPosters:
+    handler: posters/getGalleryPosters.getGalleryPosters
+    events:
+      - http:
+          path: api/posters/gallery
           method: get
           cors: true
 
