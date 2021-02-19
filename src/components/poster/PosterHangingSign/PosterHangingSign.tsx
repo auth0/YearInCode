@@ -20,6 +20,7 @@ const PosterHangingSign: React.FC<PosterHangingSignProps> = ({name, src}) => {
           height={700}
           quality={85}
           objectFit="cover"
+          priority={true}
           alt={`${name} poster`}
         />
       </div>
