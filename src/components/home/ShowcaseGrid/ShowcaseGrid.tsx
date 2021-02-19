@@ -72,17 +72,7 @@ interface ColumnProps {
 const Column: React.FC<ColumnProps> = ({className}) => (
   <div className={clsx('flex flex-col space-y-6', className)}>
     {new Array(4).fill(null).map((_, i) => (
-      <div className="border border-gray-400 rounded-sm" key={i}>
-        <Image
-          src={
-            'http://localhost:4569/nebula-serverless-poster-bucket-dev/joserfelix-poster-2020-7epu3l-1800x2400.png'
-          }
-          width={320}
-          height={424}
-          objectFit="cover"
-          className="bg-gray-200"
-        />
-      </div>
+      <div key={i} style={{height: 424}} className="bg-gray-200 w-80"></div>
     ))}
   </div>
 )
