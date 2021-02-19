@@ -14,12 +14,12 @@ const VerticalCardPoster: React.FC<VerticalCardPosterProps> = ({data}) => {
   return (
     <Wrapper bodyStyle={{minHeight: '100vh', width: '100vw'}}>
       <Branding
-        width={200}
-        height={71}
+        width={160}
+        height={56}
         style={{position: 'absolute', top: '5%'}}
       />
 
-      <PosterSVG data={data} width={600} height={600} />
+      <PosterSVG data={data} width={500} height={500} />
     </Wrapper>
   )
 }

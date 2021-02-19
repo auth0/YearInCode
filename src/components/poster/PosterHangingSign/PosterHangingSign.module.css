@@ -1,0 +1,17 @@
+.container {
+  @apply flex justify-center relative;
+
+  height: 716px;
+}
+
+.shadow {
+  @apply absolute;
+
+  height: 256px;
+  width: 100%;
+
+  bottom: 11rem;
+
+  background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
+  transform: rotate(-180deg);
+}

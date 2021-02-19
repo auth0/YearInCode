@@ -1,6 +1,6 @@
 import {NextSeo} from 'next-seo'
 
-import {DownloadPoster} from '@components/poster'
+import {DownloadPoster, PosterHangingSign} from '@components/poster'
 import {PosterService} from '@lib/poster/poster-service'
 import {Poster, PosterSlugResponse} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
@@ -61,6 +61,9 @@ export default function PosterBySlug({
         }
         content={
           <>
+            <PosterHangingSign
+              src={`${constants.site.cloudfront_url}/${posterImages.verticalCard}`}
+            />
             <DownloadPoster
               year={year}
               isUserPoster={isUserPoster}

@@ -148,6 +148,7 @@ export async function generateImagesAndUploadToS3(
     verticalCard: {
       width: 600,
       height: 1000,
+      deviceScaleFactor: 2,
     },
     highQuality: {
       width: 1800,
