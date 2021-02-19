@@ -4,13 +4,18 @@
   height: 716px;
 }
 
+.rope {
+  @apply absolute;
+  top: -114.2px;
+}
+
 .shadow {
   @apply absolute;
 
   height: 256px;
   width: 100%;
 
-  bottom: 11rem;
+  bottom: 10rem;
 
   background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
   transform: rotate(-180deg);

@@ -15,7 +15,6 @@ import {
   InstagramPoster,
   OpenGraphPoster,
   HighQualityPoster,
-  VerticalCardPoster,
 } from '../components'
 import PosterModel from '../poster.model'
 import ConnectionModel from '../connection.model'
@@ -145,11 +144,6 @@ export async function generateImagesAndUploadToS3(
       width: 1280,
       height: 680,
     },
-    verticalCard: {
-      width: 600,
-      height: 1000,
-      deviceScaleFactor: 2,
-    },
     highQuality: {
       width: 1800,
       height: 2400,
@@ -161,7 +155,6 @@ export async function generateImagesAndUploadToS3(
     instagram: '',
     openGraph: '',
     highQualityPoster: '',
-    verticalCard: '',
   }
 
   logger.info('Starting browser...')
@@ -202,13 +195,6 @@ export async function generateImagesAndUploadToS3(
     viewport: dimensions.highQuality,
     fileName: `${posterSlug}-1800x2400.png`,
     comment: 'High quality poster',
-  })
-  params.push({
-    key: 'verticalCard',
-    html: ReactDOMServer.renderToString(<VerticalCardPoster data={data} />),
-    viewport: dimensions.verticalCard,
-    fileName: `${posterSlug}-600x1000.png`,
-    comment: 'Vertical card poster',
   })
 
   const promises = params.map(async ({key, ...rest}) => {

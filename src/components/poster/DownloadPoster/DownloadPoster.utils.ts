@@ -43,9 +43,6 @@ export async function generateDownloadPack(
   zip.file('poster-1800x2400.png', imageMap.get('highQualityPoster'), {
     base64: true,
   })
-  zip.file('vertical-card-600x1000.png', imageMap.get('verticalCard'), {
-    base64: true,
-  })
 
   const content = await zip.generateAsync({type: 'blob'})
   saveAs(content, posterSlug + '-images.zip')

@@ -60,9 +60,10 @@ export default function PosterBySlug({
           <Header isUserPoster={isUserPoster} isLoggedIn={Boolean(user)} />
         }
         content={
-          <>
+          <div className="pt-8">
             <PosterHangingSign
-              src={`${constants.site.cloudfront_url}/${posterImages.verticalCard}`}
+              name={posterData.name}
+              src={`${constants.site.cloudfront_url}/${posterImages.highQualityPoster}`}
             />
             <DownloadPoster
               year={year}
@@ -77,7 +78,7 @@ export default function PosterBySlug({
             <section className="flex flex-col items-center flex-1 px-4 pb-12 overflow-auto">
               <PosterComponent wrapperClassName="mt-12" data={posterData} />
             </section>
-          </>
+          </div>
         }
         footer={<Footer />}
       />

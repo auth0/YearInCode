@@ -31,7 +31,6 @@ const schema = new dynamoose.Schema(
         instagram: {type: String, required: true},
         openGraph: {type: String, required: true},
         highQualityPoster: {type: String, required: true},
-        verticalCard: {type: String, required: true},
       },
     },
   },

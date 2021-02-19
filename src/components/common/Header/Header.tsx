@@ -17,7 +17,7 @@ function Header({isLoggedIn = false, isUserPoster}: Props) {
   const showGeneratePoster = pathname === '/' || !isUserPoster
 
   return (
-    <header className="flex items-center justify-between px-6 pt-8 sm:px-4">
+    <header className="z-50 flex items-center justify-between px-6 pt-8 sm:px-4">
       <Link href="/" passHref>
         <a>
           <Logo aria-hidden />
