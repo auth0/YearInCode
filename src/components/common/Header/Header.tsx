@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import {useRouter} from 'next/router'
+import {useWindowSize} from 'react-use'
 
-import {Button} from '@components/ui'
 import Logo from '@assets/svg/auth0-logo-white.svg'
+
+import DesktopMenu from './DesktopMenu'
+import MobileMenu from './MobileMenu'
 
 interface Props {
   isLoggedIn?: boolean
@@ -11,11 +14,13 @@ interface Props {
 
 function Header({isLoggedIn = false, isUserPoster}: Props) {
   const {pathname} = useRouter()
+  const {width} = useWindowSize()
 
   const showGeneratePoster = pathname === '/' || !isUserPoster
+  const isMobile = width < 425
 
   return (
-    <header className="flex items-center justify-between px-4 pt-8">
+    <header className="flex items-center justify-between px-6 pt-8 sm:px-4">
       <Link href="/" passHref>
         <a>
           <Logo aria-hidden />
@@ -23,24 +28,15 @@ function Header({isLoggedIn = false, isUserPoster}: Props) {
         </a>
       </Link>
 
-      <div className="flex space-x-4">
-        {isLoggedIn ? (
-          <>
-            {showGeneratePoster && (
-              <Link href="/posters/generate" passHref>
-                <Button color="primary">My poster</Button>
-              </Link>
-            )}
-            <Link href="/api/logout" passHref>
-              <Button>Log out</Button>
-            </Link>
-          </>
-        ) : (
-          <Link href="/posters/generate" passHref>
-            <Button color="primary">Connect with GitHub</Button>
-          </Link>
-        )}
-      </div>
+      <MobileMenu
+        isLoggedIn={isLoggedIn}
+        showGeneratePoster={showGeneratePoster}
+      />
+
+      <DesktopMenu
+        isLoggedIn={isLoggedIn}
+        showGeneratePoster={showGeneratePoster}
+      />
     </header>
   )
 }

@@ -51,16 +51,16 @@ export default function SelectYearPopover({
   return (
     <>
       <button
-        className="inline-flex items-center justify-start space-x-2 font-semibold"
+        className="inline-flex items-center justify-start space-x-1 font-semibold"
         {...buttonProps}
         {...triggerProps}
         ref={triggerRef}
       >
-        {year}{' '}
+        <span>{year}</span>{' '}
         {state.isOpen ? (
-          <ChevronUp strokeWidth="3" />
+          <ChevronUp width="32" height="32" strokeWidth="3" />
         ) : (
-          <ChevronDown strokeWidth="3" />
+          <ChevronDown width="32" height="32" strokeWidth="3" />
         )}
       </button>
       {state.isOpen && (
