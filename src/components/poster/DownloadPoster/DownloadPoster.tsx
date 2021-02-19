@@ -2,7 +2,7 @@ import * as React from 'react'
 import {detect} from 'detect-browser'
 import Link from 'next/link'
 import {toast} from 'react-toastify'
-import clsx from 'clsx'
+import dynamic from 'next/dynamic'
 
 import {Button, Typography} from '@components/ui'
 import DownloadIcon from '@assets/svg/download.svg'
@@ -14,10 +14,13 @@ import {
 import {Year} from '@nebula/types/queue'
 import {UserProfile} from '@lib/auth'
 
-import MobileShareButton from './MobileShareButton'
 import DesktopShareLinks from './DesktopShareLinks'
 import {generateDownloadPack} from './DownloadPoster.utils'
 import SelectYearPopover from './SelectYearPopover'
+
+const MobileShareButton = dynamic(() => import('./MobileShareButton'), {
+  ssr: false,
+})
 
 const browser = detect()
 interface GetPosterProps {

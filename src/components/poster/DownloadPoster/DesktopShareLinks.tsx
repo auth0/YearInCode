@@ -4,7 +4,6 @@ import {Button} from '@components/ui'
 import TwitterIcon from '@assets/svg/twitter-logo.svg'
 import LinkedInLogo from '@assets/svg/linkedin-logo.svg'
 import FacebookLogo from '@assets/svg/facebook-logo.svg'
-import PrinterIcon from '@assets/svg/printer.svg'
 import {constants} from '@lib/common'
 import {Year} from '@nebula/types/queue'
 
@@ -41,7 +40,7 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({
         )}&hashtags=${encodedHashtags}&url=${encodedPosterUrl}`}
         rel="noopener noreferrer"
         icon={<TwitterIcon aria-hidden />}
-        aria-label=" Share on Twitter"
+        aria-label="Share on Twitter"
       />
       <Button
         target="__blank"

@@ -93,6 +93,7 @@ const Column: React.FC<ColumnProps> = ({className, posters}) => (
           width={320}
           height={424}
           objectFit="cover"
+          priority={true}
         />
       </div>
     ))}

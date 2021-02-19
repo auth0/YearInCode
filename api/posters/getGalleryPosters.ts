@@ -8,7 +8,7 @@ import createHttpError from 'http-errors'
 
 import {shuffle} from '@api/lib/array'
 import {logger} from '@nebula/log'
-import {PosterGalleryResponse} from '@nebula/types/poster'
+import {PosterGalleryResponse, PosterState} from '@nebula/types/poster'
 
 import PosterModel from './poster.model'
 
@@ -17,20 +17,35 @@ async function getGalleryPosters() {
     const SCAN_LIMIT = 80
 
     logger.info(`Scanning ${SCAN_LIMIT} posters`)
-    const posterDocuments: PosterGalleryResponse = await PosterModel.scan()
+    const posterDocuments: Pick<
+      PosterState,
+      'posterImages' | 'posterData'
+    >[] = await PosterModel.scan()
       .limit(SCAN_LIMIT)
-      .attributes(['posterImages'])
+      .attributes(['posterImages', 'posterData'])
       .exec()
 
     logger.info(`Shuffling the result: ${JSON.stringify(posterDocuments)}`)
 
-    const shuffledPosters = shuffle(posterDocuments)
+    const filteredPosters: PosterGalleryResponse = posterDocuments
+      .filter(({posterData}) => {
+        const parsedPosterData = JSON.parse(posterData)
+          .weeks as PosterState['posterData']
+
+        return parsedPosterData.length >= 3
+      })
+      .map(({posterImages}) => ({
+        posterImages,
+      }))
+    const shuffledPosters = shuffle(filteredPosters)
 
     logger.info(`Shuffled! Result: ${JSON.stringify(shuffledPosters)}`)
 
     return {
       statusCode: 200,
-      body: JSON.stringify(shuffledPosters.slice(0, 16)),
+      body: JSON.stringify(
+        shuffledPosters.slice(0, 16) as PosterGalleryResponse,
+      ),
     }
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
