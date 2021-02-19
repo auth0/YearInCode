@@ -1,6 +1,6 @@
 import {NextSeo} from 'next-seo'
 
-import {LayoutNoBackdrop, DownloadPoster} from '@components/poster'
+import {DownloadPoster} from '@components/poster'
 import {PosterService} from '@lib/poster/poster-service'
 import {Poster, PosterSlugResponse} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
@@ -8,6 +8,7 @@ import PosterComponent from '@components/poster/Poster'
 import {constants} from '@lib/common'
 import {Year} from '@nebula/types/queue'
 import {auth0, UserProfile} from '@lib/auth'
+import {Footer, Header, Layout} from '@components/common'
 
 interface PosterBySlugProps {
   year: Year
@@ -27,6 +28,12 @@ export default function PosterBySlug({
   user,
 }: PosterBySlugProps) {
   const siteUrl = `${constants.site.url}/posters/${posterSlug}`
+
+  const isUserPoster =
+    user?.name.trim() === posterData.name.trim() ||
+    user?.nickname.trim() === posterData.name.trim()
+
+  const canGenerateMorePosters = otherPosters.length < 3 && isUserPoster
 
   return (
     <>
@@ -48,18 +55,29 @@ export default function PosterBySlug({
         }}
       />
 
-      <DownloadPoster
-        year={year}
-        user={user}
-        posterData={posterData}
-        posterImages={posterImages}
-        posterSlug={posterSlug}
-        otherPosters={otherPosters}
-      />
+      <Layout
+        navigation={
+          <Header isUserPoster={isUserPoster} isLoggedIn={Boolean(user)} />
+        }
+        content={
+          <>
+            <DownloadPoster
+              year={year}
+              isUserPoster={isUserPoster}
+              posterData={posterData}
+              canGenerateMorePosters={canGenerateMorePosters}
+              posterImages={posterImages}
+              posterSlug={posterSlug}
+              otherPosters={otherPosters}
+            />
 
-      <section className="flex flex-col items-center flex-1 px-4 pb-12 overflow-auto">
-        <PosterComponent wrapperClassName="mt-12" data={posterData} />
-      </section>
+            <section className="flex flex-col items-center flex-1 px-4 pb-12 overflow-auto">
+              <PosterComponent wrapperClassName="mt-12" data={posterData} />
+            </section>
+          </>
+        }
+        footer={<Footer />}
+      />
     </>
   )
 }
@@ -84,7 +102,7 @@ export async function getServerSideProps({params, res, req}) {
         posterData: JSON.parse(posterData) as Poster,
         posterImages,
         otherPosters,
-        user: session?.user,
+        user: session?.user ?? null,
       },
     }
   } catch (err) {
@@ -104,5 +122,3 @@ export async function getServerSideProps({params, res, req}) {
     }
   }
 }
-
-PosterBySlug.Layout = LayoutNoBackdrop

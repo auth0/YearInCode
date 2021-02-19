@@ -2,13 +2,16 @@ import React from 'react'
 import useWebSocket, {ReadyState} from 'react-use-websocket'
 import * as Iron from '@hapi/iron'
 import nProgress from 'nprogress'
+import Link from 'next/link'
 
 import {auth0} from '@lib/auth'
 import {createLoginUrl} from '@lib/common'
-import {Layout, LoadingView, SelectYearsView} from '@components/poster'
+import {LoadingView, SelectYearsView} from '@components/poster'
 import {PosterSteps} from '@nebula/types/poster'
 import {PosterService} from '@lib/poster/poster-service'
 import {Year} from '@nebula/types/queue'
+import Logo from '@assets/svg/auth0-logo-white.svg'
+import {Layout, PosterBackdrop} from '@components/common'
 
 interface Props {
   wsPayload: string
@@ -63,17 +66,36 @@ export default function Loading({
     return <span className="sr-only">Connecting to Websocket</span>
   }
 
-  if (step) {
-    return (
-      <LoadingView
-        step={step}
-        wsDisconnected={isDisconnected}
-        posterSlug={posterSlug}
-      />
-    )
-  }
-
-  return <SelectYearsView completedYears={completedYears} setStep={setStep} />
+  return (
+    <Layout
+      navigation={
+        <header className="flex items-center justify-center px-4 pt-8">
+          <Link href="/" passHref>
+            <a>
+              <Logo aria-hidden />
+              <span className="sr-only">Auth0 Logo</span>
+            </a>
+          </Link>
+        </header>
+      }
+      content={
+        <PosterBackdrop>
+          {step ? (
+            <LoadingView
+              step={step}
+              wsDisconnected={isDisconnected}
+              posterSlug={posterSlug}
+            />
+          ) : (
+            <SelectYearsView
+              completedYears={completedYears}
+              setStep={setStep}
+            />
+          )}
+        </PosterBackdrop>
+      }
+    />
+  )
 }
 
 export async function getServerSideProps({req, res, query}) {
@@ -128,5 +150,3 @@ export async function getServerSideProps({req, res, query}) {
     },
   }
 }
-
-Loading.Layout = Layout

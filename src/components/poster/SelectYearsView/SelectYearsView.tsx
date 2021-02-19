@@ -80,7 +80,7 @@ const SelectYears: React.FC<SelectYearsProps> = ({setStep, completedYears}) => {
         color="primary"
         size="large"
       >
-        Generate Death Star
+        Generate Year In Code
       </Button>
     </section>
   )

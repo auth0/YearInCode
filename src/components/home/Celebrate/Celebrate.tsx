@@ -41,7 +41,7 @@ const Hero = () => {
       </header>
 
       <RippleArrow
-        href="#meet-poster"
+        href="#showcase"
         aria-label="Learn more about Nebula"
         className="mt-24 mb-16 lg:mb-0 lg:mt-0"
       />

@@ -1,14 +1,35 @@
-import {Layout} from '@components/common'
+import {Footer, Header, Layout, PosterBackdrop} from '@components/common'
 import {Celebrate, Hero, ShowcaseGrid} from '@components/home'
+import {auth0} from '@lib/auth'
 
-export default function Home() {
+interface HomeProps {
+  isLoggedIn: boolean
+}
+
+export default function Home({isLoggedIn}: HomeProps) {
   return (
-    <div className="flex flex-col flex-1">
-      <Hero />
-      <Celebrate />
-      <ShowcaseGrid />
-    </div>
+    <Layout
+      navigation={<Header isLoggedIn={isLoggedIn} />}
+      content={
+        <PosterBackdrop>
+          <div className="flex flex-col flex-1">
+            <Hero />
+            <Celebrate />
+            <ShowcaseGrid />
+          </div>
+        </PosterBackdrop>
+      }
+      footer={<Footer />}
+    />
   )
 }
 
-Home.Layout = Layout
+export async function getServerSideProps({req}) {
+  const session = await auth0.getSession(req)
+
+  return {
+    props: {
+      isLoggedIn: Boolean(session),
+    },
+  }
+}

@@ -24,9 +24,10 @@ interface GetPosterProps {
   year: Year
   posterSlug: string
   posterImages: PosterImageSizes
-  posterData: Poster
   otherPosters: PosterSlugResponse['otherPosters']
-  user: UserProfile
+  canGenerateMorePosters: boolean
+  isUserPoster: boolean
+  posterData: Poster
 }
 
 const GetPoster: React.FC<GetPosterProps> = ({
@@ -34,7 +35,8 @@ const GetPoster: React.FC<GetPosterProps> = ({
   posterSlug,
   posterImages,
   otherPosters,
-  user,
+  canGenerateMorePosters,
+  isUserPoster,
   posterData,
 }) => {
   const [creatingZip, setCreatingZip] = React.useState(false)
@@ -43,12 +45,6 @@ const GetPoster: React.FC<GetPosterProps> = ({
     navigator.share &&
     browser.name !== 'edge-chromium' &&
     browser.name !== 'safari'
-
-  const isUserPoster =
-    user?.name.trim() === posterData.name.trim() ||
-    user?.nickname.trim() === posterData.name.trim()
-
-  const canGenerateMorePosters = otherPosters.length < 3 && isUserPoster
 
   const sortedOtherPosters = otherPosters.sort((a, b) => a.year - b.year)
 
@@ -67,19 +63,16 @@ const GetPoster: React.FC<GetPosterProps> = ({
     <section className="z-10 flex flex-col items-center justify-center flex-1 px-4 py-12 space-y-12">
       <header className="flex flex-col items-center space-y-12 text-center">
         <Typography
-          className={clsx(
-            'flex flex-col justify-center max-w-5xl font-semibold',
-            'lg:flex-row lg:space-x-4',
-          )}
+          className={clsx('justify-center max-w-5xl font-semibold')}
           variant="h1"
         >
-          <span>Your</span>
+          {isUserPoster ? 'Your' : `${posterData.name.split(' ')[0]}'s`}{' '}
           {otherPosters.length ? (
             <SelectYearPopover year={year} otherPosters={sortedOtherPosters} />
           ) : (
-            <span>{year}</span>
-          )}
-          <span>journey is ready!</span>
+            `${year}`
+          )}{' '}
+          journey is ready!
         </Typography>
         <Typography
           variant="h6"
@@ -93,16 +86,16 @@ const GetPoster: React.FC<GetPosterProps> = ({
       </header>
 
       <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
-        {canGenerateMorePosters && (
-          <Link href="/posters/generate?new=true" passHref>
-            <Button color="primary">Generate another year</Button>
-          </Link>
-        )}
-
         {canMobileShare ? (
           <MobileShareButton posterSlug={posterSlug} year={year} />
         ) : (
           <DesktopShareLinks posterSlug={posterSlug} year={year} />
+        )}
+
+        {canGenerateMorePosters && (
+          <Link href="/posters/generate?new=true" passHref>
+            <Button color="primary">Generate another year</Button>
+          </Link>
         )}
 
         <Button

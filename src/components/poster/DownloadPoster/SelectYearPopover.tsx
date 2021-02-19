@@ -51,12 +51,12 @@ export default function SelectYearPopover({
   return (
     <>
       <button
-        className="flex items-center self-center space-x-2 font-semibold"
+        className="inline-flex items-center justify-start space-x-2 font-semibold"
         {...buttonProps}
         {...triggerProps}
         ref={triggerRef}
       >
-        <span>{year}</span>{' '}
+        {year}{' '}
         {state.isOpen ? (
           <ChevronUp strokeWidth="3" />
         ) : (
@@ -71,17 +71,17 @@ export default function SelectYearPopover({
             ref={overlayRef}
             isOpen={state.isOpen}
             onClose={state.close}
-            className="flex flex-col overflow-hidden rounded-md"
+            className="flex flex-col overflow-hidden bg-black border rounded-md border-gray-50"
           >
             {otherPosters.map(({posterSlug, year}) => (
               <a
-                className="px-5 py-4 font-semibold hover:bg-gray-400"
+                className="px-5 py-4 font-semibold hover:bg-gray-900"
                 href={`/posters/${posterSlug}`}
                 key={posterSlug}
               >
                 <Typography
                   onClick={() => state.close()}
-                  variant="h1"
+                  variant="h2"
                   as="span"
                 >
                   {year}

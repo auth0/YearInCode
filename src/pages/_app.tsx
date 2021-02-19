@@ -13,8 +13,6 @@ import 'react-toastify/dist/ReactToastify.min.css'
 import {Head} from '@components/common'
 import '@assets/css/main.css'
 
-const Noop: React.FC = ({children}) => <>{children}</>
-
 // Add tailwind-debug-screens in development
 if (process.env.NODE_ENV === 'development' && typeof document !== 'undefined') {
   document.body.classList.add('debug-screens')
@@ -25,16 +23,12 @@ Router.events.on('routeChangeComplete', () => nProgress.done())
 Router.events.on('routeChangeError', () => nProgress.done())
 
 function App({Component, pageProps}) {
-  const Layout = (Component as any).Layout || Noop
-
   return (
     <AppProviders>
       <Head />
 
-      <Layout>
-        <Component {...pageProps} />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </Layout>
+      <Component {...pageProps} />
+      <ReactQueryDevtools initialIsOpen={false} />
       <ToastContainer />
     </AppProviders>
   )
@@ -45,7 +39,7 @@ const queryClient = new QueryClient()
 const AppProviders: React.FC = ({children}) => (
   <QueryClientProvider client={queryClient}>
     <SSRProvider>
-      <OverlayProvider>{children} </OverlayProvider>
+      <OverlayProvider>{children}</OverlayProvider>
     </SSRProvider>
   </QueryClientProvider>
 )

@@ -1,12 +1,14 @@
-import {Header, Footer, PosterBackdrop} from '@components/common'
+interface LayoutProps {
+  navigation?: React.ReactNode
+  content: React.ReactNode
+  footer?: React.ReactNode
+}
 
-const Layout: React.FC = ({children}) => (
-  <div className="container flex flex-col mx-auto min-h-screen">
-    <Header />
-
-    <PosterBackdrop>{children}</PosterBackdrop>
-
-    <Footer />
+const Layout: React.FC<LayoutProps> = ({navigation, content, footer}) => (
+  <div className="container flex flex-col min-h-screen mx-auto">
+    {navigation}
+    <main className="flex flex-col flex-1">{content}</main>
+    {footer}
   </div>
 )
 

@@ -18,5 +18,5 @@ export const Basic = Template.bind({})
 Basic.args = {
   type: 'warning',
   children:
-    "Creating your Death Star can take around an hour. We'll email you when it’s ready!",
+    "Creating your Year In Code can take around an hour. We'll email you when it’s ready!",
 }

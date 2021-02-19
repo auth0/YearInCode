@@ -30,8 +30,8 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({
   return (
     <div
       className={clsx(
-        'flex flex-col items-center justify-center space-y-4',
-        'sm:flex-row sm:space-x-6 sm:space-y-0',
+        'flex items-center justify-center space-x-4',
+        'sm:space-x-6 sm:space-y-0',
       )}
     >
       <Button
