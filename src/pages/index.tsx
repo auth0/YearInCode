@@ -1,12 +1,15 @@
 import {Footer, Header, Layout, PosterBackdrop} from '@components/common'
 import {Celebrate, Hero, ShowcaseGrid} from '@components/home'
 import {auth0} from '@lib/auth'
+import {PosterService} from '@lib/poster/poster-service'
+import {PosterGalleryResponse} from '@nebula/types/poster'
 
 interface HomeProps {
   isLoggedIn: boolean
+  galleryPosters: PosterGalleryResponse
 }
 
-export default function Home({isLoggedIn}: HomeProps) {
+export default function Home({isLoggedIn, galleryPosters}: HomeProps) {
   return (
     <Layout
       navigation={<Header isLoggedIn={isLoggedIn} />}
@@ -15,7 +18,7 @@ export default function Home({isLoggedIn}: HomeProps) {
           <div className="flex flex-col flex-1">
             <Hero />
             <Celebrate />
-            <ShowcaseGrid />
+            <ShowcaseGrid galleryPosters={galleryPosters} />
           </div>
         </PosterBackdrop>
       }
@@ -25,11 +28,16 @@ export default function Home({isLoggedIn}: HomeProps) {
 }
 
 export async function getServerSideProps({req}) {
-  const session = await auth0.getSession(req)
+  const sessionPromise = auth0.getSession(req)
+  const posterImagesPromise = PosterService._getGalleryPosters()
+
+  const session = await sessionPromise
+  const posterImages = await posterImagesPromise
 
   return {
     props: {
       isLoggedIn: Boolean(session),
+      galleryPosters: posterImages,
     },
   }
 }

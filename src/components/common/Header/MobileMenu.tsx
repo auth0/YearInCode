@@ -69,7 +69,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         ) : (
           <li>
             <Link href="/posters/generate" passHref>
-              <Typography variant="h3" as="li">
+              <Typography variant="h3" as="a">
                 Connect with GitHub
               </Typography>
             </Link>

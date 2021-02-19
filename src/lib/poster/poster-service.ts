@@ -3,6 +3,7 @@ import axios from 'axios'
 import {client} from '@lib/api'
 import {constants} from '@lib/common'
 import {
+  PosterGalleryResponse,
   PosterSlugResponse,
   PosterStatusDTO,
   PosterStatusResponse,
@@ -18,7 +19,7 @@ class PosterServiceImplementation {
     return data
   }
 
-  public async getPosters(
+  public async _getPosters(
     userId: PosterStatusDTO['userId'],
     accessToken: string,
   ) {
@@ -33,7 +34,7 @@ class PosterServiceImplementation {
     return data
   }
 
-  public async getPosterBySlug(posterSlug: string) {
+  public async _getPosterBySlug(posterSlug: string) {
     const url = `${constants.api.lambdaUrl}/posters/${posterSlug}`
 
     const {data} = await axios.get<PosterSlugResponse>(url)
@@ -41,7 +42,15 @@ class PosterServiceImplementation {
     return data
   }
 
-  public async requestQueue(
+  public async _getGalleryPosters() {
+    const url = `${constants.api.lambdaUrl}/posters/gallery`
+
+    const {data} = await axios.get<PosterGalleryResponse>(url)
+
+    return data
+  }
+
+  public async _requestQueue(
     userId: string,
     username: string,
     year: QueueDTO['year'],
