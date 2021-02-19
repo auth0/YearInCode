@@ -31,7 +31,8 @@ const mockedPosterImages: PosterImageSizes = {
   twitter: 'twitter.png',
   highQualityPoster: 'high-quality.png',
   instagram: 'instagram.png',
-  openGraph: 'opengrapp.png',
+  openGraph: 'openGraph.png',
+  verticalCard: 'verticalCard.png',
 }
 
 afterEach(async () => {

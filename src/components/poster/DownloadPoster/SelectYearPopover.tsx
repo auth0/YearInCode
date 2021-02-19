@@ -71,7 +71,7 @@ export default function SelectYearPopover({
             ref={overlayRef}
             isOpen={state.isOpen}
             onClose={state.close}
-            className="flex flex-col overflow-hidden bg-black border rounded-md border-gray-50"
+            className="flex flex-col overflow-hidden bg-black border-2 rounded-md border-gray-50"
           >
             {otherPosters.map(({posterSlug, year}) => (
               <a
@@ -81,7 +81,7 @@ export default function SelectYearPopover({
               >
                 <Typography
                   onClick={() => state.close()}
-                  variant="h2"
+                  variant="h1"
                   as="span"
                 >
                   {year}

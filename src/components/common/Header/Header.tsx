@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import {useRouter} from 'next/router'
-import {useWindowSize} from 'react-use'
 
 import Logo from '@assets/svg/auth0-logo-white.svg'
 
@@ -14,10 +13,8 @@ interface Props {
 
 function Header({isLoggedIn = false, isUserPoster}: Props) {
   const {pathname} = useRouter()
-  const {width} = useWindowSize()
 
   const showGeneratePoster = pathname === '/' || !isUserPoster
-  const isMobile = width < 425
 
   return (
     <header className="flex items-center justify-between px-6 pt-8 sm:px-4">

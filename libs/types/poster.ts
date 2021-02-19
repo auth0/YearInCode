@@ -34,6 +34,7 @@ export interface PosterImageSizes {
   twitter: string
   openGraph: string
   highQualityPoster: string
+  verticalCard: string
 }
 
 export interface PosterState {
