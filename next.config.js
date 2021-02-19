@@ -12,6 +12,9 @@ module.exports = withBundleAnalyzer({
     return config
   },
   images: {
-    domains: process.env.NODE_ENV === 'development' ? ['localhost'] : [],
+    domains:
+      process.env.NODE_ENV === 'development'
+        ? ['localhost']
+        : [process.env.NEXT_PUBLIC_CLOUDFRONT_URL],
   },
 })
