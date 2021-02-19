@@ -2,6 +2,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE_BUNDLE === 'true',
 })
 
+function getDomain(val) {
+  return val.replace('https://', '')
+}
+
 module.exports = withBundleAnalyzer({
   webpack(config) {
     config.module.rules.push({
@@ -15,6 +19,6 @@ module.exports = withBundleAnalyzer({
     domains:
       process.env.NODE_ENV === 'development'
         ? ['localhost']
-        : [process.env.NEXT_PUBLIC_CLOUDFRONT_URL],
+        : [getDomain(process.env.NEXT_PUBLIC_CLOUDFRONT_URL) || ''],
   },
 })
