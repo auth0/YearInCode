@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 import {Typography, Button} from '@components/ui'
 import GitHubIcon from '@assets/svg/github-logo.svg'
