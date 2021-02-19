@@ -17,7 +17,7 @@ const DesktopMenu: React.FC<DesktopMenuProps> = ({
         <>
           {showGeneratePoster && (
             <Link href="/posters/generate" passHref>
-              <Button color="primary">My poster</Button>
+              <Button color="primary">Go To My poster</Button>
             </Link>
           )}
           <Link href="/api/logout" passHref>

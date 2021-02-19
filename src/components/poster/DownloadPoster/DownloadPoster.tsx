@@ -60,10 +60,10 @@ const GetPoster: React.FC<GetPosterProps> = ({
   }
 
   return (
-    <section className="z-10 flex flex-col items-center justify-center flex-1 px-4 py-12 space-y-12">
-      <header className="flex flex-col items-center space-y-12 text-center">
+    <section className="z-10 flex flex-col items-center justify-center flex-1 px-4 py-12 space-y-12 -mt-52">
+      <header className="z-10 flex flex-col items-center space-y-12 text-center">
         <Typography
-          className={clsx('justify-center max-w-5xl font-semibold')}
+          className="justify-center max-w-5xl font-semibold"
           variant="h1"
         >
           {isUserPoster ? 'Your' : `${posterData.name.split(' ')[0]}'s`}{' '}

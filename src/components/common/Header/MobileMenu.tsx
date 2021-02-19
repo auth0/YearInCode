@@ -52,7 +52,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             {showGeneratePoster && (
               <li>
                 <Link href="/posters/generate" passHref>
-                  <Typography variant="h4" as="a" className="text-flamingo-500">
+                  <Typography variant="h3" as="a" className="text-flamingo-500">
                     My poster
                   </Typography>
                 </Link>
@@ -60,7 +60,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             )}
             <li>
               <Link href="/api/logout" passHref>
-                <Typography variant="h4" as="a">
+                <Typography variant="h3" as="a">
                   Log out
                 </Typography>
               </Link>
@@ -69,7 +69,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         ) : (
           <li>
             <Link href="/posters/generate" passHref>
-              <Typography variant="h4" as="li">
+              <Typography variant="h3" as="li">
                 Connect with GitHub
               </Typography>
             </Link>

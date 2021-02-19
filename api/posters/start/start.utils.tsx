@@ -119,6 +119,14 @@ export async function sendPosterMail({
   }
 }
 
+interface ImageParam {
+  key: string
+  html: string
+  fileName: string
+  comment: string
+  viewport: Viewport
+}
+
 export async function generateImagesAndUploadToS3(
   data: Poster,
   posterSlug: string,
@@ -157,47 +165,45 @@ export async function generateImagesAndUploadToS3(
     headless: chromium.headless,
     ignoreHTTPSErrors: true,
   })
-  const page = await browser.newPage()
 
-  const twitterPosterFileName = await uploadScreenshot({
-    page,
+  const params: ImageParam[] = []
+
+  params.push({
+    key: 'twitter',
     html: ReactDOMServer.renderToString(<TwitterPoster data={data} />),
     viewport: dimensions.twitter,
     fileName: `${posterSlug}-1080x512.png`,
     comment: 'Twitter poster',
   })
-
-  fileNames.twitter = twitterPosterFileName
-
-  const instagramPosterFileName = await uploadScreenshot({
-    page,
+  params.push({
+    key: 'instagram',
     html: ReactDOMServer.renderToString(<InstagramPoster data={data} />),
     viewport: dimensions.instagram,
     fileName: `${posterSlug}-1080x1080.png`,
     comment: 'Instagram poster',
   })
-
-  fileNames.instagram = instagramPosterFileName
-
-  const openGraphPosterFileName = await uploadScreenshot({
-    page,
+  params.push({
+    key: 'openGraph',
     html: ReactDOMServer.renderToString(<OpenGraphPoster data={data} />),
     viewport: dimensions.openGraph,
     fileName: `${posterSlug}-1280x680.png`,
     comment: 'Open Graph poster',
   })
-
-  fileNames.openGraph = openGraphPosterFileName
-
-  const highQualityPosterFileName = await uploadScreenshot({
-    page,
+  params.push({
+    key: 'highQualityPoster',
     html: ReactDOMServer.renderToString(<HighQualityPoster data={data} />),
     viewport: dimensions.highQuality,
     fileName: `${posterSlug}-1800x2400.png`,
     comment: 'High quality poster',
   })
 
-  fileNames.highQualityPoster = highQualityPosterFileName
+  const promises = params.map(async ({key, ...rest}) => {
+    const page = await browser.newPage()
+    const fileName = await uploadScreenshot({page, ...rest})
+    fileNames[key] = fileName
+  })
+
+  await Promise.all(promises)
 
   logger.info('Cleaning up browser...')
   await browser.close()
@@ -234,6 +240,9 @@ async function uploadScreenshot({
     Key: fileName,
     Body: screenshot as any,
   }).promise()
+
+  logger.info(`Closing page...`)
+  await page.close()
 
   return fileName
 }

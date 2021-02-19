@@ -11,4 +11,7 @@ module.exports = withBundleAnalyzer({
 
     return config
   },
+  images: {
+    domains: process.env.NODE_ENV === 'development' ? ['localhost'] : [],
+  },
 })

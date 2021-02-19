@@ -1,6 +1,6 @@
 import {NextSeo} from 'next-seo'
 
-import {DownloadPoster} from '@components/poster'
+import {DownloadPoster, PosterHangingSign} from '@components/poster'
 import {PosterService} from '@lib/poster/poster-service'
 import {Poster, PosterSlugResponse} from '@nebula/types/poster'
 import {logger} from '@nebula/log'
@@ -60,7 +60,11 @@ export default function PosterBySlug({
           <Header isUserPoster={isUserPoster} isLoggedIn={Boolean(user)} />
         }
         content={
-          <>
+          <div className="pt-8">
+            <PosterHangingSign
+              name={posterData.name}
+              src={`${constants.site.cloudfront_url}/${posterImages.highQualityPoster}`}
+            />
             <DownloadPoster
               year={year}
               isUserPoster={isUserPoster}
@@ -74,7 +78,7 @@ export default function PosterBySlug({
             <section className="flex flex-col items-center flex-1 px-4 pb-12 overflow-auto">
               <PosterComponent wrapperClassName="mt-12" data={posterData} />
             </section>
-          </>
+          </div>
         }
         footer={<Footer />}
       />

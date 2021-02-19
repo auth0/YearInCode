@@ -69,7 +69,7 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({className}) => (
-  <div className={clsx('flex flex-col space-y-8', className)}>
+  <div className={clsx('flex flex-col space-y-6', className)}>
     {new Array(4).fill(null).map((_, i) => (
       <div key={i} style={{height: 424}} className="bg-gray-200 w-80"></div>
     ))}

@@ -265,13 +265,13 @@ const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   )
 }
 
-interface WrappedStarProps extends PosterComponentProps {
+interface WrappedPosterProps extends PosterComponentProps {
   wrapperClassName: string
 
   screenWidth?: number
 }
 
-const WrappedStar: React.FC<WrappedStarProps> = props => {
+const WrappedPoster: React.FC<WrappedPosterProps> = props => {
   const {height: screenHeight} = useWindowSize()
   const height = screenHeight * 0.95
 
@@ -284,4 +284,4 @@ const WrappedStar: React.FC<WrappedStarProps> = props => {
   )
 }
 
-export default WrappedStar
+export default WrappedPoster

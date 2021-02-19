@@ -1,0 +1,12 @@
+<svg
+  width="315"
+  height="135"
+  viewBox="0 0 350 135"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path d="M27.7099 121.355L14.355 108L1.00006 121.355" stroke="#6C6C6C" />
+  <path d="M348.71 121.355L335.355 108L322 121.355" stroke="#6C6C6C" />
+  <line x1="14.5" y1="108" x2="14.5" y2="2.18557e-08" stroke="#6C6C6C" />
+  <line x1="335.5" y1="108" x2="335.5" y2="2.18557e-08" stroke="#6C6C6C" />
+</svg>
