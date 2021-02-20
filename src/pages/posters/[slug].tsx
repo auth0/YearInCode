@@ -8,7 +8,8 @@ import PosterComponent from '@components/poster/Poster'
 import {constants} from '@lib/common'
 import {Year} from '@nebula/types/queue'
 import {auth0, UserProfile} from '@lib/auth'
-import {Footer, Header, Layout} from '@components/common'
+import {Footer, Header, Layout, PosterBackdrop} from '@components/common'
+import NoGithubActivity from '@components/poster/NoGitHubActivity'
 
 interface PosterBySlugProps {
   year: Year
@@ -34,6 +35,41 @@ export default function PosterBySlug({
     user?.nickname.trim() === posterData.name.trim()
 
   const canGenerateMorePosters = otherPosters.length < 3 && isUserPoster
+
+  if (posterData.weeks.length === 0 && isUserPoster) {
+    return (
+      <>
+        <NextSeo
+          title={`${posterData.name}'s ${posterData.year} Year in Code`}
+          openGraph={{
+            type: 'website',
+            description: `Come take a look at the art generated from ${posterData.name}’s code in ${posterData.year}!`,
+            images: [
+              {
+                url: `${constants.site.cloudfront_url}/${posterImages.openGraph}`,
+                width: 1280,
+                height: 680,
+              },
+            ],
+          }}
+          twitter={{
+            site: siteUrl,
+          }}
+        />
+
+        <Layout
+          navigation={
+            <Header isUserPoster={isUserPoster} isLoggedIn={Boolean(user)} />
+          }
+          content={
+            <PosterBackdrop>
+              <NoGithubActivity />
+            </PosterBackdrop>
+          }
+        />
+      </>
+    )
+  }
 
   return (
     <>

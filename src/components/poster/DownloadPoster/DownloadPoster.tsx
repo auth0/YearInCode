@@ -12,7 +12,6 @@ import {
   PosterSlugResponse,
 } from '@nebula/types/poster'
 import {Year} from '@nebula/types/queue'
-import {UserProfile} from '@lib/auth'
 
 import DesktopShareLinks from './DesktopShareLinks'
 import {generateDownloadPack} from './DownloadPoster.utils'
