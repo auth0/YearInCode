@@ -1,9 +1,10 @@
 import * as React from 'react'
 import {ParentSize} from '@visx/responsive'
 import clsx from 'clsx'
-import {useWindowSize} from 'react-use'
+import {useClickAway, useWindowSize} from 'react-use'
 import {useTooltip, useTooltipInPortal, TooltipWithBounds} from '@visx/tooltip'
 import {AnimatePresence, motion} from 'framer-motion'
+import debounce from 'debounce'
 
 import {Poster} from '@nebula/types/poster'
 import {Typography} from '@components/ui'
@@ -47,6 +48,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     scroll: true,
     detectBounds: true,
   })
+  const [isFirstTouch, setIsFirstTouch] = React.useState(false)
 
   const margin = {top: 20, right: 10, bottom: 40, left: 10}
   const xMax = width - margin.left - margin.right
@@ -70,8 +72,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
 
   const handleTouchStart = React.useCallback(
     (data: PosterTooltipData) => (event: React.TouchEvent) => {
-      if (tooltipTimeout) clearTimeout(tooltipTimeout)
-
+      setIsFirstTouch(true)
       showTooltip({
         tooltipLeft: event.touches[0].clientX - containerBounds.left,
         tooltipTop: event.touches[0].clientY - containerBounds.top,
@@ -81,11 +82,19 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
     [showTooltip, containerBounds],
   )
 
-  const handleTouchEnd = React.useCallback(() => {
-    tooltipTimeout = window.setTimeout(() => {
+  const handleTouchEnd = React.useCallback(
+    debounce(() => {
+      if (isFirstTouch) {
+        return setIsFirstTouch(false)
+      }
+
       hideTooltip()
-    }, 300)
-  }, [])
+    }, 100),
+    [isFirstTouch],
+  )
+
+  const posterRef = React.useRef(null)
+  useClickAway(posterRef, handleTouchEnd)
 
   const handleMouseLeave = React.useCallback(() => {
     tooltipTimeout = window.setTimeout(() => {
@@ -108,7 +117,6 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
       />
 
       <AnimatePresence>
@@ -117,6 +125,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
           tooltipLeft != null &&
           tooltipTop != null && (
             <motion.div
+              ref={posterRef}
               className="z-30"
               initial={{opacity: 0}}
               animate={{opacity: 1}}

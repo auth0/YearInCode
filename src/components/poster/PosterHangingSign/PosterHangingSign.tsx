@@ -12,7 +12,7 @@ interface PosterHangingSignProps {
 const PosterHangingSign: React.FC<PosterHangingSignProps> = ({name, src}) => {
   return (
     <div className={s.container}>
-      <RopeSVG className={s.rope} />
+      <RopeSVG className={s.rope} aria-hidden />
       <div className="border border-gray-500">
         <Image
           src={src}
