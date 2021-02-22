@@ -135,14 +135,17 @@ export async function generateImagesAndUploadToS3(
     twitter: {
       width: 1080,
       height: 512,
+      deviceScaleFactor: 2,
     },
     instagram: {
       width: 1080,
       height: 1080,
+      deviceScaleFactor: 2,
     },
     openGraph: {
       width: 1280,
       height: 680,
+      deviceScaleFactor: 2,
     },
     highQuality: {
       width: 1800,

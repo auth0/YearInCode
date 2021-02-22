@@ -49,10 +49,9 @@ const DesktopShareLinks: React.FC<DesktopShareLinksProps> = ({
         icon={<LinkedInLogo aria-hidden />}
         aria-label="Share on LinkedIn"
       />
-      {/* TODO: Get Facebook app_id */}
       <Button
         target="__blank"
-        href={`https://www.facebook.com/dialog/share?app_id=8485179393&display=popup&href=${encodedPosterUrl}&hashtags=${encodedHashtags}`}
+        href={`https://www.facebook.com/dialog/share?app_id=${constants.site.facebook_id}&href=${encodedPosterUrl}&hashtags=${encodedHashtags}`}
         rel="noopener noreferrer"
         icon={<FacebookLogo aria-hidden />}
         aria-label="Share on Facebook"

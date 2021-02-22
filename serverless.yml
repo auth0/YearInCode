@@ -1,8 +1,8 @@
 service: nebula-serverless
 
 # app and org for use with dashboard.serverless.com
-app: nebula
-org: stackbuilders
+# app: nebula
+# org: FILL_ORGANIZATION_NAME
 
 frameworkVersion: '2'
 

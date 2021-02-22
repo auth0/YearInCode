@@ -28,7 +28,7 @@ const Hero = () => {
             className="max-w-2xl leading-relaxed text-white opacity-60"
           >
             Auth0 allows you to quickly connect any social provider to your
-            website, including github login. Authenticate using your github
+            website, including GitHub login. Authenticate using your GitHub
             account to generate a poster of your own. Your year in code :)
           </Typography>
         </div>

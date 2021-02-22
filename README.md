@@ -9,18 +9,7 @@ An experience for developers to see their career in space/time.
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Java](https://openjdk.java.net/install/index.html)
-
-### Commands
-
-In the development environment, an elasticmq server is running on port 9324, a
-serverless offline on port 1337, and a Next.js dev server on port 3000 for the
-React frontend. To run all of these servers concurrently, run the dev command.
-
-```
-yarn dev
-# or
-npm run dev
-```
+- [Serverless Framework](https://www.serverless.com/framework/docs/getting-started/)
 
 ## Configuring Auth0
 
@@ -40,10 +29,7 @@ npm run dev
 
 ### Set up environment variables
 
-To connect the app with Auth0, you'll need to add the settings from your Auth0
-application as environment variables
-
-Copy the `.env.local.example` file in this directory to `.env.local` (which will
+Copy the `.env.local.sample` file in this directory to `.env.local` (which will
 be ignored by Git):
 
 ```bash
@@ -62,9 +48,71 @@ Then, open `.env.local` and add the missing environment variables:
 - `NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI` - Where to redirect after logging out
 - `SESSION_COOKIE_SECRET` - A unique secret used to encrypt the cookies, has to
   be at least 32 characters. You can use
+  [this generator](https://generate-secret.now.sh/32) to generate a value. Value
+  is in seconds.
+- `WEBSOCKET_PAYLOAD_SECRET` - A unique secret used to encrypt the websocket
+  payload, has to be at least 32 characters. You can use
   [this generator](https://generate-secret.now.sh/32) to generate a value.
 - `SESSION_COOKIE_LIFETIME` - How long a session lasts in seconds. The default
   is 2 hours.
+- `NEXT_PUBLIC_API_URL` - The url of Next.js serverless functions
+- `NEXT_PUBLIC_API_WEBSOCKET_URL` - The url for websocket API in AWS.
+- `NEXT_PUBLIC_CLOUDFRONT_URL` - AWS Cloudfront url
+- `LAMBDA_API_URL` - AWS API Gateway url
+- `JWKS_URI` - The url for Auth0 public keys. Normally has the following
+  structure `https://your-tenant.auth0.com/.well-known/jwks.json`
+- `JWT_TOKEN_ISSUER` - The Auth0 tenant. Normally has the following structure
+  `https://your-tenant.auth0.com/`
+- `AWS_SOURCE_EMAIL` - Email address where local emails will be sent from. Make
+  sure to verify the email in the AWS SES dashboard.
+- `NEXT_PUBLIC_FACEBOOK_ID` - Facebook APP ID. You can get it
+  [here](https://developers.facebook.com/docs/development/create-an-app).
+
+### Set Up Serveless Offline
+
+To use Serverless Pro, please login with the following command:
+
+```bash
+serverless login
+```
+
+#### Create Credentials Profiles
+
+To learn how to create profiles in AWS please refer to this
+[guide](https://www.serverless.com/framework/docs/providers/aws/guide/credentials/).
+
+Nebula has the following profiles for each stage:
+
+- `nebulaDev`
+- `nebulaStaging`
+- `nebulaProduction`
+
+### Select profile for deployment or development
+
+To switch between profiles use the following command:
+
+```bash
+export AWS_PROFILE="nebulaDev"
+```
+
+### Development
+
+In the development environment the following servers are run:
+
+- Next.js dev server on port `3000`
+- Serverless Offline on port `1337`
+- Serverless Offline SES on port `9001`
+- Serverless Offline S3 on port `4569`
+- DynamoDB on port `8000`
+- elasticmq on port `9324`
+
+To run all of these servers concurrently, run the dev command.
+
+```
+yarn dev
+# or
+npm run dev
+```
 
 ## Deploy on Vercel
 
@@ -74,6 +122,48 @@ You can deploy this app to the cloud with
 
 **Important**: When you import your project on Vercel, make sure to click on
 **Environment Variables** and set them to match your `.env.local` file.
+
+## Deploy on AWS
+
+To deploy on AWS please set up the following environment variables in the
+Parameter Store:
+
+| Name                              | Value                                                                                                 | Encrypted |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------- | --------- |
+| /{stage}/auth0/audience           | Same as `AUTH0_AUDIENCE`                                                                              |           |
+| /{stage}/auth0/client_id          | Same as `NEXT_PUBLIC_AUTH0_CLIENT_ID`                                                                 |           |
+| /{stage}/auth0/client_secret      | Same as `AUTH0_CLIENT_SECRET`                                                                         | true      |
+| /{stage}/auth0/domain             | Same as `NEXT_PUBLIC_AUTH0_DOMAIN`                                                                    |           |
+| /{stage}/jwt/jwks_uri             | Same as `JWKS_URI`                                                                                    |           |
+| /{stage}/jwt/token_issuer         | Same as `JWT_TOKEN_ISSUER`                                                                            |           |
+| /{stage}/websocket/payload_secret | Same as `WEBSOCKET_PAYLOAD_SECRET`                                                                    | true      |
+| /{stage}/site/url                 | Same as `NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI`                                                        |           |
+| /{stage}/ses/source_email         | Email address where emails will be sent from. Make sure to verify the email in the AWS SES dashboard. |           |
+
+### Manual Deployment
+
+> Before manually deploying, please make sure to have the correct profile
+> selected.
+
+To deploy to dev environment please run the following command:
+
+```bash
+serverless deploy
+```
+
+To deploy to other stages run:
+
+```bash
+serverless deploy --stage staging
+# or
+serverless deploy --stage prod
+```
+
+To deploy a single function run:
+
+```
+serverless deploy --stage stage -f functionName
+```
 
 ## Testing GitHub Actions
 
