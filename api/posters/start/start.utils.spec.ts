@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 
 import {dateToUnixTimeStamp} from '@api/lib/date'
 
-import * as startUtils from '../start.utils'
+import * as startUtils from './start.utils'
 
 describe('startUtils.getWeeksWithDominantLanguageAndRepository', () => {
   it('should add dominant language and repository to incomplete weeks array', () => {
