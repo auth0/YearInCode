@@ -2,7 +2,7 @@ service: nebula-serverless
 
 # app and org for use with dashboard.serverless.com
 # app: nebula
-# org: FILL_ORGANIZATION_NAME
+# org: ORG_NAME
 
 frameworkVersion: '2'
 
@@ -17,9 +17,12 @@ provider:
   stackName: ${self:service}-${self:custom.stage}
   region: us-east-1
   environment:
-    AUTH0_DOMAIN: ${ssm:/${self:custom.stage}/auth0/domain}
+    AUTH0_DOMAIN:
+      ${ssm:/${self:custom.stage}/auth0/domain, env:NEXT_PUBLIC_AUTH0_DOMAIN}
     AUTH0_AUDIENCE: ${ssm:/${self:custom.stage}/auth0/audience}
-    AUTH0_CLIENT_ID: ${ssm:/${self:custom.stage}/auth0/client_id}
+    AUTH0_CLIENT_ID:
+      ${ssm:/${self:custom.stage}/auth0/client_id,
+      env:NEXT_PUBLIC_AUTH0_CLIENT_ID}
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
@@ -94,6 +97,28 @@ custom:
       scripts:
         - npx del-cli node_modules/aws-sdk "node_modules/**/@types/**"
           "node_modules/**/*.d.ts" "node_modules/**/.bin"
+  domainRoot: yearincode.dev
+  cdnDomains:
+    prod: cdn.${self:custom.domainRoot}
+    staging: staging-cdn.${self:custom.domainRoot}
+    dev: dev-cdn.${self:custom.domainRoot}
+  domains:
+    prod: api.${self:custom.domainRoot}
+    staging: staging-api.${self:custom.domainRoot}
+    dev: dev-api.${self:custom.domainRoot}
+  customDomain:
+    rest:
+      domainName: ${self:custom.domains.${self:custom.stage}}
+      stage: ${self:custom.stage}
+      createRoute53Record: true
+      endpointType: regional
+      autoDomain: true
+    websocket:
+      domainName: ws-${self:custom.domains.${self:custom.stage}}
+      stage: ${self:custom.stage}
+      createRoute53Record: true
+      endpointType: regional
+      autoDomain: true
   serverless-offline-sqs:
     autoCreate: true
     apiVersion: '2012-11-05'
@@ -142,7 +167,9 @@ functions:
   authorizeWS:
     handler: auth/authorizeWS.authorizeWS
     environment:
-      WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
+      WEBSOCKET_PAYLOAD_SECRET:
+        ${ssm:/${self:custom.stage}/websocket/payload_secret~true,
+        env:WEBSOCKET_PAYLOAD_SECRET}
 
   queuePoster:
     handler: posters/queuePoster.queuePoster
@@ -150,7 +177,7 @@ functions:
       SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
-          path: api/users/{userId}/posters/queue
+          path: users/{userId}/posters/queue
           method: post
           authorizer: authorize
           cors: true
@@ -159,7 +186,7 @@ functions:
     handler: posters/getPosters.getPosters
     events:
       - http:
-          path: api/users/{userId}/posters
+          path: users/{userId}/posters
           method: get
           authorizer: authorize
           cors: true
@@ -168,7 +195,7 @@ functions:
     handler: posters/getPosterBySlug.getPosterBySlug
     events:
       - http:
-          path: api/posters/{slug}
+          path: posters/{slug}
           method: get
           cors: true
 
@@ -176,14 +203,16 @@ functions:
     handler: posters/getGalleryPosters.getGalleryPosters
     events:
       - http:
-          path: api/posters/gallery
+          path: posters/gallery
           method: get
           cors: true
 
   connect:
     handler: posters/connect.connect
     environment:
-      WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
+      WEBSOCKET_PAYLOAD_SECRET:
+        ${ssm:/${self:custom.stage}/websocket/payload_secret~true,
+        env:WEBSOCKET_PAYLOAD_SECRET}
     events:
       - websocket:
           route: $connect
@@ -206,7 +235,7 @@ functions:
     layers:
       - {Ref: PuppeteerLambdaLayer}
     environment:
-      SOURCE_EMAIL:
+      AWS_SOURCE_EMAIL:
         ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
       SITE_URL:
         ${ssm:/${self:custom.stage}/site/url,
@@ -373,6 +402,7 @@ resources:
           PriceClass: PriceClass_100
 
 plugins:
+  - serverless-domain-manager
   - serverless-dotenv-plugin
   - serverless-functions-base-path
   - serverless-offline-ses
