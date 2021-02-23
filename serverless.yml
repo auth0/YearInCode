@@ -17,9 +17,12 @@ provider:
   stackName: ${self:service}-${self:custom.stage}
   region: us-east-1
   environment:
-    AUTH0_DOMAIN: ${ssm:/${self:custom.stage}/auth0/domain}
+    AUTH0_DOMAIN:
+      ${ssm:/${self:custom.stage}/auth0/domain, env:NEXT_PUBLIC_AUTH0_DOMAIN}
     AUTH0_AUDIENCE: ${ssm:/${self:custom.stage}/auth0/audience}
-    AUTH0_CLIENT_ID: ${ssm:/${self:custom.stage}/auth0/client_id}
+    AUTH0_CLIENT_ID:
+      ${ssm:/${self:custom.stage}/auth0/client_id,
+      env:NEXT_PUBLIC_AUTH0_CLIENT_ID}
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
     JWKS_URI: ${ssm:/${self:custom.stage}/jwt/jwks_uri}
@@ -164,7 +167,9 @@ functions:
   authorizeWS:
     handler: auth/authorizeWS.authorizeWS
     environment:
-      WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
+      WEBSOCKET_PAYLOAD_SECRET:
+        ${ssm:/${self:custom.stage}/websocket/payload_secret~true,
+        env:WEBSOCKET_PAYLOAD_SECRET}
 
   queuePoster:
     handler: posters/queuePoster.queuePoster
@@ -205,7 +210,9 @@ functions:
   connect:
     handler: posters/connect.connect
     environment:
-      WEBSOCKET_PAYLOAD_SECRET: ${ssm:/${self:custom.stage}/websocket/payload_secret~true}
+      WEBSOCKET_PAYLOAD_SECRET:
+        ${ssm:/${self:custom.stage}/websocket/payload_secret~true,
+        env:WEBSOCKET_PAYLOAD_SECRET}
     events:
       - websocket:
           route: $connect
