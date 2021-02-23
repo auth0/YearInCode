@@ -53,12 +53,7 @@ async function getPosterBySlug(
       .exec()
 
     if (!otherPosters.length) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          message: "Couldn't get user",
-        }),
-      }
+      return createHttpError(404, "Couldn't get user")
     }
 
     const payload: PosterSlugResponse = {

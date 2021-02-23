@@ -5,11 +5,19 @@ import parseLinkHeader from 'parse-link-header'
 import {Page, Viewport} from 'puppeteer-core'
 import chromium from 'chrome-aws-lambda'
 import AWS from 'aws-sdk'
+import {concatLimit, mapLimit, retry} from 'async'
 
 import {logger} from '@nebula/log'
-import {Poster, PosterImageSizes, PosterSteps} from '@nebula/types/poster'
+import {
+  Poster,
+  PosterImageSizes,
+  PosterSteps,
+  PosterWeek,
+} from '@nebula/types/poster'
 import {sendMessageToClient} from '@api/lib/websocket'
 import {Year} from '@nebula/types/queue'
+import {getWeekNumber, unixTimestampToDate} from '@api/lib/date'
+import {indexOfMax} from '@nebula/common/array'
 
 import {
   InstagramPoster,
@@ -67,6 +75,268 @@ export async function getUserRepositoriesByPage(
   }
 
   return payload
+}
+
+export async function getRepositoriesByTotalPages(
+  totalPages: number,
+  year: Year,
+  githubClient: Octokit,
+) {
+  const repositories: Repositories = (await concatLimit(
+    Array.from({length: totalPages - 1}, (_, i) => i + 2),
+    10,
+    async (page, callback) => {
+      try {
+        const {repositories} = await getUserRepositoriesByPage(
+          githubClient,
+          page,
+          year,
+        )
+
+        if (!repositories) {
+          return callback(new Error("couldn't get repositories"))
+        }
+
+        callback(null, repositories)
+      } catch (e) {
+        callback(new Error('Unexpected error ' + e))
+      }
+    },
+  )) as any
+
+  return repositories
+}
+
+interface RepositoryStatistic {
+  repository: string
+  language: string
+  weeks: {
+    w?: string
+    a?: number
+    d?: number
+    c?: number
+  }[]
+}
+
+export async function getRepositoryStats(
+  repositories: Repositories,
+  username: string,
+  githubClient: Octokit,
+) {
+  const result: RepositoryStatistic[] = await mapLimit(
+    repositories,
+    10,
+    async ({name: repositoryName, owner, language}, callback) => {
+      try {
+        const repositoryStats: RestEndpointMethodTypes['repos']['getContributorsStats']['response'] = (await retry(
+          {times: 20, interval: 6000},
+          async retryCallback => {
+            try {
+              const stats = await githubClient.repos.getContributorsStats({
+                owner: owner.login,
+                repo: repositoryName,
+              })
+
+              const IS_NOT_CACHED_STATUS_CODE = 202
+              if ((stats.status as number) === IS_NOT_CACHED_STATUS_CODE) {
+                logger.info(
+                  `Repository (${repositoryName}) statistics cache data is not available. retrying.`,
+                )
+
+                return retryCallback(new Error('Retrying fetch'))
+              }
+
+              retryCallback(null, stats)
+            } catch (e) {
+              retryCallback(new Error('Unexpected error ' + e))
+            }
+          },
+        )) as any
+
+        if (!Array.isArray(repositoryStats.data)) {
+          return callback(null, undefined)
+        }
+
+        const userStats = repositoryStats.data.find(
+          ({author}) => author.login === username,
+        )
+
+        if (!userStats) {
+          return callback(null, undefined)
+        }
+
+        const payload: RepositoryStatistic = {
+          repository: repositoryName,
+          language,
+          weeks: userStats.weeks,
+        }
+
+        callback(null, payload)
+      } catch (e) {
+        callback(new Error('Unexpected error ' + e))
+      }
+    },
+  )
+
+  return result
+}
+
+type IncompleteWeeks = Omit<
+  PosterWeek,
+  'dominantLanguage' | 'dominantRepository'
+>[]
+
+export async function getGeneralWeekActivity(
+  repositoriesStats: RepositoryStatistic[],
+  year: Year,
+) {
+  const repositoryWeeklyTotal: Record<string, Record<string, number>> = {}
+  const repositoryOverallTotal: Record<string, number> = {}
+  const repositoryLanguages: Record<string, string> = {}
+  const languageCount: Record<string, number> = {}
+  let totalLinesOfCode = 0
+
+  const weeks: IncompleteWeeks = new Array(52).fill(undefined)
+
+  // Get general week activity
+  await mapLimit(
+    repositoriesStats,
+    10,
+    async ({weeks: repositoryWeeks, repository, language}, callback) => {
+      try {
+        await mapLimit(
+          repositoryWeeks,
+          3,
+          async ({w, a: additions, d: deletions, c: commits}, callback) => {
+            try {
+              const date = unixTimestampToDate(Number(w))
+
+              if (year !== date.getFullYear()) {
+                return callback(null, '')
+              }
+
+              const weekNumber = getWeekNumber(date)
+              const weekIndex = weekNumber - 1
+              const lines = Math.abs(deletions) + additions
+              const total = lines + commits
+
+              if (!total) {
+                return callback(null, '')
+              }
+
+              totalLinesOfCode += total
+
+              if (!repositoryOverallTotal[repository]) {
+                repositoryOverallTotal[repository] = total
+              } else {
+                repositoryOverallTotal[repository] += total
+              }
+
+              if (!repositoryWeeklyTotal[weekIndex]) {
+                repositoryWeeklyTotal[weekIndex] = {}
+                repositoryWeeklyTotal[weekIndex][repository] = total
+              } else {
+                if (!repositoryWeeklyTotal[weekIndex][repository]) {
+                  repositoryWeeklyTotal[weekIndex][repository] = total
+                } else {
+                  repositoryWeeklyTotal[weekIndex][repository] += total
+                }
+              }
+
+              if (!repositoryLanguages[repository]) {
+                repositoryLanguages[repository] = language
+              }
+
+              if (!languageCount[language]) {
+                languageCount[language] = 1
+              } else {
+                languageCount[language] += 1
+              }
+
+              const currentWeek = weeks[weekIndex]
+
+              const currentWeekTotal = currentWeek?.total
+                ? currentWeek?.total + total
+                : total
+              const currentWeekCommits = currentWeek?.commits
+                ? currentWeek?.commits + commits
+                : commits
+              const currentWeekLines = currentWeek?.lines
+                ? currentWeek?.lines + lines
+                : lines
+
+              weeks[weekIndex] = {
+                week: weekNumber,
+                lines: currentWeekLines,
+                commits: currentWeekCommits,
+                total: currentWeekTotal,
+              }
+
+              callback(null, '')
+            } catch (e) {
+              callback(new Error('Unexpected error ' + e))
+            }
+          },
+        )
+        callback(null, '')
+      } catch (e) {
+        callback(new Error('Unexpected error ' + e))
+      }
+    },
+  )
+
+  return {
+    repositoryWeeklyTotal,
+    repositoryOverallTotal,
+    repositoryLanguages,
+    languageCount,
+    totalLinesOfCode,
+    incompleteWeeks: weeks,
+  }
+}
+
+export function getWeeksWithDominantLanguageAndRepository(
+  weeks: IncompleteWeeks,
+  repositoryWeeklyTotal: Record<string, Record<string, number>>,
+  repositoryLanguages: Record<string, string>,
+) {
+  return weeks.map((currentWeek, weekNumber) => {
+    if (!currentWeek) return
+
+    const repositoriesActivities = repositoryWeeklyTotal[weekNumber]
+    const repositoriesLinesThisWeek = Object.values(repositoriesActivities)
+    const indexOfMostDominantRepo = indexOfMax(repositoriesLinesThisWeek)
+
+    const dominantRepository = Object.keys(repositoriesActivities)[
+      indexOfMostDominantRepo
+    ]
+    const dominantLanguage = repositoryLanguages[dominantRepository]
+
+    return {
+      ...currentWeek,
+      dominantLanguage,
+      dominantRepository,
+    }
+  })
+}
+
+export function getDominantRepository(
+  repositoryOverallTotal: Record<string, number>,
+) {
+  const repositoriesNames = Object.keys(repositoryOverallTotal)
+  const repositoriesActivities = Object.values(repositoryOverallTotal)
+  const dominantRepository =
+    repositoriesNames[indexOfMax(repositoriesActivities)]
+
+  return dominantRepository
+}
+
+export function getDominantLanguage(languageCount: Record<string, number>) {
+  const languagesNames = Object.keys(languageCount)
+  const languagesFrequencies = Object.values(languageCount)
+  const dominantLanguage = languagesNames[indexOfMax(languagesFrequencies)]
+
+  return dominantLanguage
 }
 
 const SES = new AWS.SES({

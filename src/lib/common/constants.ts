@@ -11,6 +11,10 @@ const constants = {
     url: process.env.NEXT_PUBLIC_API_URL,
     lambdaUrl: process.env.LAMBDA_API_URL,
   },
+  poster: {
+    maxExtraPosters: 3,
+    maxPosters: 4,
+  },
 }
 
 export default constants

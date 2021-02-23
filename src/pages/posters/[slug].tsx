@@ -34,9 +34,12 @@ export default function PosterBySlug({
     user?.name.trim() === posterData.name.trim() ||
     user?.nickname.trim() === posterData.name.trim()
 
-  const canGenerateMorePosters = otherPosters.length < 3 && isUserPoster
+  const canGenerateMorePosters =
+    otherPosters.length < constants.poster.maxExtraPosters && isUserPoster
 
-  if (posterData.weeks.length === 0 && isUserPoster) {
+  const noPostersActivity = posterData.weeks.length === 0
+
+  if (noPostersActivity && isUserPoster) {
     return (
       <>
         <NextSeo

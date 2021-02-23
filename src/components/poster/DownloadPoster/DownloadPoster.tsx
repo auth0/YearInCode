@@ -22,7 +22,7 @@ const MobileShareButton = dynamic(() => import('./MobileShareButton'), {
 })
 
 const browser = detect()
-interface GetPosterProps {
+interface DownloadPosterProps {
   year: Year
   posterSlug: string
   posterImages: PosterImageSizes
@@ -32,7 +32,7 @@ interface GetPosterProps {
   posterData: Poster
 }
 
-const GetPoster: React.FC<GetPosterProps> = ({
+const DownloadPoster: React.FC<DownloadPosterProps> = ({
   year,
   posterSlug,
   posterImages,
@@ -112,4 +112,4 @@ const GetPoster: React.FC<GetPosterProps> = ({
   )
 }
 
-export default GetPoster
+export default DownloadPoster

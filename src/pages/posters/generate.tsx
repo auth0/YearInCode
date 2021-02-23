@@ -5,7 +5,7 @@ import nProgress from 'nprogress'
 import Link from 'next/link'
 
 import {auth0} from '@lib/auth'
-import {createLoginUrl} from '@lib/common'
+import {constants, createLoginUrl} from '@lib/common'
 import {LoadingView, SelectYearsView} from '@components/poster'
 import {PosterSteps} from '@nebula/types/poster'
 import {PosterService} from '@lib/poster/poster-service'
@@ -128,10 +128,15 @@ export async function getServerSideProps({req, res, query}) {
 
   const posterInQueue = posters.find(({step}) => step !== PosterSteps.READY)
 
-  if (
-    (!query.new && !posterInQueue && posters.length > 0) ||
-    posters.length === 4
-  ) {
+  const hasPosters = posters.length > 0
+  const wantsToGenerateNewPoster = query.new
+  const canGenerateMorePosters = posters.length !== constants.poster.maxPosters
+
+  const shouldRedirectToPoster =
+    (!wantsToGenerateNewPoster && !posterInQueue && hasPosters) ||
+    !canGenerateMorePosters
+
+  if (shouldRedirectToPoster) {
     res.writeHead(302, {
       Location: `/posters/${posters[0].posterSlug}`,
     })
