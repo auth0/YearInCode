@@ -110,7 +110,7 @@ test('should generate user activity', async () => {
     year: 2020,
     dominantLanguage: repos[0].language,
     dominantRepository: repos[0].name,
-    totalLinesOfCode: 5025,
+    totalLinesOfCode: 4965,
     weeks: [
       {
         week: 17,
