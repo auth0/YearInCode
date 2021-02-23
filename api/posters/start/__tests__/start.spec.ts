@@ -8,10 +8,9 @@ import {
 } from '@api/tests/generate'
 import {PosterImageSizes, PosterSteps} from '@nebula/types/poster'
 
-import PosterModel from '../poster.model'
-
-import * as start from './start'
-import * as startUtils from './start.utils'
+import PosterModel from '../../poster.model'
+import * as start from '../start'
+import * as startUtils from '../start.utils'
 
 jest.mock('auth0')
 const mockedGenerateImagesAndUploadToS3 = jest.spyOn(

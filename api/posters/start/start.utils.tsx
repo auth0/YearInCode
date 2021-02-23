@@ -107,7 +107,7 @@ export async function getRepositoriesByTotalPages(
   return repositories
 }
 
-interface RepositoryStatistic {
+export interface RepositoryStatistic {
   repository: string
   language: string
   weeks: {
@@ -224,7 +224,7 @@ export async function getGeneralWeekActivity(
                 return callback(null, '')
               }
 
-              totalLinesOfCode += total
+              totalLinesOfCode += lines
 
               if (!repositoryOverallTotal[repository]) {
                 repositoryOverallTotal[repository] = total
@@ -301,7 +301,7 @@ export function getWeeksWithDominantLanguageAndRepository(
   repositoryLanguages: Record<string, string>,
 ) {
   return weeks.map((currentWeek, weekNumber) => {
-    if (!currentWeek) return
+    if (!currentWeek) return undefined
 
     const repositoriesActivities = repositoryWeeklyTotal[weekNumber]
     const repositoriesLinesThisWeek = Object.values(repositoriesActivities)
