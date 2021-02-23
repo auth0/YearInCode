@@ -263,9 +263,9 @@ resources:
     # DynamoDB
     ConnectionTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${self:custom.connectionTable}
-        DeletionPolicy: Retain
         AttributeDefinitions:
           - AttributeName: connectionId
             AttributeType: S
@@ -284,9 +284,9 @@ resources:
         BillingMode: PAY_PER_REQUEST
     PosterTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${self:custom.posterTable}
-        DeletionPolicy: Retain
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
@@ -331,10 +331,10 @@ resources:
     # S3
     PosterBucket:
       Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
       Properties:
         BucketName: ${self:custom.posterBucketName}
         AccessControl: Private
-        DeletionPolicy: Retain
         CorsConfiguration:
           CorsRules:
             - AllowedHeaders: ["*"]
@@ -342,6 +342,7 @@ resources:
               AllowedOrigins: ["*"] # Update with domain when available
     PosterBucketPolicy:
       Type: AWS::S3::BucketPolicy
+      DeletionPolicy: Retain
       Properties:
         Bucket:
           Ref: PosterBucket
@@ -357,12 +358,14 @@ resources:
                     - S3CanonicalUserId
     CloudFrontOriginAccessIdentity:
       Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      DeletionPolicy: Retain
       Properties:
         CloudFrontOriginAccessIdentityConfig:
           Comment: "Identity for accessing CloudFront from S3 within stack
             #{AWS::StackName}"
     PosterCdnDistribution:
       Type: AWS::CloudFront::Distribution
+      DeletionPolicy: Retain
       Properties:
         DistributionConfig:
           Origins:
