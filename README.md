@@ -67,6 +67,8 @@ Then, open `.env.local` and add the missing environment variables:
   sure to verify the email in the AWS SES dashboard.
 - `NEXT_PUBLIC_FACEBOOK_ID` - Facebook APP ID. You can get it
   [here](https://developers.facebook.com/docs/development/create-an-app).
+- `AUTH0_AUDIENCE` - The url for Auth0 audience. Normally has the following structure `https://your-tenant.auth0.com/api/v2/`
+
 
 ### Set Up Serveless Offline
 
