@@ -34,8 +34,9 @@ async function getGalleryPosters() {
 
         return parsedPosterData.length >= 3
       })
-      .map(({posterImages}) => ({
+      .map(({posterImages, posterData}) => ({
         posterImages,
+        posterData,
       }))
     const shuffledPosters = shuffle(filteredPosters)
 

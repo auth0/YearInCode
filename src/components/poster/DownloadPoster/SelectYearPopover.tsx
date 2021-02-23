@@ -1,12 +1,8 @@
 import * as React from 'react'
-import {useOverlayTriggerState} from '@react-stately/overlays'
-import {
-  useOverlayTrigger,
-  useOverlayPosition,
-  OverlayContainer,
-} from '@react-aria/overlays'
+import {useMenuTriggerState} from '@react-stately/menu'
+import {useOverlayPosition, OverlayContainer} from '@react-aria/overlays'
 import {useButton} from '@react-aria/button'
-import Link from 'next/link'
+import {useMenuTrigger} from '@react-aria/menu'
 
 import ChevronUp from '@assets/svg/chevron-up.svg'
 import ChevronDown from '@assets/svg/chevron-down.svg'
@@ -23,15 +19,11 @@ export default function SelectYearPopover({
   year,
   otherPosters,
 }: SelectYearPopover) {
-  const state = useOverlayTriggerState({})
+  const state = useMenuTriggerState({})
 
   const triggerRef = React.useRef()
   const overlayRef = React.useRef()
-  const {triggerProps, overlayProps} = useOverlayTrigger(
-    {type: 'dialog'},
-    state,
-    triggerRef,
-  )
+  const {menuTriggerProps, menuProps} = useMenuTrigger({}, state, triggerRef)
 
   const {overlayProps: positionProps} = useOverlayPosition({
     targetRef: triggerRef,
@@ -53,7 +45,7 @@ export default function SelectYearPopover({
       <button
         className="inline-flex items-center justify-start space-x-1 font-semibold"
         {...buttonProps}
-        {...triggerProps}
+        {...menuTriggerProps}
         ref={triggerRef}
       >
         <span>{year}</span>{' '}
@@ -66,22 +58,22 @@ export default function SelectYearPopover({
       {state.isOpen && (
         <OverlayContainer>
           <Popover
-            {...overlayProps}
+            {...menuProps}
             {...positionProps}
             ref={overlayRef}
             isOpen={state.isOpen}
             onClose={state.close}
-            className="flex flex-col overflow-hidden bg-black border-2 rounded-md border-gray-50"
+            className="flex flex-col bg-black border-2 rounded-md border-gray-50"
           >
             {otherPosters.map(({posterSlug, year}) => (
               <a
-                className="px-5 py-4 font-semibold hover:bg-gray-900"
+                className="px-5 py-4 font-semibold hover:bg-dark-slate-gray-800"
                 href={`/posters/${posterSlug}`}
                 key={posterSlug}
               >
                 <Typography
                   onClick={() => state.close()}
-                  variant="h1"
+                  variant="h4"
                   as="span"
                 >
                   {year}
