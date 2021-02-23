@@ -84,7 +84,7 @@ export async function sendPosterMail({
   sendTo?: string
 }) {
   try {
-    logger.info(`Sending email to ${name}...`)
+    logger.info(`Sending email...`)
     const siteUrl = process.env.SITE_URL
 
     const downloadPosterLink = `${siteUrl}/posters/${posterSlug}`
@@ -115,7 +115,7 @@ export async function sendPosterMail({
 
     await SES.sendEmail(params).promise()
   } catch (e) {
-    logger.error(`Failed sending email to ${name}. Error: ${e}`)
+    logger.error(`Failed sending email.`)
   }
 }
 
