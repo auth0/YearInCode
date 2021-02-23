@@ -1,8 +1,8 @@
 service: nebula-serverless
 
 # app and org for use with dashboard.serverless.com
-app: nebula
-org: stackbuilders
+# app: nebula
+# org: ORG_NAME
 
 frameworkVersion: '2'
 
@@ -94,6 +94,28 @@ custom:
       scripts:
         - npx del-cli node_modules/aws-sdk "node_modules/**/@types/**"
           "node_modules/**/*.d.ts" "node_modules/**/.bin"
+  domainRoot: yearincode.dev
+  cdnDomains:
+    prod: cdn.${self:custom.domainRoot}
+    staging: staging-cdn.${self:custom.domainRoot}
+    dev: dev-cdn.${self:custom.domainRoot}
+  domains:
+    prod: api.${self:custom.domainRoot}
+    staging: staging-api.${self:custom.domainRoot}
+    dev: dev-api.${self:custom.domainRoot}
+  customDomain:
+    rest:
+      domainName: ${self:custom.domains.${self:custom.stage}}
+      stage: ${self:custom.stage}
+      createRoute53Record: true
+      endpointType: regional
+      autoDomain: true
+    websocket:
+      domainName: ws-${self:custom.domains.${self:custom.stage}}
+      stage: ${self:custom.stage}
+      createRoute53Record: true
+      endpointType: regional
+      autoDomain: true
   serverless-offline-sqs:
     autoCreate: true
     apiVersion: '2012-11-05'
@@ -150,7 +172,7 @@ functions:
       SQS_QUEUE_URL: {Ref: PosterQueue}
     events:
       - http:
-          path: api/users/{userId}/posters/queue
+          path: users/{userId}/posters/queue
           method: post
           authorizer: authorize
           cors: true
@@ -159,7 +181,7 @@ functions:
     handler: posters/getPosters.getPosters
     events:
       - http:
-          path: api/users/{userId}/posters
+          path: users/{userId}/posters
           method: get
           authorizer: authorize
           cors: true
@@ -168,7 +190,7 @@ functions:
     handler: posters/getPosterBySlug.getPosterBySlug
     events:
       - http:
-          path: api/posters/{slug}
+          path: posters/{slug}
           method: get
           cors: true
 
@@ -176,7 +198,7 @@ functions:
     handler: posters/getGalleryPosters.getGalleryPosters
     events:
       - http:
-          path: api/posters/gallery
+          path: posters/gallery
           method: get
           cors: true
 
@@ -373,6 +395,7 @@ resources:
           PriceClass: PriceClass_100
 
 plugins:
+  - serverless-domain-manager
   - serverless-dotenv-plugin
   - serverless-functions-base-path
   - serverless-offline-ses

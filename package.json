@@ -148,6 +148,7 @@
     "pretty-quick": "^3.1.0",
     "react-test-renderer": "^17.0.1",
     "serverless": "^2.22.0",
+    "serverless-domain-manager": "^5.1.0",
     "serverless-dotenv-plugin": "^3.1.0",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-functions-base-path": "^1.0.32",
