@@ -115,7 +115,7 @@ export async function sendPosterMail({
 
     await SES.sendEmail(params).promise()
   } catch (e) {
-    logger.error(`Failed sending email to ${name}.`)
+    logger.error(`Failed sending email to ${name}. Error: ${e}`)
   }
 }
 

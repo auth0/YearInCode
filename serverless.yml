@@ -228,7 +228,7 @@ functions:
     layers:
       - {Ref: PuppeteerLambdaLayer}
     environment:
-      SOURCE_EMAIL:
+      AWS_SOURCE_EMAIL:
         ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
       SITE_URL:
         ${ssm:/${self:custom.stage}/site/url,
