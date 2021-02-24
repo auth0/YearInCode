@@ -2,8 +2,24 @@ import Link from 'next/link'
 
 import {Button, Typography} from '@components/ui'
 import SittingPersonSVG from '@assets/svg/sitting-person.svg'
+import {Year} from '@nebula/types/queue'
+import {PosterSlugResponse} from '@nebula/types/poster'
+import {constants} from '@lib/common'
 
-const NoGithubActivity = () => {
+import SelectYearPopover from './SelectYearPopover'
+
+interface NoGithubActivityProps {
+  year: Year
+  otherPosters: PosterSlugResponse['otherPosters']
+}
+
+const NoGithubActivity: React.FC<NoGithubActivityProps> = ({
+  year,
+  otherPosters,
+}) => {
+  const canGenerateMorePosters =
+    otherPosters.length < constants.poster.maxExtraPosters
+
   return (
     <section className="flex flex-col items-center justify-center flex-1 space-y-8 mt-28">
       <div
@@ -30,9 +46,15 @@ const NoGithubActivity = () => {
         </Typography>
       </header>
 
-      <Link href="/posters/generate?new=true" passHref>
-        <Button color="primary">Generate another year</Button>
-      </Link>
+      {otherPosters.length && (
+        <SelectYearPopover year={year} otherPosters={otherPosters} />
+      )}
+
+      {canGenerateMorePosters && (
+        <Link href="/posters/generate?new=true" passHref>
+          <Button color="primary">Generate another year</Button>
+        </Link>
+      )}
     </section>
   )
 }

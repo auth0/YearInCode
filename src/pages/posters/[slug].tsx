@@ -66,7 +66,7 @@ export default function PosterBySlug({
           }
           content={
             <PosterBackdrop>
-              <NoGithubActivity />
+              <NoGithubActivity year={year} otherPosters={otherPosters} />
             </PosterBackdrop>
           }
         />
