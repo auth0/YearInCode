@@ -3,7 +3,7 @@ import {startDb, stopDb} from 'jest-dynalite'
 
 import {server} from './mock-server'
 
-jest.setTimeout(30000)
+jest.setTimeout(60000)
 
 // enable API mocking in test runs using the same request handlers
 beforeAll(async () => {
