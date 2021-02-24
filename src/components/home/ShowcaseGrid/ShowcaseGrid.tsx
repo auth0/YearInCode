@@ -6,7 +6,7 @@ import Image from 'next/image'
 import {Typography, Button} from '@components/ui'
 import GitHubIcon from '@assets/svg/github-logo.svg'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
-import {PosterGalleryResponse} from '@nebula/types/poster'
+import {Poster, PosterGalleryResponse} from '@nebula/types/poster'
 import {constants} from '@lib/common'
 
 interface ShowcaseGridProps {
@@ -86,22 +86,33 @@ interface ColumnProps {
 
 const Column: React.FC<ColumnProps> = ({className, posters}) => (
   <div className={clsx('flex flex-col space-y-6', className)}>
-    {new Array(4).fill(null).map((_, i) => (
-      <div className="border border-gray-400 rounded-sm" key={i}>
-        {posters[i] ? (
-          <Image
-            src={`${constants.site.cloudfront_url}/${posters[i]?.posterImages?.highQualityPoster}`}
-            width={320}
-            height={424}
-            objectFit="cover"
-            priority={true}
-            layout="fixed"
-          />
-        ) : (
+    {new Array(4).fill(null).map((_, i) => {
+      const isPoster = Boolean(posters[i])
+
+      if (isPoster) {
+        const {name}: Poster = JSON.parse(posters[i].posterData)
+
+        return (
+          <div className="border border-gray-400 rounded-sm" key={i}>
+            <Image
+              src={`${constants.site.cloudfront_url}/${posters[i]?.posterImages?.highQualityPoster}`}
+              alt={`${name} Year in Code poster`}
+              width={320}
+              height={424}
+              objectFit="cover"
+              priority={true}
+              layout="fixed"
+            />
+          </div>
+        )
+      }
+
+      return (
+        <div className="border border-gray-400 rounded-sm" key={i}>
           <div style={{width: 320, height: 424}}></div>
-        )}
-      </div>
-    ))}
+        </div>
+      )
+    })}
   </div>
 )
 

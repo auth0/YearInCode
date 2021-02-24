@@ -22,7 +22,7 @@ const MobileShareButton = dynamic(() => import('./MobileShareButton'), {
 })
 
 const browser = detect()
-interface GetPosterProps {
+interface DownloadPosterProps {
   year: Year
   posterSlug: string
   posterImages: PosterImageSizes
@@ -32,7 +32,7 @@ interface GetPosterProps {
   posterData: Poster
 }
 
-const GetPoster: React.FC<GetPosterProps> = ({
+const DownloadPoster: React.FC<DownloadPosterProps> = ({
   year,
   posterSlug,
   posterImages,
@@ -82,7 +82,7 @@ const GetPoster: React.FC<GetPosterProps> = ({
           className="max-w-2xl leading-relaxed text-white opacity-60"
         >
           Auth0 allows you to quickly connect any social provider to your
-          website, including github login. Authenticate using your github
+          website, including GitHub login. Authenticate using your GitHub
           account to generate a poster of your own. Your year in code :)
         </Typography>
       </header>
@@ -112,4 +112,4 @@ const GetPoster: React.FC<GetPosterProps> = ({
   )
 }
 
-export default GetPoster
+export default DownloadPoster

@@ -3,7 +3,7 @@ describe('Index page smoke test', () => {
     cy.visit('/')
 
     cy.findByRole('heading', {
-      name: 'You’re the heart of innovation.Tell your journey today.',
+      name: 'You’re the heart of innovation.So share your journey.',
     }).should('exist')
   })
 })

@@ -35,7 +35,7 @@ const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
         <div
           {...mergeProps(overlayProps, dialogProps, otherProps, modalProps)}
           ref={ref}
-          style={style}
+          style={{...style, maxHeight: '100%'}}
           className={className}
         >
           <h3 {...titleProps} style={{marginTop: 0}}>
