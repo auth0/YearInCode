@@ -13,12 +13,12 @@ import PosterModel from '../poster.model'
 import * as start from './start'
 import * as startUtils from './start.utils'
 
-jest.mock('auth0')
 const mockedGenerateImagesAndUploadToS3 = jest.spyOn(
   startUtils,
   'generateImagesAndUploadToS3',
 )
 const mockedSendPosterMail = jest.spyOn(startUtils, 'sendPosterMail')
+jest.mock('auth0')
 
 const mockedManagementClient = ManagementClient as jest.MockedClass<
   typeof ManagementClient
@@ -111,7 +111,7 @@ test('should generate user activity', async () => {
     year: 2020,
     dominantLanguage: repos[0].language,
     dominantRepository: repos[0].name,
-    totalLinesOfCode: 5025,
+    totalLinesOfCode: 4965,
     weeks: [
       {
         week: 17,
