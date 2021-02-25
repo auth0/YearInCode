@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'test') {
     sslEnabled: false,
     region: 'local',
   })
-  dynamoose.aws.ddb.local(process.env.MOCK_DYNAMODB_ENDPOINT)
+  dynamoose.aws.ddb.local('localhost:8000')
 
   process.env['CONNECTION_TABLE'] = 'nebula-serverless-connection-dev'
   process.env['POSTER_TABLE'] = 'nebula-serverless-poster-dev'
