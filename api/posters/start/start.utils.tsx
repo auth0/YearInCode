@@ -6,6 +6,7 @@ import {Page, Viewport} from 'puppeteer-core'
 import chromium from 'chrome-aws-lambda'
 import AWS from 'aws-sdk'
 import {concatLimit, mapLimit, retry} from 'async'
+import {ManagementClient} from 'auth0'
 
 import {logger} from '@nebula/log'
 import {
@@ -38,6 +39,31 @@ const S3 = new AWS.S3({
     secretAccessKey: 'S3RVER',
   }),
 })
+
+const auth0Management = new ManagementClient({
+  domain:
+    process.env.IS_OFFLINE || process.env.NODE_ENV === 'test'
+      ? process.env.NEXT_PUBLIC_AUTH0_DOMAIN
+      : process.env.AUTH0_DOMAIN,
+  clientId:
+    process.env.IS_OFFLINE || process.env.NODE_ENV === 'test'
+      ? process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID
+      : process.env.AUTH0_CLIENT_ID,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET,
+  scope: 'read:users read:user_idp_tokens',
+})
+
+export async function getGitHubToken(userId: string) {
+  const {identities} = await auth0Management.getUser({
+    id: userId,
+  })
+
+  const githubToken = identities.find(
+    identity => identity.provider === 'github',
+  ).access_token
+
+  return githubToken
+}
 
 export async function getUserRepositoriesByPage(
   client: Octokit,

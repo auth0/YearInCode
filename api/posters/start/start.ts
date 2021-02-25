@@ -1,17 +1,13 @@
-import {ManagementClient} from 'auth0'
 import middy from 'middy'
 import {SQSEvent, SQSRecord} from 'aws-lambda'
 import sqsBatch from '@middy/sqs-partial-batch-failure'
 import sqsJsonBodyParser from '@middy/sqs-json-body-parser'
-import {Octokit, RestEndpointMethodTypes} from '@octokit/rest'
-import {mapLimit, retry} from 'async'
+import {Octokit} from '@octokit/rest'
 
 import {SetBodyToType} from '@api/lib/types'
 import {QueueRecordDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
-import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
-import {getWeekNumber, unixTimestampToDate} from '@api/lib/date'
-import {indexOfMax} from '@nebula/common/array'
+import {Poster, PosterSteps} from '@nebula/types/poster'
 
 import PosterModel from '../poster.model'
 
@@ -26,18 +22,8 @@ import {
   sendUpdateToClient,
   getDominantRepository,
   getDominantLanguage,
+  getGitHubToken,
 } from './start.utils'
-
-const auth0Management = new ManagementClient({
-  domain: process.env.IS_OFFLINE
-    ? process.env.NEXT_PUBLIC_AUTH0_DOMAIN
-    : process.env.AUTH0_DOMAIN,
-  clientId: process.env.IS_OFFLINE
-    ? process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID
-    : process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  scope: 'read:users read:user_idp_tokens',
-})
 
 // TODO: Extract nested functions
 export function startImplementation(event: SQSEvent) {
@@ -51,13 +37,7 @@ export function startImplementation(event: SQSEvent) {
       await sendUpdateToClient(posterSlug, userId, PosterSteps.START)
       logger.info(`${userId} started step ${PosterSteps.START}`)
 
-      const {identities} = await auth0Management.getUser({
-        id: userId,
-      })
-
-      const githubToken = identities.find(
-        identity => identity.provider === 'github',
-      ).access_token
+      const githubToken = await getGitHubToken(userId)
 
       await sendUpdateToClient(posterSlug, userId, PosterSteps.GATHERING)
       logger.info(`${userId} started step ${PosterSteps.GATHERING}`)

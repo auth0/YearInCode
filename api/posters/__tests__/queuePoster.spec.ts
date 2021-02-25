@@ -1,10 +1,8 @@
-import createHttpError from 'http-errors'
-
 import * as randomUtils from '@api/lib/random'
 import * as tokenUtils from '@api/lib/token'
+import {invoke} from '@api/tests/middy'
 
-import PosterModel from '../poster.model'
-import {queuePosterImplementation} from '../queuePoster'
+import {queuePoster} from '../queuePoster'
 
 const mockedGeneratePosterSlug = jest.spyOn(randomUtils, 'generatePosterSlug')
 const mockedDecodeToken = jest.spyOn(tokenUtils, 'decodeToken')
@@ -34,15 +32,18 @@ test('should return 401 error if userId does not match token', async () => {
     },
   }
 
-  expect(await queuePosterImplementation(event)).toEqual(
-    createHttpError(401, 'Unauthorized'),
-  )
+  const response = await invoke(queuePoster, event)
+
+  expect(response).toEqual({
+    statusCode: 401,
+    body: 'Unauthorized',
+  })
 })
 
 test('should return 500 error if there is an error in database', async () => {
-  mockedGeneratePosterSlug.mockReturnValueOnce(posterSlug)
-  mockedGetTokenFromString.mockReturnValueOnce(token)
-  mockedDecodeToken.mockReturnValueOnce({payload: {sub: userId}})
+  mockedGeneratePosterSlug.mockReturnValue(posterSlug)
+  mockedGetTokenFromString.mockReturnValue(token)
+  mockedDecodeToken.mockReturnValue({payload: {sub: userId}})
 
   const event: any = {
     pathParameters: {
@@ -57,7 +58,10 @@ test('should return 500 error if there is an error in database', async () => {
     },
   }
 
-  expect(await queuePosterImplementation(event)).toEqual(
-    createHttpError(500, 'ERROR adding to queue'),
-  )
+  const response = await invoke(queuePoster, event, {})
+
+  expect(response).toEqual({
+    statusCode: 500,
+    body: 'ERROR adding to queue',
+  })
 })
