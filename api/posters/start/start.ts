@@ -25,7 +25,6 @@ import {
   getGitHubToken,
 } from './start.utils'
 
-// TODO: Extract nested functions
 export function startImplementation(event: SQSEvent) {
   logger.info(`Received records: ${JSON.stringify(event.Records)}`)
   const recordPromises = event.Records.map(async (record: any) => {
