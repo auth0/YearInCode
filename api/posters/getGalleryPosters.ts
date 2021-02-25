@@ -29,6 +29,8 @@ async function getGalleryPosters() {
 
     const filteredPosters: PosterGalleryResponse = posterDocuments
       .filter(({posterData}) => {
+        if (!posterData) return false
+
         const parsedPosterData = JSON.parse(posterData)
           .weeks as PosterState['posterData']
 
@@ -51,7 +53,7 @@ async function getGalleryPosters() {
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
 
-    return createHttpError(500, 'ERROR getting gallery posts')
+    return Promise.reject(createHttpError(500, 'ERROR getting gallery posts'))
   }
 }
 

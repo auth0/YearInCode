@@ -35,13 +35,8 @@ async function getPosterBySlug(
       .attributes(['posterData', 'posterImages', 'year', 'userId'])
       .exec()
 
-    if (!result.length) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({
-          message: "Couldn't find poster",
-        }),
-      }
+    if (!result[0]?.posterData || !result.length) {
+      return Promise.reject(createHttpError(404, "Couldn't find poster"))
     }
 
     const otherPosters: PosterSlugResponse['otherPosters'] = await PosterModel.query(
@@ -53,7 +48,7 @@ async function getPosterBySlug(
       .exec()
 
     if (!otherPosters.length) {
-      return createHttpError(404, "Couldn't get user")
+      return Promise.reject(createHttpError(404, "Couldn't get user"))
     }
 
     const payload: PosterSlugResponse = {
@@ -68,7 +63,7 @@ async function getPosterBySlug(
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
 
-    return createHttpError(500, 'ERROR getting poster by slug')
+    return Promise.reject(createHttpError(500, 'ERROR getting poster by slug'))
   }
 }
 

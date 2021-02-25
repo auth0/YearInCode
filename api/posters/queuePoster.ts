@@ -74,7 +74,7 @@ async function queuePosterImplementation(
     )
 
     if (posterInPipeline) {
-      return createHttpError(400, 'Already queued')
+      return Promise.reject(createHttpError(400, 'Already queued'))
     }
 
     const isAlreadyDone = posters.find(
@@ -82,7 +82,9 @@ async function queuePosterImplementation(
     )
 
     if (isAlreadyDone) {
-      return createHttpError(400, 'Poster for this year has already been made')
+      return Promise.reject(
+        createHttpError(400, 'Poster for this year has already been made'),
+      )
     }
 
     await PosterModel.update(
@@ -135,7 +137,7 @@ async function queuePosterImplementation(
       }
     }
 
-    return createHttpError(500, 'ERROR adding to queue')
+    return Promise.reject(createHttpError(500, 'ERROR adding to queue'))
   }
 }
 

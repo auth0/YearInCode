@@ -36,7 +36,7 @@ async function getPosters(
   } catch (error) {
     logger.error('Failed getting status. Error: ' + error)
 
-    return createHttpError(500, 'ERROR getting posters')
+    return Promise.reject(createHttpError(500, 'ERROR getting posters'))
   }
 }
 

@@ -3,7 +3,7 @@
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": ["s3:GetBucketPolicy", "s3:PutBucketPolicy"],
+      "Action": ["s3:GetBucketPolicy"],
       "Resource": "arn:aws:s3:::nebula-serverless-prod*"
     },
     {
@@ -22,9 +22,20 @@
         "cloudformation:List*",
         "cloudformation:Get*",
         "cloudformation:ValidateTemplate",
-        "cloudfront:UpdateDistribution"
+        "cloudfront:UpdateDistribution",
+        "cloudfront:CreateCloudFrontOriginAccessIdentity",
+        "cloudfront:CreateDistribution",
+        "cloudfront:TagResource",
+        "cloudfront:GetDistribution",
+        "cloudfront:GetDistributionConfig",
+        "cloudfront:GetCloudFrontOriginAccessIdentity"
       ],
       "Resource": ["*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["lambda:PublishLayerVersion"],
+      "Resource": ["arn:aws:lambda:*:*:layer:production-*"]
     },
     {
       "Effect": "Allow",
@@ -60,7 +71,12 @@
     },
     {
       "Effect": "Allow",
-      "Action": ["lambda:Get*", "lambda:List*", "lambda:CreateFunction"],
+      "Action": [
+        "lambda:Get*",
+        "lambda:List*",
+        "lambda:CreateFunction",
+        "lambda:CreateEventSourceMapping"
+      ],
       "Resource": ["*"]
     },
     {
@@ -91,7 +107,8 @@
         "lambda:InvokeFunction",
         "lambda:PublishVersion",
         "lambda:RemovePermission",
-        "lambda:Update*"
+        "lambda:Update*",
+        "lambda:PutFunctionConcurrency"
       ],
       "Resource": [
         "arn:aws:lambda:us-east-1:*:function:nebula-serverless-production-*"
@@ -114,6 +131,11 @@
     },
     {
       "Effect": "Allow",
+      "Action": ["apigateway:POST"],
+      "Resource": ["arn:aws:apigateway:*::/apis*"]
+    },
+    {
+      "Effect": "Allow",
       "Action": ["apigateway:GET"],
       "Resource": [
         "arn:aws:apigateway:*::/domainnames/*",
@@ -130,7 +152,8 @@
       "Action": ["apigateway:POST"],
       "Resource": [
         "arn:aws:apigateway:*::/domainnames",
-        "arn:aws:apigateway:*::/domainnames/*/basepathmappings"
+        "arn:aws:apigateway:*::/domainnames/*/basepathmappings",
+        "arn:aws:apigateway:*::/domainnames/*/apimappings*"
       ]
     },
     {
@@ -176,7 +199,7 @@
     {
       "Effect": "Allow",
       "Action": "sqs:*",
-      "Resource": ["arn:aws:sqs:*:*:nebula-serverless-production-us-east-1"]
+      "Resource": ["arn:aws:sqs:*:*:sqs-poster-queue-production"]
     },
     {
       "Effect": "Allow",
@@ -227,7 +250,7 @@
     },
     {
       "Effect": "Allow",
-      "Action": ["s3:CreateBucket"],
+      "Action": ["s3:CreateBucket", "s3:PutBucketCORS", "s3:PutBucketPolicy"],
       "Resource": ["arn:aws:s3:::*"]
     }
   ]

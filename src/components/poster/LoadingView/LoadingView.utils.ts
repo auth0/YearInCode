@@ -1,6 +1,12 @@
 import {PosterSteps} from '@nebula/types/poster'
 
 export const steps = {
+  [PosterSteps.FAILED]: {
+    title: 'Year In Code assemble begins.\nWe’re analyzing your Github...',
+    subtitle:
+      'Our bots are checking your activity.\nWe need to understand your work before we create the right canvas.',
+    percent: 25,
+  },
   [PosterSteps.PREPARING]: {
     title: 'Year In Code assemble begins.\nWe’re analyzing your Github...',
     subtitle:
