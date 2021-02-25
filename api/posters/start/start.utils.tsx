@@ -49,7 +49,7 @@ const auth0Management = new ManagementClient({
     process.env.IS_OFFLINE || process.env.NODE_ENV === 'test'
       ? process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID ?? 'MOCK_CLIENT_ID'
       : process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRET,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET ?? 'CLIENT_SECRET',
   scope: 'read:users read:user_idp_tokens',
 })
 
