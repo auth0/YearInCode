@@ -127,8 +127,11 @@ custom:
     accessKeyId: local
     secretAccessKey: local
     skipCacheInvalidation: false
+  dotenvInclude:
+    production: []
   dotenv:
     logging: false
+    include: ${self:custom.dotenvInclude.${self:custom.stage}}
     required:
       file: false
   dynamodb: # DynamoDB Local Instance
