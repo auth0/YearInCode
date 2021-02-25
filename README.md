@@ -26,6 +26,23 @@ An experience for developers to see their career in space/time.
   locally or typically to `https://myapp.com/` when deploying your application.
 
 4. Save the settings
+5. Head into _APIs_, and click on _Auth0 Management API_
+6. Click on _Machine to Machine Applications_ and authorize your newly created application. 
+7. Open the authorized application dropdown and select the following permissions: `read:users` and `read:user_idp_tokens`.
+8. Save the settings by clicking on update.
+
+## Setting up Auth0 OAuth
+
+1. Go to `Connections -> Social` in your [Auth0 dashboard](https://manage.auth0.com/). 
+2. Click on _create connection_  and select GitHub. 
+3. Go back to your connections and click on GitHub. 
+4. Head into [Auth0 documentation](https://auth0.com/docs/connections/social/github) on how to get your `Client ID` and `Client Secret`. 
+5. Fill the `Client ID` and `Client Secret`.
+6. Enable the `Email address` attribute.
+7. Save your settings.  
+8. Head into _Applications tab_  and authorize your created application. 
+9. Head into your application in _Applications_ and click on _Connections_. 
+10. Disable `Username-Password-Authentication` and enable only `GitHub`. 
 
 ### Set up environment variables
 
