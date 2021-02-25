@@ -10,6 +10,7 @@ beforeAll(async () => {
   server.listen()
   jest.spyOn(console, 'error').mockImplementation(() => {})
   jest.spyOn(console, 'warn').mockImplementation(() => {})
+
   await startDb()
 })
 

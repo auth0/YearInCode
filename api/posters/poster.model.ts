@@ -44,8 +44,17 @@ const PosterModel = dynamoose.model<PosterDocument>(
   process.env.POSTER_TABLE,
   schema,
   {
-    create: process.env.NODE_ENV === 'test' ? true : false,
+    create: false,
     throughput: 'ON_DEMAND',
+    ...(process.env.NODE_ENV === 'test' && {
+      create: true,
+      waitForActive: {
+        enabled: true,
+        check: {
+          frequency: 0,
+        },
+      },
+    }),
   },
 )
 
