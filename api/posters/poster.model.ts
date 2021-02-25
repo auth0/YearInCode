@@ -51,6 +51,7 @@ const PosterModel = dynamoose.model<PosterDocument>(
       waitForActive: {
         enabled: true,
         check: {
+          timeout: 60000,
           frequency: 0,
         },
       },

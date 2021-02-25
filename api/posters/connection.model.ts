@@ -35,6 +35,7 @@ const ConnectionModel = dynamoose.model<ConnectionDocument>(
       waitForActive: {
         enabled: true,
         check: {
+          timeout: 60000,
           frequency: 0,
         },
       },

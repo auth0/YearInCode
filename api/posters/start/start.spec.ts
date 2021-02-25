@@ -1,5 +1,3 @@
-import {ManagementClient} from 'auth0'
-
 import {rest, server, githubURLs} from '@api/tests/mock-server'
 import {
   buildAuthenticatedGitHubUser,
