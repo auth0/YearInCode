@@ -39,9 +39,6 @@ const tables = [
   },
 ]
 
-process.env['CONNECTION_TABLE'] = 'nebula-serverless-connection-dev'
-process.env['POSTER_TABLE'] = 'nebula-serverless-poster-dev'
-
 module.exports = {
   tables,
   basePort: 8050,

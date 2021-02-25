@@ -20,10 +20,6 @@ const mockedGenerateImagesAndUploadToS3 = jest.spyOn(
 const mockedSendPosterMail = jest.spyOn(startUtils, 'sendPosterMail')
 const mockedGetGitHubToken = jest.spyOn(startUtils, 'getGitHubToken')
 
-const mockedManagementClient = ManagementClient as jest.MockedClass<
-  typeof ManagementClient
->
-
 const userId = 'MOCK_USER_ID'
 const username = 'MOCK_USER_NAME'
 const posterSlug = 'MOCK_POSTER_SLUG'
