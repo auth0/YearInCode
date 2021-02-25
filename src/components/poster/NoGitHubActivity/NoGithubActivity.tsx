@@ -46,7 +46,7 @@ const NoGithubActivity: React.FC<NoGithubActivityProps> = ({
         </Typography>
       </header>
 
-      {otherPosters.length && (
+      {Boolean(otherPosters.length) && (
         <SelectYearPopover year={year} otherPosters={otherPosters} />
       )}
 
