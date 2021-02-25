@@ -30,7 +30,7 @@ const mockedPosterImages: PosterImageSizes = {
   openGraph: 'openGraph.png',
 }
 
-afterEach(async () => {
+beforeEach(async () => {
   await PosterModel.delete({posterSlug, userId})
 })
 
