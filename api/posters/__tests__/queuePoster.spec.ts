@@ -41,9 +41,9 @@ test('should return 401 error if userId does not match token', async () => {
 })
 
 test('should return 500 error if there is an error in database', async () => {
-  mockedGeneratePosterSlug.mockReturnValue(posterSlug)
-  mockedGetTokenFromString.mockReturnValue(token)
-  mockedDecodeToken.mockReturnValue({payload: {sub: userId}})
+  mockedGeneratePosterSlug.mockReturnValueOnce(posterSlug)
+  mockedGetTokenFromString.mockReturnValueOnce(token)
+  mockedDecodeToken.mockReturnValueOnce({payload: {sub: userId}})
 
   const event: any = {
     pathParameters: {
