@@ -31,7 +31,6 @@ const ConnectionModel = dynamoose.model<ConnectionDocument>(
     create: false,
     throughput: 'ON_DEMAND',
     ...(process.env.NODE_ENV === 'test' && {
-      create: true,
       waitForActive: {
         enabled: true,
         check: {
