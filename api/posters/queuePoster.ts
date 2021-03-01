@@ -55,7 +55,7 @@ async function queuePosterImplementation(
   const decoded = decodeToken(token)
 
   if (decoded.payload.sub !== userId) {
-    return createHttpError(401, 'Unauthorized')
+    return Promise.reject(createHttpError(401, 'Unauthorized'))
   }
 
   let inDb = false

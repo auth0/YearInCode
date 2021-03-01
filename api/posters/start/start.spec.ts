@@ -1,5 +1,3 @@
-import {ManagementClient} from 'auth0'
-
 import {rest, server, githubURLs} from '@api/tests/mock-server'
 import {
   buildAuthenticatedGitHubUser,
@@ -18,11 +16,7 @@ const mockedGenerateImagesAndUploadToS3 = jest.spyOn(
   'generateImagesAndUploadToS3',
 )
 const mockedSendPosterMail = jest.spyOn(startUtils, 'sendPosterMail')
-jest.mock('auth0')
-
-const mockedManagementClient = ManagementClient as jest.MockedClass<
-  typeof ManagementClient
->
+const mockedGetGitHubToken = jest.spyOn(startUtils, 'getGitHubToken')
 
 const userId = 'MOCK_USER_ID'
 const username = 'MOCK_USER_NAME'
@@ -34,7 +28,7 @@ const mockedPosterImages: PosterImageSizes = {
   openGraph: 'openGraph.png',
 }
 
-afterEach(async () => {
+beforeEach(async () => {
   await PosterModel.delete({posterSlug, userId})
 })
 
@@ -71,10 +65,7 @@ test('should generate user activity', async () => {
     ],
   }
 
-  mockedManagementClient.prototype.getUser = jest.fn().mockResolvedValueOnce({
-    identities: [{provider: 'github', access_token: undefined}],
-  })
-
+  mockedGetGitHubToken.mockResolvedValueOnce('')
   mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
   mockedSendPosterMail.mockResolvedValueOnce()
 
@@ -174,9 +165,7 @@ test('should be able to generate based on selected year', async () => {
     ],
   }
 
-  mockedManagementClient.prototype.getUser = jest.fn().mockResolvedValueOnce({
-    identities: [{provider: 'github', access_token: undefined}],
-  })
+  mockedGetGitHubToken.mockResolvedValueOnce('')
   mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
   mockedSendPosterMail.mockResolvedValueOnce()
 
