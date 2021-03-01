@@ -1,17 +1,17 @@
-import getISOWeek from 'date-fns/getISOWeek'
+import {getISOWeek, fromUnixTime, getUnixTime} from 'date-fns'
 
-export function getWeekNumber(date: Date, dowOffset = 0) {
+export function getWeekNumber(date: Date) {
   const weekNumber = getISOWeek(date)
 
   return weekNumber === 53 ? 52 : weekNumber
 }
 
 export function unixTimestampToDate(timestamp: number) {
-  const date = new Date(timestamp * 1000)
+  const date = fromUnixTime(timestamp)
 
   return date
 }
 
 export function dateToUnixTimeStamp(date: Date) {
-  return new Date(date).getTime() / 1000
+  return getUnixTime(date)
 }

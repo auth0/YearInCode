@@ -108,8 +108,8 @@ describe('startUtils.getGeneralWeekActivity', () => {
 
     expect(totalLinesOfCode).toBe(216)
     expect(repositoryWeeklyTotal).toEqual({
-      '16': {TEST_REPO_1: 91},
-      '26': {TEST_REPO_2: 133},
+      '13': {TEST_REPO_1: 91},
+      '27': {TEST_REPO_2: 133},
     })
     expect(repositoryLanguages).toEqual({
       TEST_REPO_1: 'Python',
@@ -118,11 +118,11 @@ describe('startUtils.getGeneralWeekActivity', () => {
     expect(repositoryOverallTotal).toEqual({TEST_REPO_1: 91, TEST_REPO_2: 133})
     expect(languageCount).toEqual({Python: 1, JavaScript: 1})
     expect(incompleteWeeks).toEqual([
-      ...new Array(16).fill(undefined),
-      {week: 17, lines: 89, commits: 2, total: 91},
-      ...new Array(9).fill(undefined),
-      {week: 27, lines: 127, commits: 6, total: 133},
-      ...new Array(25).fill(undefined),
+      ...new Array(13).fill(undefined),
+      {week: 14, lines: 89, commits: 2, total: 91},
+      ...new Array(13).fill(undefined),
+      {week: 28, lines: 127, commits: 6, total: 133},
+      ...new Array(24).fill(undefined),
     ])
   })
 
@@ -181,7 +181,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
 
     expect(totalLinesOfCode).toBe(89)
     expect(repositoryWeeklyTotal).toEqual({
-      '16': {TEST_REPO_1: 91},
+      '13': {TEST_REPO_1: 91},
     })
     expect(repositoryLanguages).toEqual({
       TEST_REPO_1: 'Python',
@@ -189,9 +189,9 @@ describe('startUtils.getGeneralWeekActivity', () => {
     expect(repositoryOverallTotal).toEqual({TEST_REPO_1: 91})
     expect(languageCount).toEqual({Python: 1})
     expect(incompleteWeeks).toEqual([
-      ...new Array(16).fill(undefined),
-      {week: 17, lines: 89, commits: 2, total: 91},
-      ...new Array(35).fill(undefined),
+      ...new Array(13).fill(undefined),
+      {week: 14, lines: 89, commits: 2, total: 91},
+      ...new Array(38).fill(undefined),
     ])
   })
 
@@ -290,7 +290,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
 
     expect(totalLinesOfCode).toEqual(44)
     expect(repositoryWeeklyTotal).toEqual({
-      '16': {TEST_REPO_1: 25, TEST_REPO_2: 26},
+      '13': {TEST_REPO_1: 25, TEST_REPO_2: 26},
     })
     expect(repositoryLanguages).toEqual({
       TEST_REPO_1: 'Python',
@@ -299,9 +299,9 @@ describe('startUtils.getGeneralWeekActivity', () => {
     expect(repositoryOverallTotal).toEqual({TEST_REPO_1: 25, TEST_REPO_2: 26})
     expect(languageCount).toEqual({Python: 1, JavaScript: 1})
     expect(incompleteWeeks).toEqual([
-      ...new Array(16).fill(undefined),
-      {week: 17, lines: 44, commits: 7, total: 51},
-      ...new Array(35).fill(undefined),
+      ...new Array(13).fill(undefined),
+      {week: 14, lines: 44, commits: 7, total: 51},
+      ...new Array(38).fill(undefined),
     ])
   })
 })

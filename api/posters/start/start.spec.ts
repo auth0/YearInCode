@@ -105,7 +105,7 @@ test('should generate user activity', async () => {
     totalLinesOfCode: 4965,
     weeks: [
       {
-        week: 17,
+        week: 14,
         lines: 445,
         commits: 10,
         total: 455,
@@ -113,7 +113,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 27,
+        week: 28,
         lines: 635,
         commits: 30,
         total: 665,
@@ -121,7 +121,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 33,
+        week: 34,
         lines: 3885,
         commits: 20,
         total: 3905,
