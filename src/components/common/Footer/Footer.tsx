@@ -14,11 +14,11 @@ const Footer = () => {
   const showTermsCard = () => setDisplayTermsCard(true)
 
   return (
-    <footer className="lg:flex-column px-4 py-6">
+    <footer className="flex flex-col px-4 py-6">
       {displayTermsCard && <Terms onClickAccept={hideTermsCard} />}
       <div
         className={clsx(
-          'relative flex flex-row items-center justify-start text-center',
+          'relative flex flex-col items-center justify-start text-center',
           'lg:flex-row lg:justify-between',
         )}
       >
