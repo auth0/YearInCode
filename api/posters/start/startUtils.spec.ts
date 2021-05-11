@@ -63,7 +63,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 2)
+                .set('date', 2)
                 .startOf('day')
                 .set('year', 2020)
                 .set('month', 3)
@@ -82,7 +82,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 12)
+                .set('date', 12)
                 .startOf('day')
                 .set('year', 2020)
                 .set('month', 6)
@@ -135,7 +135,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 2)
+                .set('date', 2)
                 .startOf('day')
                 .set('year', 2020)
                 .set('month', 3)
@@ -154,7 +154,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 12)
+                .set('date', 12)
                 .startOf('day')
                 .set('year', 2019)
                 .set('month', 6)
@@ -204,7 +204,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 2)
+                .set('date', 2)
                 .startOf('day')
                 .set('year', 2020)
                 .set('month', 3)
@@ -245,7 +245,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 2)
+                .set('date', 2)
                 .startOf('day')
                 .set('year', 2020)
                 .set('month', 3)
@@ -264,7 +264,7 @@ describe('startUtils.getGeneralWeekActivity', () => {
           {
             w: dateToUnixTimeStamp(
               dayjs()
-                .set('day', 4)
+                .set('date', 4)
                 .startOf('day')
                 .set('year', 2020)
                 .set('month', 3)
