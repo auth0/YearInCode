@@ -14,7 +14,7 @@ export const links = [
   },
   {
     name: 'Terms',
-    href: '#',
+    href: '#terms',
   },
 ]
 
