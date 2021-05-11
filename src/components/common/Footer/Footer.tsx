@@ -103,7 +103,7 @@ type TermsProps = {onClickAccept: () => void}
 const Terms: React.FC<TermsProps> = ({onClickAccept}) => (
   <div
     id="terms"
-    className="lg:flex-column px-8 py-6 text-center border border-gray-400 rounded-sm mb-4"
+    className="lg:flex-column px-8 py-6 text-center border border-gray-400 rounded-sm mb-6"
   >
     <Typography className="font-bold mb-3" variant="h5">
       Terms &amp; Conditions
