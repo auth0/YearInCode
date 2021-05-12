@@ -2,27 +2,34 @@ import {fireEvent, render} from '@testing-library/react'
 
 import Footer from '../Footer'
 
+beforeEach(() => {
+  // scrollIntoView is not defined into jsdom thus the need for this mock.
+  window.HTMLElement.prototype.scrollIntoView = jest.fn()
+})
+
+afterEach(jest.clearAllMocks)
+
 describe('Footer', () => {
-  beforeEach(jest.clearAllMocks)
-
   describe("when the user clicks on 'Terms'", () => {
-    jest
-      .spyOn(require('next/router'), 'useRouter')
-      .mockReturnValue({push: jest.fn().mockResolvedValue(null)})
-
     it("displays 'Terms & Conditions'", () => {
-      const {getByText} = render(<Footer />)
-      fireEvent.click(getByText('Terms'))
-      expect(getByText('Terms & Conditions')).toBeInTheDocument()
+      const {getByRole} = render(<Footer />)
+      fireEvent.click(getByRole('button', {name: 'Terms'}))
+      expect(
+        getByRole('heading', {name: 'Terms & Conditions'}),
+      ).toBeInTheDocument()
     })
 
     describe('and accepts the conditions', () => {
       it("hides the 'Terms & Conditions' section", () => {
-        const {getByText, queryByText} = render(<Footer />)
-        fireEvent.click(getByText('Terms'))
-        expect(getByText('Terms & Conditions')).toBeInTheDocument()
-        fireEvent.click(getByText(/Click to accept/i))
-        expect(queryByText('Terms & Condtions')).not.toBeInTheDocument()
+        const {getByRole, queryByRole} = render(<Footer />)
+        fireEvent.click(getByRole('button', {name: 'Terms'}))
+        expect(
+          getByRole('heading', {name: 'Terms & Conditions'}),
+        ).toBeInTheDocument()
+        fireEvent.click(getByRole('button', {name: 'Click to accept'}))
+        expect(
+          queryByRole('heading', {name: 'Terms & Conditions'}),
+        ).not.toBeInTheDocument()
       })
     })
   })

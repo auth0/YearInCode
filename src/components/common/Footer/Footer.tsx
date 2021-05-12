@@ -10,6 +10,11 @@ import {links, socials} from './Footer.utils'
 const Footer = () => {
   const [displayTermsCard, setDisplayTermsCard] = React.useState(false)
 
+  React.useEffect(() => {
+    if (!displayTermsCard) return
+    document.getElementById('terms')?.scrollIntoView()
+  }, [displayTermsCard])
+
   const hideTermsCard = () => setDisplayTermsCard(false)
   const showTermsCard = () => setDisplayTermsCard(true)
 
@@ -66,22 +71,25 @@ interface LinksProps {
 const Links: React.FC<LinksProps> = ({className, onClickTerms}) => (
   <ul className={clsx('flex space-x-6', className)}>
     {links.map(link => (
-      <Link
-        key={link.name}
-        {...link}
-        onClick={link.name === 'Terms' ? onClickTerms : undefined}
-      />
+      <Link key={link.name} {...link} />
     ))}
+    <Typography
+      variant="body1"
+      as="button"
+      className="text-white hover:text-opacity-100 text-opacity-60 focus:outline-none"
+      onClick={onClickTerms}
+    >
+      Terms
+    </Typography>
   </ul>
 )
 
 interface LinkProps {
   name: string
   href: string
-  onClick?: () => void
 }
 
-const Link: React.FC<LinkProps> = ({name, href, onClick}) => {
+const Link: React.FC<LinkProps> = ({name, href}) => {
   return (
     <li>
       <NextLink href={href} passHref>
@@ -89,7 +97,6 @@ const Link: React.FC<LinkProps> = ({name, href, onClick}) => {
           variant="body1"
           as="a"
           className="text-white hover:text-opacity-100 text-opacity-60"
-          onClick={onClick}
         >
           {name}
         </Typography>
