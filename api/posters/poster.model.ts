@@ -11,6 +11,11 @@ const schema = new dynamoose.Schema(
       type: String,
       required: true,
       rangeKey: true,
+      index: {
+        name: 'userIdIndex',
+        global: true,
+        project: true,
+      },
     },
     year: {
       type: Number,
@@ -44,7 +49,17 @@ const PosterModel = dynamoose.model<PosterDocument>(
   process.env.POSTER_TABLE,
   schema,
   {
-    create: process.env.NODE_ENV === 'test' ? true : false,
+    create: false,
+    throughput: 'ON_DEMAND',
+    ...(process.env.NODE_ENV === 'test' && {
+      waitForActive: {
+        enabled: true,
+        check: {
+          timeout: 60000,
+          frequency: 0,
+        },
+      },
+    }),
   },
 )
 
