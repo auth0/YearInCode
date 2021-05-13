@@ -12,10 +12,6 @@ export const links = [
     name: 'Privacy',
     href: '#',
   },
-  {
-    name: 'Terms',
-    href: '#',
-  },
 ]
 
 export const socials = [

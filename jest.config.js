@@ -14,8 +14,12 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
+    '^.+\\.svg$': 'jest-svg-transformer',
   },
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths),
+    '^.+\\.css$': 'jest-css-modules',
+  },
   transformIgnorePatterns: [
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',
