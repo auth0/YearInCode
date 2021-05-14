@@ -10,7 +10,7 @@ export default {
   component: InstagramPoster,
 } as Meta
 
-const Template = (args: typeof InstagramPoster['arguments']) => (
+const Template = (args: Parameters<typeof InstagramPoster>[0]) => (
   <InstagramPoster {...args} />
 )
 

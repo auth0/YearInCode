@@ -7,7 +7,7 @@ export default {
   component: ProgressBar,
 } as Meta
 
-const Template = (args: typeof ProgressBar['arguments']) => (
+const Template = (args: Parameters<typeof ProgressBar>[0]) => (
   <div className="flex items-center justify-center min-h-screen">
     <ProgressBar {...args} />
   </div>

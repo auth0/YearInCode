@@ -7,7 +7,7 @@ export default {
   component: ToggleButton,
 } as Meta
 
-const Template = (args: typeof ToggleButton['arguments']) => (
+const Template = (args: Parameters<typeof ToggleButton>[0]) => (
   <div className="flex items-center justify-center min-h-screen">
     <ToggleButton {...args} />
   </div>

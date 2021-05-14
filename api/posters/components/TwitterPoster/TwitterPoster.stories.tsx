@@ -10,7 +10,7 @@ export default {
   component: TwitterPoster,
 } as Meta
 
-const Template = (args: typeof TwitterPoster['arguments']) => (
+const Template = (args: Parameters<typeof TwitterPoster>[0]) => (
   <TwitterPoster {...args} />
 )
 

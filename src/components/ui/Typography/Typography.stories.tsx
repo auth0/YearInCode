@@ -20,7 +20,7 @@ const variants: Variants[] = [
   'caption',
 ]
 
-const Template = (args: typeof Typography['arguments']) => (
+const Template = (args: Parameters<typeof Typography>[0]) => (
   <Typography {...args} />
 )
 
@@ -31,7 +31,7 @@ Basic.args = {
   children: 'Hello World!',
 }
 
-export const All = (args: typeof Template['arguments']) => (
+export const All = (args: Parameters<typeof Template>[0]) => (
   <>
     {variants.map(variant => (
       <Template key={variant} {...args} variant={variant} />

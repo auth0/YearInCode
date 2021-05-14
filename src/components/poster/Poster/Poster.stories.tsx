@@ -8,9 +8,7 @@ export default {
   component: Poster,
 } as Meta
 
-const Template = (args: typeof Poster['arguments']) => (
-  <Poster wrapperStyle={{height: '90vh'}} {...args} />
-)
+const Template = (args: Parameters<typeof Poster>[0]) => <Poster {...args} />
 
 export const Basic = Template.bind({})
 
