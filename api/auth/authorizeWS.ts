@@ -56,10 +56,13 @@ export const authorizeWS = (
       return getSigningKey(decoded.header.kid).then((key: any) => {
         const signingKey = key.publicKey || key.rsaPublicKey
 
-        return jwt.verify(accessToken, signingKey, jwtOptions)
+        return jwt.verify(accessToken, signingKey, jwtOptions) as Record<
+          string,
+          any
+        >
       })
     })
-    .then((decoded: Record<string, any>) => ({
+    .then(decoded => ({
       principalId: decoded.sub,
       policyDocument: getPolicyDocument('Allow', params.methodArn),
       context: {scope: decoded.scope},

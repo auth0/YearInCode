@@ -66,9 +66,9 @@ export const authorize = (params: AuthorizeParams) => {
     .then((key: any) => {
       const signingKey = key.publicKey || key.rsaPublicKey
 
-      return jwt.verify(token, signingKey, jwtOptions)
+      return jwt.verify(token, signingKey, jwtOptions) as Record<string, any>
     })
-    .then((decoded: Record<string, any>) => ({
+    .then(decoded => ({
       principalId: decoded.sub,
       policyDocument: getPolicyDocument('Allow', '*'),
       context: {scope: decoded.scope},

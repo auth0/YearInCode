@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Meta} from '@storybook/react/types-6-0'
+import {Meta, Story} from '@storybook/react/types-6-0'
 
 import {getMockData} from '@components/poster/Poster/Poster.utils'
 
@@ -12,7 +12,7 @@ export default {
   component: HighQualityPoster,
 } as Meta
 
-const Template = (args: Parameters<typeof HighQualityPoster>[0]) => (
+const Template: Story<Parameters<typeof HighQualityPoster>[0]> = args => (
   <Wrapper>
     <HighQualityPoster {...args} />
   </Wrapper>

@@ -1,4 +1,4 @@
-import {Meta} from '@storybook/react/types-6-0'
+import {Meta, Story} from '@storybook/react/types-6-0'
 
 import ProgressBar from './ProgressBar'
 
@@ -7,7 +7,7 @@ export default {
   component: ProgressBar,
 } as Meta
 
-const Template = (args: Parameters<typeof ProgressBar>[0]) => (
+const Template: Story<Parameters<typeof ProgressBar>[0]> = args => (
   <div className="flex items-center justify-center min-h-screen">
     <ProgressBar {...args} />
   </div>
