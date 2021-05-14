@@ -10,7 +10,9 @@ export default {
   component: OpenGraphPoster,
 } as Meta
 
-const Template = args => <OpenGraphPoster {...args} />
+const Template = (args: typeof OpenGraphPoster['arguments']) => (
+  <OpenGraphPoster {...args} />
+)
 
 export const Basic = Template.bind({})
 

@@ -46,7 +46,7 @@ const schema = new dynamoose.Schema(
 )
 
 const PosterModel = dynamoose.model<PosterDocument>(
-  process.env.POSTER_TABLE,
+  process.env.POSTER_TABLE as string,
   schema,
   {
     create: false,

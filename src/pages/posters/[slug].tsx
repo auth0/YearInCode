@@ -1,3 +1,4 @@
+import {GetServerSidePropsContext} from 'next'
 import {NextSeo} from 'next-seo'
 
 import {DownloadPoster, PosterHangingSign} from '@components/poster'
@@ -31,8 +32,8 @@ export default function PosterBySlug({
   const siteUrl = `${constants.site.url}/posters/${posterSlug}`
 
   const isUserPoster =
-    user?.name.trim() === posterData.name.trim() ||
-    user?.nickname.trim() === posterData.name.trim()
+    user?.name?.trim() === posterData.name.trim() ||
+    user?.nickname?.trim() === posterData.name.trim()
 
   const canGenerateMorePosters =
     otherPosters.length < constants.poster.maxExtraPosters && isUserPoster
@@ -125,9 +126,13 @@ export default function PosterBySlug({
   )
 }
 
-export async function getServerSideProps({params, res, req}) {
+export async function getServerSideProps({
+  params,
+  res,
+  req,
+}: GetServerSidePropsContext<{slug: string}>) {
   try {
-    const {slug} = params
+    const {slug} = params || {slug: ''}
 
     const session = await auth0.getSession(req)
 

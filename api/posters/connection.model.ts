@@ -25,7 +25,7 @@ const schema = new dynamoose.Schema(
 )
 
 const ConnectionModel = dynamoose.model<ConnectionDocument>(
-  process.env.CONNECTION_TABLE,
+  process.env.CONNECTION_TABLE as string,
   schema,
   {
     create: false,

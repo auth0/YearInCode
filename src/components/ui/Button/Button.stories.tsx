@@ -24,7 +24,7 @@ const Icon = () => (
   </svg>
 )
 
-const Template = args => (
+const Template = (args: typeof Button['arguments']) => (
   <div className="flex items-center justify-center min-h-screen">
     <Button {...args} />
   </div>

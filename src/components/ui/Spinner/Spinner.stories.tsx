@@ -7,7 +7,7 @@ export default {
   component: Spinner,
 } as Meta
 
-const Template = args => (
+const Template = (args: typeof Spinner['arguments']) => (
   <div className="flex items-center justify-center min-h-screen">
     <Spinner {...args} />
   </div>

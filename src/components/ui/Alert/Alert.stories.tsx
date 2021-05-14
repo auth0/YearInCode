@@ -7,7 +7,7 @@ export default {
   component: Alert,
 } as Meta
 
-const Template = args => (
+const Template = (args: typeof Alert['arguments']) => (
   <div className="flex items-center justify-center min-h-screen">
     <Alert {...args} />
   </div>

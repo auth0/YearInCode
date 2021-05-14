@@ -12,7 +12,7 @@ export default {
   component: HighQualityPoster,
 } as Meta
 
-const Template = args => (
+const Template = (args: typeof HighQualityPoster['arguments']) => (
   <Wrapper>
     <HighQualityPoster {...args} />
   </Wrapper>

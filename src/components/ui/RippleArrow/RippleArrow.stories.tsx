@@ -7,7 +7,7 @@ export default {
   component: RippleArrow,
 } as Meta
 
-const Template = args => (
+const Template = (args: typeof RippleArrow['arguments']) => (
   <div className="flex items-center justify-center min-h-screen">
     <RippleArrow {...args} />
   </div>

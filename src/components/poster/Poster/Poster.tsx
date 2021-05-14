@@ -33,8 +33,8 @@ let tooltipTimeout: number
 
 const PosterComponent: React.FC<PosterComponentProps> = ({
   data,
-  width,
-  height,
+  width = 0,
+  height = 0,
 }) => {
   const {
     showTooltip,

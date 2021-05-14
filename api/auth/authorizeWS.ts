@@ -12,7 +12,7 @@ import {
   WebSocketConnectDTO,
 } from '@nebula/types/poster'
 
-const getPolicyDocument = (effect, resource) => {
+const getPolicyDocument = (effect: 'Allow', resource: string) => {
   const policyDocument = {
     Version: '2012-10-17', // default version
     Statement: [
@@ -36,7 +36,7 @@ const client = jwksClient({
   cache: true,
   rateLimit: true,
   jwksRequestsPerMinute: 10, // Default value
-  jwksUri: process.env.JWKS_URI,
+  jwksUri: process.env.JWKS_URI as string,
 })
 
 export const authorizeWS = (
@@ -46,7 +46,7 @@ export const authorizeWS = (
 
   return Iron.unseal(
     wsPayload,
-    process.env.WEBSOCKET_PAYLOAD_SECRET,
+    process.env.WEBSOCKET_PAYLOAD_SECRET as string,
     Iron.defaults,
   )
     .then(({accessToken}: UnsealedWebSocketConnectDTO) => {

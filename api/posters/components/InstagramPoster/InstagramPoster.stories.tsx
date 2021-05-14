@@ -10,7 +10,9 @@ export default {
   component: InstagramPoster,
 } as Meta
 
-const Template = args => <InstagramPoster {...args} />
+const Template = (args: typeof InstagramPoster['arguments']) => (
+  <InstagramPoster {...args} />
+)
 
 export const Basic = Template.bind({})
 
