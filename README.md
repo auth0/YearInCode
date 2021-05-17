@@ -75,7 +75,7 @@ Then, open `.env.local` and add the missing environment variables:
 - `NEXT_PUBLIC_API_URL` - The url of Next.js serverless functions
 - `NEXT_PUBLIC_API_WEBSOCKET_URL` - The url for websocket API in AWS.
 - `NEXT_PUBLIC_CLOUDFRONT_URL` - AWS Cloudfront url
-- `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_ID`: The token for Cloudflare analytics that can be retrieved from the [dashboard](https://dash.cloudflare.com).
+- `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_ID` - The token for Cloudflare analytics that can be retrieved from the [dashboard](https://dash.cloudflare.com).
 - `LAMBDA_API_URL` - AWS API Gateway url
 - `JWKS_URI` - The url for Auth0 public keys. Normally has the following
   structure `https://your-tenant.auth0.com/.well-known/jwks.json`
