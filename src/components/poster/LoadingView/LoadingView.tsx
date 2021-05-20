@@ -1,8 +1,13 @@
 import * as React from 'react'
 import Link from 'next/link'
 
-import {Alert, Button, ProgressBar, Typography} from '@components/ui'
-import GitHubIcon from '@assets/svg/github-logo.svg'
+import {
+  Alert,
+  Button,
+  GoToRepoButton,
+  ProgressBar,
+  Typography,
+} from '@components/ui'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
 import {PosterSteps} from '@nebula/types/poster'
 
@@ -57,9 +62,7 @@ const Loading: React.FC<LoadingProps> = ({
               See How it Works
             </Button>
 
-            <Button href="#" icon={<GitHubIcon />}>
-              Check GitHub Repo
-            </Button>
+            <GoToRepoButton />
           </div>
         )}
 
