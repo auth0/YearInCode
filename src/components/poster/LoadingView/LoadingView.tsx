@@ -1,13 +1,8 @@
 import * as React from 'react'
 import Link from 'next/link'
 
-import {
-  Alert,
-  Button,
-  GoToRepoButton,
-  ProgressBar,
-  Typography,
-} from '@components/ui'
+import {GoToRepoButton} from '@components/common'
+import {Alert, Button, ProgressBar, Typography} from '@components/ui'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
 import {PosterSteps} from '@nebula/types/poster'
 
