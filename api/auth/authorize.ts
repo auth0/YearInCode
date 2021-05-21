@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken'
 
 import {decodeToken} from '@api/lib/token'
 
-const getPolicyDocument = (effect, resource) => {
+const getPolicyDocument = (effect: 'Allow', resource: string) => {
   const policyDocument = {
     Version: '2012-10-17', // default version
     Statement: [
@@ -21,7 +21,7 @@ const getPolicyDocument = (effect, resource) => {
 }
 
 // extract and return the Bearer Token from the Lambda event parameters
-const getToken = params => {
+const getToken = (params: AuthorizeParams) => {
   if (!params.type || params.type !== 'TOKEN') {
     throw new Error('Expected "event.type" parameter to have value "TOKEN"')
   }
@@ -50,10 +50,12 @@ const client = jwksClient({
   cache: true,
   rateLimit: true,
   jwksRequestsPerMinute: 10, // Default value
-  jwksUri: process.env.JWKS_URI,
+  jwksUri: process.env.JWKS_URI as string,
 })
 
-export const authorize = params => {
+type AuthorizeParams = {type?: string; authorizationToken?: string}
+
+export const authorize = (params: AuthorizeParams) => {
   const token = getToken(params)
 
   const decoded = decodeToken(token)
@@ -64,9 +66,9 @@ export const authorize = params => {
     .then((key: any) => {
       const signingKey = key.publicKey || key.rsaPublicKey
 
-      return jwt.verify(token, signingKey, jwtOptions)
+      return jwt.verify(token, signingKey, jwtOptions) as Record<string, any>
     })
-    .then((decoded: Record<string, any>) => ({
+    .then(decoded => ({
       principalId: decoded.sub,
       policyDocument: getPolicyDocument('Allow', '*'),
       context: {scope: decoded.scope},

@@ -6,10 +6,9 @@ const noop = {} as ISignInWithAuth0
 
 function getServerSetting(environmentVariable: string, defaultValue?: string) {
   if (typeof window === 'undefined') {
-    return process.env[environmentVariable]
+    return process.env[environmentVariable] as string
   }
-
-  return defaultValue || null
+  return defaultValue as string
 }
 
 const auth0Config: IAuth0Settings = {

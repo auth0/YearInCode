@@ -23,8 +23,8 @@ const AXIS_LINE_AMOUNT = 30
 interface PosterSVGProps {
   data: Poster
 
-  width?: number
-  height?: number
+  width: number
+  height: number
   className?: string
   selectedIndex?: number
 
@@ -75,7 +75,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
   const normalizeLines = React.useMemo(
     () =>
       scaleSqrt({
-        domain: [0, d3.max(data.weeks, d => d.lines)],
+        domain: [0, d3.max(data.weeks, d => d.lines) as number],
         range: [0, 320],
       }),
     [data],
@@ -85,8 +85,8 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
     () =>
       scaleLinear({
         domain: [
-          d3.min(data.weeks, d => d.commits),
-          d3.max(data.weeks, d => d.commits),
+          d3.min(data.weeks, d => d.commits) as number,
+          d3.max(data.weeks, d => d.commits) as number,
         ],
         range: [
           normalizeLines.range()[0],
@@ -161,14 +161,14 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                 normalizeCommits(commits) + normalizeLines(lines),
               ),
               startAngle: x(week),
-              endAngle: x(week) + x.bandwidth(),
+              endAngle: (x(week) as number) + x.bandwidth(),
               padAngle: anglePadding,
               padRadius: innerRadius,
               cornerRadius: 9999,
             })(d)
 
             // parse vector points
-            const parsedPath = parseSVG(path) as Array<
+            const parsedPath = parseSVG(path as string) as Array<
               Command & {
                 x: number
                 y: number
@@ -245,7 +245,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                     normalizeCommits(commits) + normalizeLines(lines),
                   )}
                   startAngle={x(i + 1)}
-                  endAngle={x(i + 1) + x.bandwidth()}
+                  endAngle={(x(i + 1) as number) + x.bandwidth()}
                   padAngle={anglePadding}
                   padRadius={innerRadius}
                   cornerRadius={9999}
@@ -292,7 +292,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
                   innerRadius={barY(0)}
                   outerRadius={barY(normalizeLines(lines))}
                   startAngle={x(i + 1)}
-                  endAngle={x(i + 1) + x.bandwidth()}
+                  endAngle={(x(i + 1) as number) + x.bandwidth()}
                   padAngle={anglePadding}
                   padRadius={innerRadius}
                   cornerRadius={9999}

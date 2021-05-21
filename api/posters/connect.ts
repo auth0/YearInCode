@@ -20,7 +20,7 @@ async function connect(
 
   const {userId} = (await Iron.unseal(
     wsPayload,
-    process.env.WEBSOCKET_PAYLOAD_SECRET,
+    process.env.WEBSOCKET_PAYLOAD_SECRET as string,
     Iron.defaults,
   )) as UnsealedWebSocketConnectDTO
   logger.info(`Received connection from user (${userId})`)

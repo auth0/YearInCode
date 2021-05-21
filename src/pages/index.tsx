@@ -1,4 +1,5 @@
 import * as cache from 'memory-cache'
+import {GetServerSidePropsContext} from 'next'
 
 import {Footer, Header, Layout, PosterBackdrop} from '@components/common'
 import {Celebrate, Hero, ShowcaseGrid} from '@components/home'
@@ -30,7 +31,7 @@ export default function Home({isLoggedIn, galleryPosters}: HomeProps) {
   )
 }
 
-export async function getServerSideProps({req}) {
+export async function getServerSideProps({req}: GetServerSidePropsContext) {
   const sessionPromise = auth0.getSession(req)
 
   const cachedGalleryPosters = cache.get('galleryPosters')

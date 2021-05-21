@@ -1,3 +1,4 @@
+import {AppProps} from 'next/dist/next-server/lib/router/router'
 import {Router} from 'next/router'
 import nProgress from 'nprogress'
 import {QueryClientProvider, QueryClient} from 'react-query'
@@ -22,7 +23,7 @@ Router.events.on('routeChangeStart', () => nProgress.start())
 Router.events.on('routeChangeComplete', () => nProgress.done())
 Router.events.on('routeChangeError', () => nProgress.done())
 
-function App({Component, pageProps}) {
+function App({Component, pageProps}: AppProps) {
   return (
     <AppProviders>
       <Head />

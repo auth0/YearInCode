@@ -1,5 +1,5 @@
 import React from 'react'
-import {Meta} from '@storybook/react/types-6-0'
+import {Meta, Story} from '@storybook/react/types-6-0'
 
 import Typography, {Variants} from './Typography'
 
@@ -20,7 +20,9 @@ const variants: Variants[] = [
   'caption',
 ]
 
-const Template = args => <Typography {...args} />
+const Template: Story<Parameters<typeof Typography>[0]> = args => (
+  <Typography {...args} />
+)
 
 export const Basic = Template.bind({})
 
@@ -29,7 +31,7 @@ Basic.args = {
   children: 'Hello World!',
 }
 
-export const All = args => (
+export const All = (args: Parameters<typeof Template>[0]) => (
   <>
     {variants.map(variant => (
       <Template key={variant} {...args} variant={variant} />
