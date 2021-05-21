@@ -1,4 +1,4 @@
-export function indexOfMax(arr) {
+export function indexOfMax<T>(arr: T[]) {
   if (arr.length === 0) {
     return -1
   }

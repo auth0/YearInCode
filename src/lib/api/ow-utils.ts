@@ -1,8 +1,12 @@
-import ow from 'ow'
+import ow, {BasePredicate} from 'ow'
 
 import {constants} from '@lib/common'
 
-export function owWithMessage(val, message, validator) {
+export function owWithMessage<T>(
+  val: T,
+  message: string,
+  validator: BasePredicate<T>,
+) {
   try {
     ow(val, validator)
   } catch (error) {

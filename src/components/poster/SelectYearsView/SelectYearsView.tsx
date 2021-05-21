@@ -28,6 +28,7 @@ const SelectYears: React.FC<SelectYearsProps> = ({setStep, completedYears}) => {
   }
 
   const submitToQueue = () => {
+    if (!selectedYear) return
     mutateAsync({year: selectedYear})
       .then(() => setStep(PosterSteps.PREPARING))
       .catch(console.error)

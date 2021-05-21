@@ -31,14 +31,14 @@ async function queueStar(req: NextApiRequest, res: NextApiResponse) {
 
     const tokenCache = auth0.tokenCache(req, res)
     const session = await auth0.getSession(req)
-    const user = session.user as UserProfile
+    const user = session?.user as UserProfile
 
     const {accessToken} = await tokenCache.getAccessToken()
     const {data} = await PosterService._requestQueue(
-      user.sub,
-      user.nickname,
+      user.sub as string,
+      user.nickname as string,
       year,
-      accessToken,
+      accessToken as string,
     )
 
     res.status(200).json(data)

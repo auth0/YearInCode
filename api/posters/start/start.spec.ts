@@ -70,7 +70,7 @@ test('should generate user activity', async () => {
   mockedSendPosterMail.mockResolvedValueOnce()
 
   const results = await start.startImplementation(event)
-  const result = results[0].status === 'fulfilled' && results[0].value
+  const result = getFirstResult(results)
   const databaseResult = await PosterModel.get({posterSlug, userId})
 
   expect(databaseResult).toMatchObject({
@@ -170,7 +170,7 @@ test('should be able to generate based on selected year', async () => {
   mockedSendPosterMail.mockResolvedValueOnce()
 
   const results = await start.startImplementation(event)
-  const result = results[0].status === 'fulfilled' && results[0].value
+  const result = getFirstResult(results)
 
   expect(result.posterSlug).toContain(posterSlug)
   expect(result.posterData).toEqual({
@@ -183,3 +183,10 @@ test('should be able to generate based on selected year', async () => {
     weeks: [],
   })
 })
+
+const getFirstResult = <T>(results: PromiseSettledResult<T>[]) => {
+  if (results[0].status !== 'fulfilled') {
+    throw new Error('First result should be succesfull')
+  }
+  return results[0].value
+}
