@@ -15,12 +15,13 @@ const posterImages: PosterImageSizes = {
 const posterSlug = 'slug'
 
 describe('sendPosterStatistics', () => {
-  afterEach(async () => {
-    ;['user1', 'user2', 'user3'].forEach(async userId => {
-      await PosterModel.delete({posterSlug, userId})
+  beforeEach(async () => {
+    const posters = await PosterModel.scan().exec()
+    posters.forEach(async poster => {
+      await poster.delete()
     })
-    jest.clearAllMocks()
   })
+  afterEach(jest.clearAllMocks)
 
   describe("when there's no posters in the current week", () => {
     it("sends an email with 'No new posters this week'", async () => {
