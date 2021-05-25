@@ -214,6 +214,8 @@ functions:
 
   sendPosterAnalytics:
     handler: posters/statistics/send.sendPosterStatistics
+    events:
+      - schedule: cron(0 0 * * 1)
 
   connect:
     handler: posters/connect.connect
