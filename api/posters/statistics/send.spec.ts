@@ -15,7 +15,7 @@ const posterImages: PosterImageSizes = {
 describe('sendPosterStatistics', () => {
   afterEach(jest.clearAllMocks)
 
-  afterAll(async () => {
+  afterEach(async () => {
     await PosterModel.delete({posterSlug: 'slug'})
   })
 

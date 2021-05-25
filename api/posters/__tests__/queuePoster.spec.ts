@@ -2,7 +2,6 @@ import * as randomUtils from '@api/lib/random'
 import * as tokenUtils from '@api/lib/token'
 import {invoke} from '@api/tests/middy'
 
-import PosterModel from '../poster.model'
 import {queuePoster} from '../queuePoster'
 
 const mockedGeneratePosterSlug = jest.spyOn(randomUtils, 'generatePosterSlug')
@@ -14,10 +13,6 @@ const username = 'MOCK_USER_NAME'
 const posterSlug = 'MOCK_POSTER_SLUG'
 const authorization = 'MOCK_AUTHORIZATION'
 const token = 'MOCK_TOKEN'
-
-afterEach(async () => {
-  await PosterModel.delete({userId, posterSlug})
-})
 
 test('should return 401 error if userId does not match token', async () => {
   mockedGeneratePosterSlug.mockReturnValueOnce(posterSlug)
