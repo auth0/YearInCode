@@ -210,7 +210,7 @@ functions:
           method: get
           cors: true
 
-  sendPosterAnalytics:
+  sendPosterStatistics:
     handler: posters/statistics/send.sendPosterStatistics
     environment:
       SEND_POSTER_ANALYTICS_RECIPIENTS:
