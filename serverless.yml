@@ -213,7 +213,7 @@ functions:
           cors: true
 
   sendPosterAnalytics:
-    handler: posters/sendPosterStatistics.sendPosterStatistics
+    handler: posters/statistics/send.sendPosterStatistics
 
   connect:
     handler: posters/connect.connect
