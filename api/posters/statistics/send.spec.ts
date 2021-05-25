@@ -15,16 +15,17 @@ const posterImages: PosterImageSizes = {
 const posterSlug = 'slug'
 
 describe('sendPosterStatistics', () => {
-  beforeEach(async () => {
-    const posters = await PosterModel.scan().exec()
-    posters.forEach(async poster => {
-      await poster.delete()
-    })
-  })
   afterEach(jest.clearAllMocks)
 
   describe("when there's no posters in the current week", () => {
     it("sends an email with 'No new posters this week'", async () => {
+      /**
+       * Make sure there's no posters in the database due to race conditions in the DB.
+       */
+      const posters = await PosterModel.scan().exec()
+      posters.forEach(async poster => {
+        await poster.delete()
+      })
       const sendEmailSpy = jest
         .spyOn(helpers, 'sendEmail')
         .mockResolvedValueOnce()
@@ -36,6 +37,12 @@ describe('sendPosterStatistics', () => {
   })
 
   describe('when there are 2 posters in ready state and different languages in the current week', () => {
+    afterEach(async () => {
+      ;['user1', 'user2', 'user3'].forEach(async userId => {
+        await PosterModel.delete({posterSlug, userId})
+      })
+    })
+
     it('appends each separate langauge/total as a row in the email', async () => {
       const typescriptPoster = new PosterModel({
         posterSlug,
