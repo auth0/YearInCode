@@ -10,8 +10,12 @@ export const getCreatedPostersBetween = async (
   lowerBound: Date,
   upperBound: Date,
 ) =>
-  PosterModel.scan('updatedAt')
-    .between(dateToUnixTimeStamp(lowerBound), dateToUnixTimeStamp(upperBound))
+  PosterModel.scan({
+    updatedAt: {
+      ge: dateToUnixTimeStamp(lowerBound),
+      le: dateToUnixTimeStamp(upperBound),
+    },
+  })
     .filter('step')
     .eq(PosterSteps.READY)
     .attributes(['posterData'])

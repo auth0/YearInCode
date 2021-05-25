@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import {logger} from '@nebula/log'
 
 import {
@@ -9,12 +11,8 @@ import {
 
 export const sendPosterStatistics = async () => {
   try {
-    const now = new Date()
-    const oneWeekBefore = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - 7,
-    )
+    const now = dayjs().toDate()
+    const oneWeekBefore = dayjs().subtract(1, 'week').toDate()
 
     logger.info(
       `Retrieving posters from ${oneWeekBefore.toUTCString()} until ${now.toUTCString()}`,
