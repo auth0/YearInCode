@@ -4,7 +4,7 @@ service: nebula-serverless
 # app: nebula
 # org: ORG_NAME
 
-frameworkVersion: '2'
+frameworkVersion: "2"
 
 package:
   individually: true
@@ -17,11 +17,9 @@ provider:
   stackName: ${self:service}-${self:custom.stage}
   region: us-east-1
   environment:
-    AUTH0_DOMAIN:
-      ${ssm:/${self:custom.stage}/auth0/domain, env:NEXT_PUBLIC_AUTH0_DOMAIN}
+    AUTH0_DOMAIN: ${ssm:/${self:custom.stage}/auth0/domain, env:NEXT_PUBLIC_AUTH0_DOMAIN}
     AUTH0_AUDIENCE: ${ssm:/${self:custom.stage}/auth0/audience}
-    AUTH0_CLIENT_ID:
-      ${ssm:/${self:custom.stage}/auth0/client_id,
+    AUTH0_CLIENT_ID: ${ssm:/${self:custom.stage}/auth0/client_id,
       env:NEXT_PUBLIC_AUTH0_CLIENT_ID}
     AUTH0_CLIENT_SECRET: ${ssm:/${self:custom.stage}/auth0/client_secret~true}
     JWT_TOKEN_ISSUER: ${ssm:/${self:custom.stage}/jwt/token_issuer}
@@ -39,22 +37,22 @@ provider:
         - ses:SendEmail
       Resource:
         Fn::Join:
-          - ''
-          - - 'arn:aws:ses:'
+          - ""
+          - - "arn:aws:ses:"
             - Ref: AWS::Region
-            - ':'
+            - ":"
             - Ref: AWS::AccountId
-            - ':identity/*'
+            - ":identity/*"
     - Effect: Allow
       Action:
         - s3:PutObject
       Resource: arn:aws:s3:::${self:custom.posterBucketName}/*
     - Effect: Allow
       Action:
-        - 'execute-api:Invoke'
+        - "execute-api:Invoke"
       Resource:
-        - 'arn:aws:execute-api:*:*:**/@connections/*'
-    - Effect: 'Allow'
+        - "arn:aws:execute-api:*:*:**/@connections/*"
+    - Effect: "Allow"
       Action:
         - sqs:SendMessage
         - sqs:DeleteMessage
@@ -69,7 +67,7 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
         - dynamodb:DescribeTable
-      Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/*'
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/*"
 
 custom:
   stage: ${opt:stage, self:provider.stage, 'dev'}
@@ -92,7 +90,7 @@ custom:
         - chrome-aws-lambda
       forceInclude:
         - uuid
-    packager: 'yarn'
+    packager: "yarn"
     packagerOptions:
       scripts:
         - npx del-cli node_modules/aws-sdk "node_modules/**/@types/**"
@@ -121,15 +119,15 @@ custom:
       autoDomain: true
   serverless-offline-sqs:
     autoCreate: true
-    apiVersion: '2012-11-05'
+    apiVersion: "2012-11-05"
     endpoint: http://0.0.0.0:9324
     region: us-east-1
     accessKeyId: local
     secretAccessKey: local
     skipCacheInvalidation: false
   dotenvInclude:
-    dev: ''
-    staging: ''
+    dev: ""
+    staging: ""
     production: []
   dotenv:
     logging: false
@@ -141,7 +139,7 @@ custom:
       - dev
     start:
       host: localhost
-      port: '8000' # the port of our Dynamo docker container
+      port: "8000" # the port of our Dynamo docker container
       noStart: true
       migrate: true
   s3:
@@ -179,7 +177,7 @@ functions:
   queuePoster:
     handler: posters/queuePoster.queuePoster
     environment:
-      SQS_QUEUE_URL: {Ref: PosterQueue}
+      SQS_QUEUE_URL: { Ref: PosterQueue }
     events:
       - http:
           path: users/{userId}/posters/queue
@@ -216,7 +214,7 @@ functions:
     handler: posters/statistics/send.sendPosterStatistics
     environment:
       SEND_POSTER_ANALYTICS_RECIPIENTS:
-        ${ssm:/${self:custom.stage}/ses/poster_statistics_recipients,
+        ${ssm:/${self:custom.stage}/ses/poster_analytics_recipients,
         env:SEND_POSTER_ANALYTICS_RECIPIENTS}
     events:
       - schedule: cron(0 0 * * 1)
@@ -233,7 +231,7 @@ functions:
           authorizer:
             name: authorizeWS
             identitySource:
-              - 'route.request.querystring.wsPayload'
+              - "route.request.querystring.wsPayload"
 
   disconnect:
     handler: posters/disconnect.disconnect
@@ -247,16 +245,14 @@ functions:
     reservedConcurrency: 8 # No more than 8 concurrent invocations
     memorySize: 2048
     layers:
-      - {Ref: PuppeteerLambdaLayer}
+      - { Ref: PuppeteerLambdaLayer }
     environment:
-      AWS_SOURCE_EMAIL:
-        ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
-      SITE_URL:
-        ${ssm:/${self:custom.stage}/site/url,
+      AWS_SOURCE_EMAIL: ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
+      SITE_URL: ${ssm:/${self:custom.stage}/site/url,
         env:NEXT_PUBLIC_POST_LOGOUT_REDIRECT_URI}
       WEBSOCKET_API_ENDPOINT:
         Fn::Join:
-          - ''
+          - ""
           - - Ref: WebsocketsApi
             - .execute-api.
             - Ref: AWS::Region
@@ -273,7 +269,7 @@ resources:
   Resources:
     # SQS
     PosterQueue:
-      Type: 'AWS::SQS::Queue'
+      Type: "AWS::SQS::Queue"
       Properties:
         QueueName: sqs-poster-queue-${self:custom.stage}
         VisibilityTimeout: 900
@@ -326,25 +322,25 @@ resources:
 
     # API Gateway
     GatewayResponse:
-      Type: 'AWS::ApiGateway::GatewayResponse'
+      Type: "AWS::ApiGateway::GatewayResponse"
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: EXPIRED_TOKEN
         RestApiId:
-          Ref: 'ApiGatewayRestApi'
-        StatusCode: '401'
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
     AuthFailureGatewayResponse:
-      Type: 'AWS::ApiGateway::GatewayResponse'
+      Type: "AWS::ApiGateway::GatewayResponse"
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: UNAUTHORIZED
         RestApiId:
-          Ref: 'ApiGatewayRestApi'
-        StatusCode: '401'
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
 
     # S3
     PosterBucket:
@@ -355,9 +351,9 @@ resources:
         AccessControl: Private
         CorsConfiguration:
           CorsRules:
-            - AllowedHeaders: ['*']
-              AllowedMethods: ['PUT', 'GET']
-              AllowedOrigins: ['*'] # Update with domain when available
+            - AllowedHeaders: ["*"]
+              AllowedMethods: ["PUT", "GET"]
+              AllowedOrigins: ["*"] # Update with domain when available
     PosterBucketPolicy:
       Type: AWS::S3::BucketPolicy
       DeletionPolicy: Retain
@@ -367,7 +363,7 @@ resources:
         PolicyDocument:
           Statement:
             - Action: s3:GetObject
-              Effect: 'Allow'
+              Effect: "Allow"
               Resource: arn:aws:s3:::${self:custom.posterBucketName}/*
               Principal:
                 CanonicalUser:
@@ -379,9 +375,8 @@ resources:
       DeletionPolicy: Retain
       Properties:
         CloudFrontOriginAccessIdentityConfig:
-          Comment:
-            'Identity for accessing CloudFront from S3 within stack
-            #{AWS::StackName}'
+          Comment: "Identity for accessing CloudFront from S3 within stack
+            #{AWS::StackName}"
     PosterCdnDistribution:
       Type: AWS::CloudFront::Distribution
       DeletionPolicy: Retain
@@ -389,13 +384,13 @@ resources:
         DistributionConfig:
           Origins:
             # S3 origin for static content
-            - DomainName: '${self:custom.posterBucketName}.s3.amazonaws.com'
+            - DomainName: "${self:custom.posterBucketName}.s3.amazonaws.com"
               Id: PosterBucketS3Origin
               S3OriginConfig:
                 OriginAccessIdentity:
                   Fn::Join:
-                    - ''
-                    - - 'origin-access-identity/cloudfront/'
+                    - ""
+                    - - "origin-access-identity/cloudfront/"
                       - Ref: CloudFrontOriginAccessIdentity
           Comment: CDN for poster photos.
           Enabled: true
@@ -411,9 +406,9 @@ resources:
             ForwardedValues:
               Headers:
                 [
-                  'Access-Control-Request-Headers',
-                  'Access-Control-Request-Method',
-                  'Origin',
+                  "Access-Control-Request-Headers",
+                  "Access-Control-Request-Method",
+                  "Origin",
                 ]
               QueryString: false
               Cookies:
