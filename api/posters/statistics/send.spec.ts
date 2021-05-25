@@ -12,9 +12,13 @@ const posterImages: PosterImageSizes = {
   openGraph: 'openGraph.png',
 }
 
+const posterSlug = 'slug'
+
 describe('sendPosterStatistics', () => {
   afterEach(async () => {
-    await PosterModel.delete({posterSlug: 'slug'})
+    ;['user1', 'user2', 'user3'].forEach(async userId => {
+      await PosterModel.delete({posterSlug, userId})
+    })
     jest.clearAllMocks()
   })
 
@@ -33,7 +37,7 @@ describe('sendPosterStatistics', () => {
   describe('when there are 2 posters in ready state and different languages in the current week', () => {
     it('appends each separate langauge/total as a row in the email', async () => {
       const typescriptPoster = new PosterModel({
-        posterSlug: 'slug',
+        posterSlug,
         userId: 'user1',
         year: 2020,
         step: PosterSteps.READY,
@@ -44,7 +48,7 @@ describe('sendPosterStatistics', () => {
       await typescriptPoster.save()
 
       const haskellPoster = new PosterModel({
-        posterSlug: 'slug',
+        posterSlug,
         userId: 'user2',
         year: 2020,
         step: PosterSteps.READY,
@@ -55,7 +59,7 @@ describe('sendPosterStatistics', () => {
       await haskellPoster.save()
 
       const goPoster = new PosterModel({
-        posterSlug: 'slug',
+        posterSlug,
         userId: 'user3',
         year: 2020,
         step: PosterSteps.FAILED,
