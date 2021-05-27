@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
+import {GoToRepoButton} from '@components/common'
 import {Typography, Button} from '@components/ui'
 import GitHubIcon from '@assets/svg/github-logo.svg'
 import YoutubeIcon from '@assets/svg/youtube-logo.svg'
@@ -39,9 +40,7 @@ const ShowcaseGrid: React.FC<ShowcaseGridProps> = ({galleryPosters}) => {
             See How it Works
           </Button>
 
-          <Button href="#" icon={<GitHubIcon />}>
-            Check GitHub Repo
-          </Button>
+          <GoToRepoButton />
         </div>
       </header>
 
