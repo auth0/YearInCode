@@ -19,7 +19,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = props => {
     isSelected,
     ...otherProps
   } = props
-  const ref = React.useRef()
+  const ref = React.useRef<HTMLButtonElement | null>(null)
   const state = useToggleState(props)
   const {buttonProps} = useToggleButton(
     {...props, isDisabled: props.loading || props.disabled},

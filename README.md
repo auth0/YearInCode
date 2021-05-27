@@ -27,22 +27,22 @@ An experience for developers to see their career in space/time.
 
 4. Save the settings
 5. Head into _APIs_, and click on _Auth0 Management API_
-6. Click on _Machine to Machine Applications_ and authorize your newly created application. 
+6. Click on _Machine to Machine Applications_ and authorize your newly created application.
 7. Open the authorized application dropdown and select the following permissions: `read:users` and `read:user_idp_tokens`.
 8. Save the settings by clicking on update.
 
 ## Setting up Auth0 OAuth
 
-1. Go to `Connections -> Social` in your [Auth0 dashboard](https://manage.auth0.com/). 
-2. Click on _create connection_  and select GitHub. 
-3. Go back to your connections and click on GitHub. 
-4. Head into [Auth0 documentation](https://auth0.com/docs/connections/social/github) on how to get your `Client ID` and `Client Secret`. 
+1. Go to `Connections -> Social` in your [Auth0 dashboard](https://manage.auth0.com/).
+2. Click on _create connection_  and select GitHub.
+3. Go back to your connections and click on GitHub.
+4. Head into [Auth0 documentation](https://auth0.com/docs/connections/social/github) on how to get your `Client ID` and `Client Secret`.
 5. Fill the `Client ID` and `Client Secret`.
 6. Enable the `Email address` attribute.
-7. Save your settings.  
-8. Head into _Applications tab_  and authorize your created application. 
-9. Head into your application in _Applications_ and click on _Connections_. 
-10. Disable `Username-Password-Authentication` and enable only `GitHub`. 
+7. Save your settings.
+8. Head into _Applications tab_  and authorize your created application.
+9. Head into your application in _Applications_ and click on _Connections_.
+10. Disable `Username-Password-Authentication` and enable only `GitHub`.
 
 ### Set up environment variables
 
@@ -75,6 +75,7 @@ Then, open `.env.local` and add the missing environment variables:
 - `NEXT_PUBLIC_API_URL` - The url of Next.js serverless functions
 - `NEXT_PUBLIC_API_WEBSOCKET_URL` - The url for websocket API in AWS.
 - `NEXT_PUBLIC_CLOUDFRONT_URL` - AWS Cloudfront url
+- `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_ID` - The token for Cloudflare analytics that can be retrieved from the [dashboard](https://dash.cloudflare.com).
 - `LAMBDA_API_URL` - AWS API Gateway url
 - `JWKS_URI` - The url for Auth0 public keys. Normally has the following
   structure `https://your-tenant.auth0.com/.well-known/jwks.json`
@@ -85,6 +86,7 @@ Then, open `.env.local` and add the missing environment variables:
 - `NEXT_PUBLIC_FACEBOOK_ID` - Facebook APP ID. You can get it
   [here](https://developers.facebook.com/docs/development/create-an-app).
 - `AUTH0_AUDIENCE` - The url for Auth0 audience. Normally has the following structure `https://your-tenant.auth0.com/api/v2/`
+- `SEND_POSTER_ANALYTICS_RECIPIENTS` - A comma separated list of emails that will receive the emails with the poster statistics
 
 
 ### Set Up Serveless Offline

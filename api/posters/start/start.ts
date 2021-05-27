@@ -7,7 +7,7 @@ import {Octokit} from '@octokit/rest'
 import {SetBodyToType} from '@api/lib/types'
 import {QueueRecordDTO} from '@nebula/types/queue'
 import {logger} from '@nebula/log'
-import {Poster, PosterSteps} from '@nebula/types/poster'
+import {Poster, PosterSteps, PosterWeek} from '@nebula/types/poster'
 
 import PosterModel from '../poster.model'
 
@@ -113,7 +113,7 @@ export function startImplementation(event: SQSEvent) {
         followers: githubFollowers,
         year,
         totalLinesOfCode,
-        weeks: completeWeeks.filter(val => val !== undefined),
+        weeks: completeWeeks.filter(val => val !== undefined) as PosterWeek[],
         dominantRepository,
         dominantLanguage,
       }
@@ -138,7 +138,11 @@ export function startImplementation(event: SQSEvent) {
       await sendUpdateToClient(posterSlug, userId, PosterSteps.READY)
       logger.info(`${userId} poster is ready!`)
 
-      await sendPosterMail({name: posterData.name, posterSlug, sendTo: email})
+      await sendPosterMail({
+        name: posterData.name,
+        posterSlug,
+        sendTo: email as string,
+      })
 
       return Promise.resolve({posterSlug, posterData})
     } catch (e) {
