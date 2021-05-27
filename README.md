@@ -86,6 +86,7 @@ Then, open `.env.local` and add the missing environment variables:
 - `NEXT_PUBLIC_FACEBOOK_ID` - Facebook APP ID. You can get it
   [here](https://developers.facebook.com/docs/development/create-an-app).
 - `AUTH0_AUDIENCE` - The url for Auth0 audience. Normally has the following structure `https://your-tenant.auth0.com/api/v2/`
+- `SEND_POSTER_ANALYTICS_RECIPIENTS` - A comma separated list of emails that will receive the emails with the poster statistics
 
 
 ### Set Up Serveless Offline

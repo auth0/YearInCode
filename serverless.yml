@@ -210,6 +210,15 @@ functions:
           method: get
           cors: true
 
+  sendPosterStatistics:
+    handler: posters/statistics/send.sendPosterStatistics
+    environment:
+      SEND_POSTER_ANALYTICS_RECIPIENTS:
+        ${ssm:/${self:custom.stage}/ses/poster_analytics_recipients,
+        env:SEND_POSTER_ANALYTICS_RECIPIENTS}
+    events:
+      - schedule: cron(0 0 * * 1) # Notify at the start of the week
+
   connect:
     handler: posters/connect.connect
     environment:
