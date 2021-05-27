@@ -2,6 +2,7 @@ import GitHubIcon from '@assets/svg/github-logo.svg'
 import TwitterIcon from '@assets/svg/twitter-logo.svg'
 import InstagramIcon from '@assets/svg/instagram-logo.svg'
 import LinkedInIcon from '@assets/svg/linkedin-logo.svg'
+import {constants} from '@lib/common'
 
 export const links = [
   {
@@ -18,7 +19,9 @@ export const socials = [
   {
     id: '1',
     icon: GitHubIcon,
-    link: '#',
+    link: constants.site.githubRepoUrl,
+    target: '_blank',
+    rel: 'noopener noreferrer',
   },
   {
     id: '2',
