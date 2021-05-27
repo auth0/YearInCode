@@ -20,12 +20,10 @@ describe('sendPosterStatistics', () => {
   describe("when there's no posters in the current week", () => {
     it("sends an email with 'No new posters this week'", async () => {
       /**
-       * Make sure there's no posters in the database due to race conditions in the DB.
+       * Due to race conditions, this test might fail thus the need of mocking
+       * the function bellow
        */
-      const posters = await PosterModel.scan().exec()
-      posters.forEach(async poster => {
-        await poster.delete()
-      })
+      jest.spyOn(helpers, 'getCreatedPostersBetween').mockResolvedValueOnce([])
       const sendEmailSpy = jest
         .spyOn(helpers, 'sendEmail')
         .mockResolvedValueOnce()
