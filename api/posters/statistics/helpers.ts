@@ -88,6 +88,12 @@ type PerLanguageStats = {[k in string]: number}
 
 export const sendEmail = async (content: string) => {
   const to = (process.env.SEND_POSTER_ANALYTICS_RECIPIENTS || '').split(',')
+  if (to.length === 0) {
+    logger.info('Skipping email due to empty recipients...')
+
+    return
+  }
+
   const params: AWS.SES.SendEmailRequest = {
     Destination: {
       ToAddresses: to,

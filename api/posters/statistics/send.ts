@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import createHttpError from 'http-errors'
 
 import {logger} from '@nebula/log'
 
@@ -29,5 +30,8 @@ export const sendPosterStatistics = async () => {
     await sendEmail(emailContent)
   } catch (e) {
     logger.error(`Error sending posters analytics`, e)
+    return Promise.reject(
+      createHttpError(500, 'Error sending poster analytics'),
+    )
   }
 }
