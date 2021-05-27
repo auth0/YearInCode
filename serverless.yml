@@ -217,7 +217,7 @@ functions:
         ${ssm:/${self:custom.stage}/ses/poster_analytics_recipients,
         env:SEND_POSTER_ANALYTICS_RECIPIENTS}
     events:
-      - schedule: cron(0 0 * * 1) # Notify at the start of the week
+      - schedule: cron(0 0 * * 1 *) # Notify at the start of the week
 
   connect:
     handler: posters/connect.connect
