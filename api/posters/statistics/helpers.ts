@@ -88,8 +88,10 @@ type PerLanguageStats = {[k in string]: number}
 
 export const sendEmail = async (content: string) => {
   const to = (process.env.SEND_POSTER_ANALYTICS_RECIPIENTS || '').split(',')
-  if (to.length === 0) {
-    logger.info('Skipping email due to empty recipients...')
+  if (to.length === 0 || !process.env.AWS_SOURCE_EMAIL) {
+    logger.info(
+      'Skipping email due to empty recipients or missing email sender',
+    )
 
     return
   }
@@ -98,7 +100,7 @@ export const sendEmail = async (content: string) => {
     Destination: {
       ToAddresses: to,
     },
-    Source: process.env.AWS_SOURCE_EMAIL as string,
+    Source: process.env.AWS_SOURCE_EMAIL,
     Message: {
       Subject: {
         Data: 'Poster statistics',
@@ -110,7 +112,7 @@ export const sendEmail = async (content: string) => {
       },
     },
   }
-  logger.info('Sending email to: ', to)
+  logger.info(`Sending email to ${to.length} recipients`)
   await SES.sendEmail(params).promise()
 }
 
