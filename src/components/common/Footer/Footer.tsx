@@ -55,8 +55,8 @@ const Socials: React.FC<SocialsProps> = ({className}) => (
       className,
     )}
   >
-    {socials.map(({icon: Icon, link, id, target, rel}) => (
-      <a key={id} href={link} target={target} rel={rel}>
+    {socials.map(({icon: Icon, link, id}) => (
+      <a key={id} href={link} target="_blank" rel="noopener noreferrer">
         <Icon className="hover:opacity-100 opacity-60" />
       </a>
     ))}

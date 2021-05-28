@@ -20,22 +20,20 @@ export const socials = [
     id: '1',
     icon: GitHubIcon,
     link: constants.site.githubRepoUrl,
-    target: '_blank',
-    rel: 'noopener noreferrer',
   },
   {
     id: '2',
     icon: InstagramIcon,
-    link: '#',
+    link: constants.site.instagramUrl,
   },
   {
     id: '3',
     icon: LinkedInIcon,
-    link: '#',
+    link: constants.site.linkedInUrl,
   },
   {
     id: '4',
     icon: TwitterIcon,
-    link: '#',
+    link: constants.site.twitterUrl,
   },
 ]
