@@ -36,7 +36,7 @@ describe('sendPosterStatistics', () => {
     })
   })
 
-  describe.only('when there are 2 posters in ready state and different languages in the current week', () => {
+  describe('when there are 2 posters in ready state and different languages in the current week', () => {
     afterEach(async () => {
       ;['user1', 'user2', 'user3'].forEach(async userId => {
         await PosterModel.delete({posterSlug, userId})
