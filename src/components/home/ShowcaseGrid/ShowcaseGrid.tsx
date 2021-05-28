@@ -120,6 +120,7 @@ const PosterPlaceholder: React.FC = () => (
       <h2
         style={{width: 320}}
         className="text-center text-2xl opacity-40 cursor-default"
+        aria-hidden
       >
         Your Poster Here...
       </h2>
