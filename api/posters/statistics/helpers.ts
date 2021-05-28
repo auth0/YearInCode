@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk'
 
-import {dateToUnixTimeStamp} from '@api/lib/date'
 import {logger} from '@nebula/log'
 import {Poster, PosterDocument, PosterSteps} from '@nebula/types/poster'
 
@@ -10,12 +9,8 @@ export const getCreatedPostersBetween = async (
   lowerBound: Date,
   upperBound: Date,
 ) =>
-  PosterModel.scan({
-    updatedAt: {
-      ge: dateToUnixTimeStamp(lowerBound),
-      le: dateToUnixTimeStamp(upperBound),
-    },
-  })
+  PosterModel.scan('updatedAt')
+    .between(lowerBound.getTime(), upperBound.getTime())
     .filter('step')
     .eq(PosterSteps.READY)
     .attributes(['posterData'])
