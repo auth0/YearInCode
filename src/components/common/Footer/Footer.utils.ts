@@ -4,17 +4,6 @@ import InstagramIcon from '@assets/svg/instagram-logo.svg'
 import LinkedInIcon from '@assets/svg/linkedin-logo.svg'
 import {constants} from '@lib/common'
 
-export const links = [
-  {
-    name: 'Legal',
-    href: '#',
-  },
-  {
-    name: 'Privacy',
-    href: '#',
-  },
-]
-
 export const socials = [
   {
     id: '1',
