@@ -6,9 +6,11 @@ import {Page, Viewport} from 'puppeteer-core'
 import chromium from 'chrome-aws-lambda'
 import AWS from 'aws-sdk'
 import {concatLimit, mapLimit, retry} from 'async'
+import {ManagementClient} from 'auth0'
 
 import {logger} from '@nebula/log'
 import {
+  ConnectionDocument,
   Poster,
   PosterImageSizes,
   PosterSteps,
@@ -39,6 +41,31 @@ const S3 = new AWS.S3({
   }),
 })
 
+const auth0Management = new ManagementClient({
+  domain:
+    process.env.IS_OFFLINE || process.env.NODE_ENV === 'test'
+      ? process.env.NEXT_PUBLIC_AUTH0_DOMAIN ?? 'test.us.auth0.com'
+      : (process.env.AUTH0_DOMAIN as string),
+  clientId:
+    process.env.IS_OFFLINE || process.env.NODE_ENV === 'test'
+      ? process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID ?? 'MOCK_CLIENT_ID'
+      : process.env.AUTH0_CLIENT_ID,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET ?? 'CLIENT_SECRET',
+  scope: 'read:users read:user_idp_tokens',
+})
+
+export async function getGitHubToken(userId: string) {
+  const {identities} = await auth0Management.getUser({
+    id: userId,
+  })
+
+  const githubToken = identities?.find(
+    identity => identity.provider === 'github',
+  )?.access_token
+
+  return githubToken
+}
+
 export async function getUserRepositoriesByPage(
   client: Octokit,
   page: number,
@@ -62,7 +89,7 @@ export async function getUserRepositoriesByPage(
 
   if (result.headers.link) {
     const parsedPagination = parseLinkHeader(result.headers.link)
-    payload.totalPages = Number(parsedPagination.last?.page)
+    payload.totalPages = Number(parsedPagination?.last?.page)
   }
 
   if (
@@ -127,6 +154,7 @@ export async function getRepositoryStats(
     repositories,
     10,
     async ({name: repositoryName, owner, language}, callback) => {
+      if (owner === null || language === null) return callback(null)
       try {
         const repositoryStats: RestEndpointMethodTypes['repos']['getContributorsStats']['response'] = (await retry(
           {times: 20, interval: 6000},
@@ -158,7 +186,7 @@ export async function getRepositoryStats(
         }
 
         const userStats = repositoryStats.data.find(
-          ({author}) => author.login === username,
+          ({author}) => author?.login === username,
         )
 
         if (!userStats) {
@@ -199,7 +227,7 @@ export async function getGeneralWeekActivity(
   const weeks: IncompleteWeeks = new Array(52).fill(undefined)
 
   // Get general week activity
-  await mapLimit(
+  await mapLimit<RepositoryStatistic, string>(
     repositoriesStats,
     10,
     async ({weeks: repositoryWeeks, repository, language}, callback) => {
@@ -207,7 +235,8 @@ export async function getGeneralWeekActivity(
         await mapLimit(
           repositoryWeeks,
           3,
-          async ({w, a: additions, d: deletions, c: commits}, callback) => {
+          async ({w, a: additions, d: deletions, c}, callback) => {
+            const commits = c || 0
             try {
               const date = unixTimestampToDate(Number(w))
 
@@ -217,7 +246,7 @@ export async function getGeneralWeekActivity(
 
               const weekNumber = getWeekNumber(date)
               const weekIndex = weekNumber - 1
-              const lines = Math.abs(deletions) + additions
+              const lines = Math.abs(deletions || 0) + (additions || 0)
               const total = lines + commits
 
               if (!total) {
@@ -362,7 +391,7 @@ export async function sendPosterMail({
       Destination: {
         ToAddresses: [sendTo],
       },
-      Source: process.env.AWS_SOURCE_EMAIL,
+      Source: process.env.AWS_SOURCE_EMAIL as string,
       Message: {
         Subject: {
           Data: `${name}, your year in code poster is ready!`,
@@ -370,12 +399,12 @@ export async function sendPosterMail({
         Body: {
           Html: {
             Data: `
-            <p>Thank you for taking the time to create your poster and sharing your creativity with the world. At Auth0 we love developers and we appreciate the work you do every day in creating a more convenient and secure world.</p> 
-  
-            <p>To download your poster: <a href="${downloadPosterLink}">click here</a></p> 
-            
+            <p>Thank you for taking the time to create your poster and sharing your creativity with the world. At Auth0 we love developers and we appreciate the work you do every day in creating a more convenient and secure world.</p>
+
+            <p>To download your poster: <a href="${downloadPosterLink}">click here</a></p>
+
             <p>A note from our benevolent sponsors at Auth0:</p>
-            
+
             <p>Auth0 makes securing your apps simple, and secure even as you scale to the moon.</p>
             `,
           },
@@ -390,7 +419,7 @@ export async function sendPosterMail({
 }
 
 interface ImageParam {
-  key: string
+  key: keyof PosterImageSizes
   html: string
   fileName: string
   comment: string
@@ -509,7 +538,7 @@ async function uploadScreenshot({
   logger.info(`Uploading screenshot to S3`)
 
   await S3.putObject({
-    Bucket: process.env.POSTER_BUCKET,
+    Bucket: process.env.POSTER_BUCKET as string,
     Key: fileName,
     Body: screenshot as any,
   }).promise()
@@ -530,9 +559,9 @@ export async function sendUpdateToClient(
   try {
     const websocketConnectionUrl = process.env.IS_OFFLINE
       ? 'http://localhost:3001'
-      : process.env.WEBSOCKET_API_ENDPOINT
+      : (process.env.WEBSOCKET_API_ENDPOINT as string)
 
-    const result = await ConnectionModel.query('userId')
+    const result: ConnectionDocument[] = await ConnectionModel.query('userId')
       .eq(userId)
       .using('userIdIndex')
       .exec()

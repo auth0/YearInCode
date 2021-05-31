@@ -2,6 +2,12 @@ import React from 'react'
 import useWebSocket, {ReadyState} from 'react-use-websocket'
 import * as Iron from '@hapi/iron'
 import nProgress from 'nprogress'
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next'
 import Link from 'next/link'
 
 import {auth0} from '@lib/auth'
@@ -28,7 +34,7 @@ export default function Loading({
   const [posterSlug, setPosterSlug] = React.useState('')
 
   const {readyState, lastJsonMessage} = useWebSocket(
-    process.env.NEXT_PUBLIC_API_WEBSOCKET_URL,
+    process.env.NEXT_PUBLIC_API_WEBSOCKET_URL as string,
     {
       queryParams: {
         wsPayload,
@@ -98,7 +104,11 @@ export default function Loading({
   )
 }
 
-export async function getServerSideProps({req, res, query}) {
+export async function getServerSideProps({
+  req,
+  res,
+  query,
+}: GetServerSidePropsContext) {
   const session = await auth0.getSession(req)
 
   if (!session || !session.user) {
@@ -110,16 +120,19 @@ export async function getServerSideProps({req, res, query}) {
     return {props: {}}
   }
 
-  const tokenCache = auth0.tokenCache(req, res)
+  const tokenCache = auth0.tokenCache(
+    req as NextApiRequest,
+    res as NextApiResponse,
+  )
   const {accessToken} = await tokenCache.getAccessToken()
 
   const getPostersPromise = PosterService._getPosters(
     session.user.sub as string,
-    accessToken,
+    accessToken as string,
   )
   const wsPayloadPromise = Iron.seal(
     {accessToken, userId: session.user.sub},
-    process.env.WEBSOCKET_PAYLOAD_SECRET,
+    process.env.WEBSOCKET_PAYLOAD_SECRET as string,
     Iron.defaults,
   )
 

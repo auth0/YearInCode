@@ -27,7 +27,7 @@ export const commitColors = new Proxy(
     Ruby: '#C7504B',
   },
   {
-    get: function (target, name) {
+    get: function (target: {[l in string]: string}, name: string) {
       return target.hasOwnProperty(name) ? target[name] : '#AA3C1F'
     },
   },
@@ -45,13 +45,13 @@ export const linesColors = new Proxy(
     Ruby: '#E46764',
   },
   {
-    get: function (target, name) {
+    get: function (target: {[l in string]: string}, name: string) {
       return target.hasOwnProperty(name) ? target[name] : '#EB5424'
     },
   },
 )
 
-export function numberOrZero(n: number) {
+export function numberOrZero(n: number | undefined) {
   return n ?? 0
 }
 

@@ -32,7 +32,7 @@ const sqsConfig = IS_OFFLINE
 
 const QUEUE_URL = IS_OFFLINE
   ? `http://localhost:9324/queue/sqs-poster-queue-${process.env.STAGE}`
-  : process.env.SQS_QUEUE_URL
+  : (process.env.SQS_QUEUE_URL as string)
 
 const sqs = new SQS(sqsConfig)
 
@@ -51,11 +51,11 @@ async function queuePosterImplementation(
   logger.info(
     `Received request from user (${userId} - ${username}) to generate ${year} poster`,
   )
-  const token = getTokenFromString(Authorization)
+  const token = getTokenFromString(Authorization as string)
   const decoded = decodeToken(token)
 
   if (decoded.payload.sub !== userId) {
-    return createHttpError(401, 'Unauthorized')
+    return Promise.reject(createHttpError(401, 'Unauthorized'))
   }
 
   let inDb = false

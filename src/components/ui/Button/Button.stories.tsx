@@ -1,4 +1,4 @@
-import {Meta} from '@storybook/react/types-6-0'
+import {Meta, Story} from '@storybook/react/types-6-0'
 
 import Button from './Button'
 
@@ -24,7 +24,7 @@ const Icon = () => (
   </svg>
 )
 
-const Template = args => (
+const Template: Story<Parameters<typeof Button>[0]> = args => (
   <div className="flex items-center justify-center min-h-screen">
     <Button {...args} />
   </div>
@@ -35,7 +35,7 @@ export const Basic = Template.bind({})
 Basic.args = {
   children: 'See How it Works',
   icon: <Icon />,
-  size: 'small',
+  size: 'default',
 }
 
 export const Primary = Template.bind({})
@@ -43,14 +43,14 @@ export const Primary = Template.bind({})
 Primary.args = {
   color: 'primary',
   children: 'Primary',
-  size: 'small',
+  size: 'default',
 }
 
 export const Link = Template.bind({})
 
 Link.args = {
   children: 'This is a link',
-  size: 'small',
+  size: 'default',
   href: '#',
 }
 
@@ -68,7 +68,7 @@ Outlined.args = {
   color: 'primary',
   variant: 'outlined',
   children: 'See How it Works',
-  size: 'small',
+  size: 'default',
 }
 
 export const Loading = Template.bind({})
@@ -76,6 +76,6 @@ export const Loading = Template.bind({})
 Loading.args = {
   color: 'primary',
   children: 'See How it Works',
-  size: 'small',
+  size: 'default',
   loading: true,
 }

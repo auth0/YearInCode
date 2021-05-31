@@ -22,8 +22,8 @@ export default function SelectYearPopover({
 }: SelectYearPopover) {
   const state = useMenuTriggerState({})
 
-  const triggerRef = React.useRef()
-  const overlayRef = React.useRef()
+  const triggerRef = React.useRef(null)
+  const overlayRef = React.useRef(null)
   const {menuTriggerProps, menuProps} = useMenuTrigger({}, state, triggerRef)
 
   const {overlayProps: positionProps} = useOverlayPosition({

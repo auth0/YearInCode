@@ -45,8 +45,8 @@ const DownloadPoster: React.FC<DownloadPosterProps> = ({
   const canMobileShare =
     typeof window !== 'undefined' &&
     navigator.share &&
-    browser.name !== 'edge-chromium' &&
-    browser.name !== 'safari'
+    browser?.name !== 'edge-chromium' &&
+    browser?.name !== 'safari'
 
   const sortedOtherPosters = otherPosters.sort((a, b) => a.year - b.year)
 

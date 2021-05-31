@@ -11,7 +11,7 @@ interface SetupUseFetchHookParams {
 
 function setupFetchUserHook({params}: SetupUseFetchHookParams = {}) {
   const queryClient = new QueryClient()
-  const wrapper = ({children}) => (
+  const wrapper: React.FC = ({children}) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 

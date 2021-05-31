@@ -1,4 +1,4 @@
-import {Meta} from '@storybook/react/types-6-0'
+import {Meta, Story} from '@storybook/react/types-6-0'
 
 import Alert from './Alert'
 
@@ -7,7 +7,7 @@ export default {
   component: Alert,
 } as Meta
 
-const Template = args => (
+const Template: Story<Parameters<typeof Alert>[0]> = args => (
   <div className="flex items-center justify-center min-h-screen">
     <Alert {...args} />
   </div>

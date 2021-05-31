@@ -9,7 +9,7 @@ import ButtonBase, {ButtonBaseProps} from '../ButtonBase'
 const Button = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
   (props, userRef) => {
     const {onPress, ...otherProps} = props
-    const libraryRef = React.useRef()
+    const libraryRef = React.useRef(null)
     const composedRef = useCombinedRef(libraryRef, userRef)
     const {buttonProps} = useButton(
       {

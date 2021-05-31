@@ -25,10 +25,20 @@ const schema = new dynamoose.Schema(
 )
 
 const ConnectionModel = dynamoose.model<ConnectionDocument>(
-  process.env.CONNECTION_TABLE,
+  process.env.CONNECTION_TABLE as string,
   schema,
   {
-    create: process.env.NODE_ENV === 'test' ? true : false,
+    create: false,
+    throughput: 'ON_DEMAND',
+    ...(process.env.NODE_ENV === 'test' && {
+      waitForActive: {
+        enabled: true,
+        check: {
+          timeout: 60000,
+          frequency: 0,
+        },
+      },
+    }),
   },
 )
 

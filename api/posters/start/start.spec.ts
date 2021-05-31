@@ -1,5 +1,3 @@
-import {ManagementClient} from 'auth0'
-
 import {rest, server, githubURLs} from '@api/tests/mock-server'
 import {
   buildAuthenticatedGitHubUser,
@@ -18,11 +16,7 @@ const mockedGenerateImagesAndUploadToS3 = jest.spyOn(
   'generateImagesAndUploadToS3',
 )
 const mockedSendPosterMail = jest.spyOn(startUtils, 'sendPosterMail')
-jest.mock('auth0')
-
-const mockedManagementClient = ManagementClient as jest.MockedClass<
-  typeof ManagementClient
->
+const mockedGetGitHubToken = jest.spyOn(startUtils, 'getGitHubToken')
 
 const userId = 'MOCK_USER_ID'
 const username = 'MOCK_USER_NAME'
@@ -34,7 +28,7 @@ const mockedPosterImages: PosterImageSizes = {
   openGraph: 'openGraph.png',
 }
 
-afterEach(async () => {
+beforeEach(async () => {
   await PosterModel.delete({posterSlug, userId})
 })
 
@@ -71,15 +65,12 @@ test('should generate user activity', async () => {
     ],
   }
 
-  mockedManagementClient.prototype.getUser = jest.fn().mockResolvedValueOnce({
-    identities: [{provider: 'github', access_token: undefined}],
-  })
-
+  mockedGetGitHubToken.mockResolvedValueOnce('')
   mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
   mockedSendPosterMail.mockResolvedValueOnce()
 
   const results = await start.startImplementation(event)
-  const result = results[0].status === 'fulfilled' && results[0].value
+  const result = getFirstResult(results)
   const databaseResult = await PosterModel.get({posterSlug, userId})
 
   expect(databaseResult).toMatchObject({
@@ -114,7 +105,7 @@ test('should generate user activity', async () => {
     totalLinesOfCode: 4965,
     weeks: [
       {
-        week: 17,
+        week: 14,
         lines: 445,
         commits: 10,
         total: 455,
@@ -122,7 +113,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 27,
+        week: 28,
         lines: 635,
         commits: 30,
         total: 665,
@@ -130,7 +121,7 @@ test('should generate user activity', async () => {
         dominantRepository: repos[0].name,
       },
       {
-        week: 33,
+        week: 34,
         lines: 3885,
         commits: 20,
         total: 3905,
@@ -174,14 +165,12 @@ test('should be able to generate based on selected year', async () => {
     ],
   }
 
-  mockedManagementClient.prototype.getUser = jest.fn().mockResolvedValueOnce({
-    identities: [{provider: 'github', access_token: undefined}],
-  })
+  mockedGetGitHubToken.mockResolvedValueOnce('')
   mockedGenerateImagesAndUploadToS3.mockResolvedValueOnce(mockedPosterImages)
   mockedSendPosterMail.mockResolvedValueOnce()
 
   const results = await start.startImplementation(event)
-  const result = results[0].status === 'fulfilled' && results[0].value
+  const result = getFirstResult(results)
 
   expect(result.posterSlug).toContain(posterSlug)
   expect(result.posterData).toEqual({
@@ -194,3 +183,10 @@ test('should be able to generate based on selected year', async () => {
     weeks: [],
   })
 })
+
+const getFirstResult = <T>(results: PromiseSettledResult<T>[]) => {
+  if (results[0].status !== 'fulfilled') {
+    throw new Error('First result should be succesfull')
+  }
+  return results[0].value
+}
