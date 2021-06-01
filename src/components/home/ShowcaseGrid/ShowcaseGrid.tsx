@@ -36,10 +36,6 @@ const ShowcaseGrid: React.FC<ShowcaseGridProps> = ({galleryPosters}) => {
         </div>
 
         <div className="flex items-center space-x-6">
-          <Button href="#" icon={<YoutubeIcon />}>
-            See How it Works
-          </Button>
-
           <GoToRepoButton />
         </div>
       </header>

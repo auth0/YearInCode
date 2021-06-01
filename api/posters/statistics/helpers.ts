@@ -24,8 +24,9 @@ export const getEmailContent = (
     logger.info(`No new posters this week...`)
 
     return `
-    <h1>Poster Statistics</h1>
-    <em>No new posters this week.</em>
+    <h3>
+      <em>No new posters this week.</em>
+    </h3>
     `
   }
   logger.info(`There's a total of ${totalPosters} new posters`)
@@ -55,27 +56,36 @@ const getPerLanguageStatiticsContent = (
   stats: PerLanguageStats,
   totalPosters: number,
 ) => {
-  const rows = Object.entries(stats).map(
-    ([language, total]) => `<tr><td>${language}</td><td>${total}</td></tr>`,
-  )
+  const perLanguageHtmlRows: string = Object.entries(stats)
+    .map(
+      ([language, total]) =>
+        `<tr style='${bordered}'>
+          <td style='${bordered} ${paddedContent} min-width: 75px;'>
+            <em>${language}</em>
+          </td>
+          <td style='text-align: center; min-width: 50px; ${paddedContent}'>
+            <strong>${total}</strong>
+          </td>
+        </tr>`,
+    )
+    .join('')
 
   return `
-  <h1>Poster Statistics</h1>
-  <p>
-    <strong>New posters:</strong>
-    ${totalPosters}
-  </p>
+  <h3>
+    <span style='font-weight: normal'>
+      <strong>New Posters: </strong>${totalPosters}
+    </span>
+  </h3>
 
-  <h1>Per Language Statistics</h1>
-  <table>
-    <thead>
-      <th>Language</th>
-      <th>Total Posters</th>
-    </thead>
-    <tbody>${rows}</tbody>
+  <h3>Posters By Programming Language</h3>
+  <table style='border-collapse: collapse; ${bordered}'>
+    <tbody>${perLanguageHtmlRows}</tbody>
   </table>
   `
 }
+
+const bordered = 'border: 1px solid black;'
+const paddedContent = 'padding: 5px;'
 
 export type RawPosterData = Pick<PosterDocument, 'posterData'>
 

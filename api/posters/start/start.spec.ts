@@ -32,6 +32,10 @@ beforeEach(async () => {
   await PosterModel.delete({posterSlug, userId})
 })
 
+afterEach(async () => {
+  await PosterModel.delete({posterSlug, userId})
+})
+
 test('should generate user activity', async () => {
   const user = buildAuthenticatedGitHubUser()
   const repos = Array.from({length: 5}, () => buildGitHubRepo())

@@ -1,3 +1,5 @@
+import cheerio from 'cheerio'
+
 import {PosterImageSizes, PosterSteps} from '@nebula/types/poster'
 
 import PosterModel from '../poster.model'
@@ -80,17 +82,18 @@ describe('sendPosterStatistics', () => {
         .mockResolvedValueOnce()
       await sendPosterStatistics()
 
-      expect(sendEmailSpy).toHaveBeenCalledWith(
-        expect.stringContaining('<td>typescript</td><td>1</td>'),
-      )
+      const $ = cheerio.load(sendEmailSpy.mock.calls[0][0])
 
-      expect(sendEmailSpy).toHaveBeenCalledWith(
-        expect.stringContaining('<td>haskell</td><td>1</td>'),
-      )
+      const rows = $('tr')
+      expect(rows).toHaveLength(2)
 
-      expect(sendEmailSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining('<td>golang</td><td>1</td>'),
-      )
+      const typescriptRowContent = rows.first().text()
+      expect(typescriptRowContent).toContain('typescript')
+      expect(typescriptRowContent).toContain('1')
+
+      const haskellRowContent = rows.last().text()
+      expect(haskellRowContent).toContain('haskell')
+      expect(haskellRowContent).toContain('1')
     })
   })
 })

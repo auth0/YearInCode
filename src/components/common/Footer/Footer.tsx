@@ -5,7 +5,7 @@ import NextLink from 'next/link'
 import {Button, Typography} from '@components/ui'
 import Logo from '@assets/svg/auth0-logo-white.svg'
 
-import {links, socials} from './Footer.utils'
+import {socials} from './Footer.utils'
 
 const Footer = () => {
   const [displayTermsCard, setDisplayTermsCard] = React.useState(false)
@@ -55,8 +55,8 @@ const Socials: React.FC<SocialsProps> = ({className}) => (
       className,
     )}
   >
-    {socials.map(({icon: Icon, link, id, target, rel}) => (
-      <a key={id} href={link} target={target} rel={rel}>
+    {socials.map(({icon: Icon, link, id}) => (
+      <a key={id} href={link} target="_blank" rel="noopener noreferrer">
         <Icon className="hover:opacity-100 opacity-60" />
       </a>
     ))}
@@ -70,16 +70,13 @@ interface LinksProps {
 
 const Links: React.FC<LinksProps> = ({className, onClickTerms}) => (
   <ul className={clsx('flex space-x-6', className)}>
-    {links.map(link => (
-      <Link key={link.name} {...link} />
-    ))}
     <Typography
       variant="body1"
       as="button"
       className="text-white hover:text-opacity-100 text-opacity-60 focus:outline-none"
       onClick={onClickTerms}
     >
-      Terms
+      Terms and Conditions
     </Typography>
   </ul>
 )
