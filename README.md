@@ -1,6 +1,6 @@
-# devrel-nebula
+# Year In Code
 
-An experience for developers to see their career in space/time.
+An experience for developers built with ❤️ by Auth0
 
 ## Development
 
