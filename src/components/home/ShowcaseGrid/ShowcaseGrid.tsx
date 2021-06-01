@@ -36,10 +36,6 @@ const ShowcaseGrid: React.FC<ShowcaseGridProps> = ({galleryPosters}) => {
         </div>
 
         <div className="flex items-center space-x-6">
-          <Button href="#" icon={<YoutubeIcon />}>
-            See How it Works
-          </Button>
-
           <GoToRepoButton />
         </div>
       </header>
@@ -106,12 +102,25 @@ const Column: React.FC<ColumnProps> = ({className, posters}) => (
         )
       }
 
-      return (
-        <div className="border border-gray-400 rounded-sm" key={i}>
-          <div style={{width: 320, height: 424}}></div>
-        </div>
-      )
+      return <PosterPlaceholder key={i} />
     })}
+  </div>
+)
+
+const PosterPlaceholder: React.FC = () => (
+  <div className="border border-gray-400 rounded-sm">
+    <div
+      style={{width: 320, height: 424}}
+      className="flex flex-col justify-center"
+    >
+      <h2
+        style={{width: 320}}
+        className="text-center text-2xl opacity-40 cursor-default"
+        aria-hidden
+      >
+        Your Poster Here...
+      </h2>
+    </div>
   </div>
 )
 

@@ -51,16 +51,6 @@ const Loading: React.FC<LoadingProps> = ({
           </Typography>
         </header>
 
-        {!isReady && (
-          <div className="flex items-center space-x-6">
-            <Button href="#" icon={<YoutubeIcon />}>
-              See How it Works
-            </Button>
-
-            <GoToRepoButton />
-          </div>
-        )}
-
         {isReady && (
           <Link href="/posters/[slug]" as={`/posters/${posterSlug}`} passHref>
             <Button color="primary" size="large">
