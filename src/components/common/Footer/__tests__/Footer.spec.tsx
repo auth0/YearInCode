@@ -10,10 +10,10 @@ beforeEach(() => {
 afterEach(jest.clearAllMocks)
 
 describe('Footer', () => {
-  describe("when the user clicks on 'Terms'", () => {
+  describe("when the user clicks on 'Terms and Conditions'", () => {
     it("displays 'Terms & Conditions'", () => {
       const {getByRole} = render(<Footer />)
-      fireEvent.click(getByRole('button', {name: 'Terms'}))
+      fireEvent.click(getByRole('button', {name: 'Terms and Conditions'}))
       expect(
         getByRole('heading', {name: 'Terms & Conditions'}),
       ).toBeInTheDocument()
@@ -22,7 +22,7 @@ describe('Footer', () => {
     describe('and accepts the conditions', () => {
       it("hides the 'Terms & Conditions' section", () => {
         const {getByRole, queryByRole} = render(<Footer />)
-        fireEvent.click(getByRole('button', {name: 'Terms'}))
+        fireEvent.click(getByRole('button', {name: 'Terms and Conditions'}))
         expect(
           getByRole('heading', {name: 'Terms & Conditions'}),
         ).toBeInTheDocument()
