@@ -4,7 +4,7 @@ const constants = {
     cloudfront_url: process.env.NEXT_PUBLIC_CLOUDFRONT_URL,
     facebook_id: process.env.NEXT_PUBLIC_FACEBOOK_ID,
     cloudflareAnalyticsId: process.env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_ID,
-    githubRepoUrl: 'https://github.com/auth0/devrel-nebula',
+    githubRepoUrl: 'https://github.com/auth0/YearInCode',
     instagramUrl: 'https://www.instagram.com/weareauth0',
     linkedInUrl: 'https://www.linkedin.com/company/auth0',
     twitterUrl: 'https://twitter.com/auth0',
