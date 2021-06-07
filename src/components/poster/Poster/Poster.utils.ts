@@ -46,7 +46,7 @@ export const linesColors = new Proxy(
   },
   {
     get: function (target: {[l in string]: string}, name: string) {
-      return target.hasOwnProperty(name) ? target[name] : '#EB5424'
+      return target.hasOwnProperty(name) ? target[name] : '#635DFF'
     },
   },
 )
