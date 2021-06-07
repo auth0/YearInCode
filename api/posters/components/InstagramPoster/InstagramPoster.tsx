@@ -35,7 +35,7 @@ const InstagramPoster: React.FC<InstagramPosterProps> = ({data}) => {
           bottom: '0',
           width: 1080,
           height: 800,
-          background: 'linear-gradient(0deg, #2a2e35 0%, rgba(0, 0, 0, 0) 70%)',
+          background: 'linear-gradient(0deg, #000000 0%, rgba(0, 0, 0, 0) 70%)',
         }}
       />
 

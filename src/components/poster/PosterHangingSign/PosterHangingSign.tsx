@@ -25,7 +25,7 @@ const PosterHangingSign: React.FC<PosterHangingSignProps> = ({name, src}) => {
         />
       </div>
       <div className={s.shadow} />
-      <div className="absolute bottom-0 w-full h-40 bg-dark-slate-gray-500" />
+      <div className="absolute bottom-0 w-full h-40 bg-black" />
     </div>
   )
 }

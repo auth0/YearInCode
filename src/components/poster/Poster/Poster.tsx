@@ -133,7 +133,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
             >
               <TooltipWithBounds
                 className={clsx(
-                  'absolute px-3 py-2 w-full max-w-52 text-white font-light bg-dark-slate-gray-500 border border-gray-500 rounded-md space-y-1',
+                  'absolute px-3 py-2 w-full max-w-52 text-white font-light bg-black border border-gray-500 rounded-md space-y-1',
                   'md:min-w-52 md:w-auto md:max-w-none',
                 )}
                 left={tooltipLeft + 20}
@@ -242,7 +242,7 @@ interface InfoBoxProps {
 
 const InfoBox: React.FC<InfoBoxProps> = ({label, value, icon}) => {
   return (
-    <section className="flex items-center flex-1 bg-dark-slate-gray-500">
+    <section className="flex items-center flex-1 bg-black">
       <div
         aria-hidden
         style={{

@@ -22,7 +22,7 @@ const Wrapper: React.FC<WrapperProps> = ({children, bodyStyle}) => {
       <body
         style={{
           position: 'relative',
-          background: '#2a2e35',
+          background: '#000',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

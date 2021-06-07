@@ -63,7 +63,7 @@ export default function SelectYearPopover({
             ref={overlayRef}
             isOpen={state.isOpen}
             onClose={state.close}
-            className="flex flex-col bg-dark-slate-gray-500 border-2 rounded-md border-gray-50"
+            className="flex flex-col bg-black border-2 rounded-md border-gray-50"
           >
             {otherPosters.map(({posterSlug, year}) => (
               <a

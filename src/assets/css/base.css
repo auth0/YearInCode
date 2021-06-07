@@ -1,10 +1,10 @@
 :root {
-  --primary: theme('colors.dark-slate-gray.500');
+  --primary: theme('colors.black');
   --secondary: theme('colors.white');
 
   --text-base: theme('colors.white');
   --text-primary: theme('colors.white');
-  --text-secondary: theme('colors.dark-slate-gray.500');
+  --text-secondary: theme('colors.black');
 
   --indigo: theme('colors.indigo.500');
 

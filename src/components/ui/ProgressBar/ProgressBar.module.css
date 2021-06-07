@@ -1,5 +1,5 @@
 .progressBar {
-  @apply flex mb-4 h-2 text-xs bg-dark-slate-gray-600 rounded overflow-hidden;
+  @apply flex mb-4 h-2 text-xs bg-dark-slate-gray-500 rounded overflow-hidden;
 
   height: 6px;
 }

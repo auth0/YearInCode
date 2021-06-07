@@ -45,7 +45,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         initial="closed"
         animate={isOpen ? 'open' : 'closed'}
         variants={variants}
-        className="absolute left-0 z-50 w-screen px-4 py-5 space-y-4 text-right bg-dark-slate-gray-500 bg-opacity-95"
+        className="absolute left-0 z-50 w-screen px-4 py-5 space-y-4 text-right bg-black bg-opacity-95"
       >
         {isLoggedIn ? (
           <>
