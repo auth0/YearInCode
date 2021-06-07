@@ -54,7 +54,7 @@ export default function SelectYearPopover({
         </label>
         <button
           className={clsx(
-            'flex items-center justify-start px-3 py-2 space-x-1 text-2xl font-semibold bg-black border rounded-md border-gray-50',
+            'flex items-center justify-start px-3 py-2 space-x-1 text-2xl font-semibold bg-dark-slate-gray-500 border rounded-md border-gray-50',
             'transition-all duration-150 hover:border-flamingo-200',
             {
               'border-flamingo-500 hover:border-flamingo-500': state.isOpen,
@@ -82,7 +82,7 @@ export default function SelectYearPopover({
             isOpen={state.isOpen}
             onClose={state.close}
             className={clsx(
-              'flex flex-col bg-black border rounded-md border-gray-50',
+              'flex flex-col bg-dark-slate-gray-500 border rounded-md border-gray-50',
               {
                 'border-flamingo-500': state.isOpen,
               },

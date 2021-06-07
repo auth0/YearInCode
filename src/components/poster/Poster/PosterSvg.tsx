@@ -137,7 +137,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
             <LinearGradient
               key={i}
               id={`line-fill-${i}`}
-              from={'#000'}
+              from={'#2a2e35'}
               to={'#fff'}
               gradientUnits="userSpaceOnUse"
               x1={axesOriginPoints[i].x}
@@ -211,7 +211,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
               <LinearGradient
                 key={week}
                 id={`starGradient-${week}`}
-                from={'#000'}
+                from={'#2a2e35'}
                 fromOffset={fromOffset}
                 to={
                   selectedIndex === i || typeof selectedIndex === 'undefined'
@@ -340,6 +340,7 @@ export const PosterSvg: React.FC<PosterSVGProps> = ({
         <SittingPersonIcon
           width={sittingPersonWidth}
           height={sittingPersonHeight}
+          fill="#2a2e35"
         />
       </Group>
     </svg>

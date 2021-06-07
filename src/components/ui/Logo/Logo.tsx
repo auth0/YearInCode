@@ -1,6 +1,6 @@
 const colors = {
   default: '#EB5424',
-  dark: '#00000029',
+  dark: '#2a2e35',
   light: '#E9E9E9',
 }
 
