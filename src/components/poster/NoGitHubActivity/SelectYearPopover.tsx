@@ -46,7 +46,7 @@ export default function SelectYearPopover({
       <div className="flex flex-col items-center space-y-3">
         <label
           className={clsx('font-semibold', {
-            'text-flamingo-500': state.isOpen,
+            'text-indigo-500': state.isOpen,
           })}
           htmlFor={menuTriggerProps.id}
         >
@@ -55,9 +55,9 @@ export default function SelectYearPopover({
         <button
           className={clsx(
             'flex items-center justify-start px-3 py-2 space-x-1 text-2xl font-semibold bg-dark-slate-gray-500 border rounded-md border-gray-50',
-            'transition-all duration-150 hover:border-flamingo-200',
+            'transition-all duration-150 hover:border-indigo-200',
             {
-              'border-flamingo-500 hover:border-flamingo-500': state.isOpen,
+              'border-indigo-500 hover:border-indigo-500': state.isOpen,
             },
           )}
           {...buttonProps}
@@ -84,7 +84,7 @@ export default function SelectYearPopover({
             className={clsx(
               'flex flex-col bg-dark-slate-gray-500 border rounded-md border-gray-50',
               {
-                'border-flamingo-500': state.isOpen,
+                'border-indigo-500': state.isOpen,
               },
             )}
           >

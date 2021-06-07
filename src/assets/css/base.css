@@ -6,7 +6,7 @@
   --text-primary: theme('colors.white');
   --text-secondary: theme('colors.dark-slate-gray.500');
 
-  --flamingo: theme('colors.flamingo.500');
+  --indigo: theme('colors.indigo.500');
 
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: Inter, sans-serif;

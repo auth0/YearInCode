@@ -152,7 +152,7 @@ const PosterComponent: React.FC<PosterComponentProps> = ({
                 <TooltipRow icon={<RepositoryIcon />}>
                   {tooltipData.dominantRepository}
                 </TooltipRow>
-                <TooltipRow className="text-flamingo-500" icon={<HashIcon />}>
+                <TooltipRow className="text-indigo-500" icon={<HashIcon />}>
                   {tooltipData.dominantLanguage}
                 </TooltipRow>
               </TooltipWithBounds>
