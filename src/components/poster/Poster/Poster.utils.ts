@@ -28,7 +28,7 @@ export const commitColors = new Proxy(
   },
   {
     get: function (target: {[l in string]: string}, name: string) {
-      return target.hasOwnProperty(name) ? target[name] : '#AA3C1F'
+      return target.hasOwnProperty(name) ? target[name] : '#312E81'
     },
   },
 )
