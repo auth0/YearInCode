@@ -78,7 +78,7 @@ export default function Loading({
         <header className="flex items-center justify-center px-4 pt-8">
           <Link href="/" passHref>
             <a>
-              <Logo aria-hidden />
+              <Logo aria-hidden width={89} height={32} />
               <span className="sr-only">Auth0 Logo</span>
             </a>
           </Link>

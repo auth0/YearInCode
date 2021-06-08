@@ -36,7 +36,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = props => {
       ref={ref}
       className={clsx(
         {
-          'bg-opacity-20 bg-flamingo-500 text-flamingo-500 border-flamingo-500':
+          'bg-opacity-20 bg-indigo-500 text-indigo-500 border-indigo-500':
             state.isSelected && color === 'primary',
         },
         className,

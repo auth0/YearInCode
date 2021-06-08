@@ -132,7 +132,7 @@ const Terms: React.FC<TermsProps> = ({onClickAccept}) => (
       . Thank you and enjoy!
     </Typography>
     <div className="flex flex-col sm:flex-row items-center sm:justify-between">
-      <Logo className="mb-6 lg:mb-0" />
+      <Logo className="mb-6 lg:mb-0" width={89} height={32} />
       <Button color="primary" onPress={onClickAccept}>
         Click to accept
       </Button>

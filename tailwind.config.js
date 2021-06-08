@@ -19,16 +19,8 @@ module.exports = {
       colors: {
         primary: 'var(--primary)',
         secondary: 'var(--secondary)',
-        flamingo: {
-          100: '#fbddd3',
-          200: '#f7bba7',
-          300: '#f3987c',
-          400: '#ef7650',
-          500: '#eb5424',
-          600: '#bc431d',
-          700: '#8d3216',
-          800: '#5e220e',
-          900: '#2f1107',
+        indigo: {
+          500: '#635dff',
         },
         'dark-slate-gray': {
           100: '#d4d5d7',

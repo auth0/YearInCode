@@ -18,7 +18,7 @@ export const tooltipVariants = {
 export const commitColors = new Proxy(
   {
     Python: '#001FBC',
-    JavaScript: '#9D6F0D',
+    JavaScript: '#312E81',
     Java: '#a54f00',
     'Objective-C': '#1368F8',
     'C#': '#388659',
@@ -28,7 +28,7 @@ export const commitColors = new Proxy(
   },
   {
     get: function (target: {[l in string]: string}, name: string) {
-      return target.hasOwnProperty(name) ? target[name] : '#AA3C1F'
+      return target.hasOwnProperty(name) ? target[name] : '#312E81'
     },
   },
 )
@@ -36,7 +36,7 @@ export const commitColors = new Proxy(
 export const linesColors = new Proxy(
   {
     Python: '#0025E4',
-    JavaScript: '#E7B130',
+    JavaScript: '#635DFF',
     Java: '#D16909',
     'Objective-C': '#0078FF',
     'C#': '#3DAF6B',
@@ -46,7 +46,7 @@ export const linesColors = new Proxy(
   },
   {
     get: function (target: {[l in string]: string}, name: string) {
-      return target.hasOwnProperty(name) ? target[name] : '#EB5424'
+      return target.hasOwnProperty(name) ? target[name] : '#635DFF'
     },
   },
 )
