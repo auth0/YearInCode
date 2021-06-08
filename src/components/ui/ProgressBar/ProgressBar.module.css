@@ -5,7 +5,7 @@
 }
 
 .progressBarValue {
-  @apply flex flex-col justify-center text-center text-white whitespace-nowrap bg-flamingo-500 rounded-sm transition-all duration-500 ease-out;
+  @apply flex flex-col justify-center text-center text-white whitespace-nowrap bg-indigo-500 rounded-sm transition-all duration-500 ease-out;
 
-  box-shadow: 8px 0px 16px 4px rgba(235, 84, 36, 0.4);
+  box-shadow: 8px 0px 16px 4px rgba(99, 93, 255, 0.4);
 }

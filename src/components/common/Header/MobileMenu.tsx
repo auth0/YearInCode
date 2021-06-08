@@ -52,7 +52,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             {showGeneratePoster && (
               <li>
                 <Link href="/posters/generate" passHref>
-                  <Typography variant="h3" as="a" className="text-flamingo-500">
+                  <Typography variant="h3" as="a" className="text-indigo-500">
                     My poster
                   </Typography>
                 </Link>

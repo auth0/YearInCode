@@ -20,7 +20,7 @@ function Header({isLoggedIn = false, isUserPoster}: Props) {
     <header className="z-50 flex items-center justify-between px-6 pt-8 sm:px-4">
       <Link href="/" passHref>
         <a>
-          <Logo aria-hidden />
+          <Logo aria-hidden width={89} height={32} />
           <span className="sr-only">Auth0 Logo</span>
         </a>
       </Link>
