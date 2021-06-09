@@ -349,7 +349,7 @@ export function getWeeksWithDominantLanguageAndRepository(
   })
 }
 
-export function getDominantRepository(
+export function getRepositoryStatistics(
   repositoryOverallTotal: Record<string, number>,
 ) {
   const repositoriesNames = Object.keys(repositoryOverallTotal)
@@ -357,7 +357,7 @@ export function getDominantRepository(
   const dominantRepository =
     repositoriesNames[indexOfMax(repositoriesActivities)]
 
-  return dominantRepository
+  return {dominantRepository, totalRepositories: repositoriesNames.length}
 }
 
 export function getDominantLanguage(languageCount: Record<string, number>) {

@@ -20,7 +20,7 @@ import {
   getWeeksWithDominantLanguageAndRepository,
   sendPosterMail,
   sendUpdateToClient,
-  getDominantRepository,
+  getRepositoryStatistics,
   getDominantLanguage,
   getGitHubToken,
 } from './start.utils'
@@ -104,7 +104,9 @@ export function startImplementation(event: SQSEvent) {
         repositoryLanguages,
       )
 
-      const dominantRepository = getDominantRepository(repositoryOverallTotal)
+      const {dominantRepository, totalRepositories} = getRepositoryStatistics(
+        repositoryOverallTotal,
+      )
       const dominantLanguage = getDominantLanguage(languageCount)
 
       const name = githubName ? githubName.trim() : username
@@ -114,6 +116,7 @@ export function startImplementation(event: SQSEvent) {
         year,
         totalLinesOfCode,
         weeks: completeWeeks.filter(val => val !== undefined) as PosterWeek[],
+        totalRepositories,
         dominantRepository,
         dominantLanguage,
       }

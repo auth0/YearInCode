@@ -107,6 +107,7 @@ test('should generate user activity', async () => {
     dominantLanguage: repos[0].language,
     dominantRepository: repos[0].name,
     totalLinesOfCode: 4965,
+    totalRepositories: 5,
     weeks: [
       {
         week: 14,
@@ -184,6 +185,7 @@ test('should be able to generate based on selected year', async () => {
     dominantLanguage: undefined,
     dominantRepository: undefined,
     totalLinesOfCode: 0,
+    totalRepositories: 0,
     weeks: [],
   })
 })
