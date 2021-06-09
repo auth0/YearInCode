@@ -185,7 +185,7 @@ test('should be able to generate based on selected year', async () => {
     dominantLanguage: undefined,
     dominantRepository: undefined,
     totalLinesOfCode: 0,
-    totalRepositories: 0,
+    totalRepositories: 5,
     weeks: [],
   })
 })

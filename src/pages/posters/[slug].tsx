@@ -128,7 +128,7 @@ export default function PosterBySlug({
   )
 }
 
-export const getPosterDescription = ({
+const getPosterDescription = ({
   year,
   totalRepositories,
   dominantLanguage,
