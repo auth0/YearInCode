@@ -1,7 +1,8 @@
 import {GetServerSideProps} from 'next'
 import Link from 'next/link'
 
-import {Footer, Header, Layout, PosterBackdrop} from '@components/common'
+import NotFoundSvg from '@assets/svg/not-found.svg'
+import {Footer, Header, Layout} from '@components/common'
 import {Button, Typography} from '@components/ui'
 import {auth0} from '@lib/auth'
 
@@ -10,10 +11,10 @@ const ErrorPage: React.FC<ErrorPageProps> = ({isLoggedIn}) => (
     navigation={<Header isLoggedIn={isLoggedIn} />}
     footer={<Footer />}
     content={
-      <div className="flex flex-col flex-1 lg:flex-row">
-        <PosterBackdrop>Howdy</PosterBackdrop>
+      <div className="flex flex-col flex-1 lg:flex-row items-center">
+        <NotFoundSvg className="place-self-center" />
         <div className="flex flex-col flex-1 p-10 text-center justify-center items-center">
-          <Typography variant="h3" className="font-bold mb-6">
+          <Typography variant="h2" className="font-bold mb-6">
             Oh, no!
           </Typography>
           <Typography
