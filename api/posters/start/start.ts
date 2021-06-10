@@ -23,6 +23,7 @@ import {
   getDominantRepository,
   getDominantLanguage,
   getGitHubToken,
+  sendErrorEmail,
 } from './start.utils'
 
 export function startImplementation(event: SQSEvent) {
@@ -31,6 +32,8 @@ export function startImplementation(event: SQSEvent) {
     const {
       body: {userId, year, username, posterSlug},
     } = record as SetBodyToType<SQSRecord, QueueRecordDTO>
+
+    let userEmail: string | null = null
 
     try {
       await sendUpdateToClient(posterSlug, userId, PosterSteps.START)
@@ -49,6 +52,7 @@ export function startImplementation(event: SQSEvent) {
         data: {name: githubName, followers: githubFollowers, email},
       } = await githubClient.users.getAuthenticated()
 
+      userEmail = email
       const {
         repositories: initialRepositories,
         totalPages,
@@ -162,6 +166,8 @@ export function startImplementation(event: SQSEvent) {
           `Error marking poster as FAILED for user (${userId}). Error details: ${err}`,
         )
       }
+
+      await sendErrorEmail(userEmail)
 
       return Promise.reject(e)
     }

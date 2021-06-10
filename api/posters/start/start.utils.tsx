@@ -8,6 +8,7 @@ import AWS from 'aws-sdk'
 import {concatLimit, mapLimit, retry} from 'async'
 import {ManagementClient} from 'auth0'
 
+import Logo from '@assets/svg/auth0-logo-white.svg'
 import {logger} from '@nebula/log'
 import {
   ConnectionDocument,
@@ -581,3 +582,83 @@ export async function sendUpdateToClient(
     logger.error(error)
   }
 }
+
+export const sendErrorEmail = async (userEmail: string | null) => {
+  if (!userEmail) {
+    logger.info(
+      "Error notitifaction not sent to user, since it doesn't have an email",
+    )
+
+    return
+  }
+  const bccRecipients = (
+    process.env.SEND_POSTER_ANALYTICS_RECIPIENTS || ''
+  ).split(',')
+
+  const params: AWS.SES.SendEmailRequest = {
+    Destination: {
+      ToAddresses: [userEmail],
+      BccAddresses: bccRecipients,
+    },
+    Source: process.env.AWS_SOURCE_EMAIL as string,
+    Message: {
+      Subject: {
+        Data: 'Auth0 Poster Generation - Error Notification',
+      },
+      Body: {
+        Html: {
+          Data: ReactDOMServer.renderToString(<ErrorNotification />),
+        },
+      },
+    },
+  }
+
+  logger.info('Sending error notification to user...')
+
+  try {
+    await SES.sendEmail(params).promise()
+  } catch (e) {
+    logger.error('Failed to send error notification', e)
+  }
+}
+
+const ErrorNotification: React.FC = () => (
+  <div style={{textAlign: 'center'}}>
+    <h2>OOOPS......</h2>
+    <p>Looks like there was an issue while we tried to create your poster.</p>
+    <p>Please try to come back later.</p>
+    <p style={{color: '#BCBCBC', fontWeight: 'bold'}}>
+      <span
+        style={{
+          transform: 'rotate(-30deg)',
+          display: 'inline-block',
+          fontSize: '14rem',
+        }}
+      >
+        4
+      </span>
+      <span style={{fontSize: '11rem', marginLeft: 30, marginRight: 20}}>
+        0
+      </span>
+      <span
+        style={{
+          transform: 'rotate(20deg)',
+          display: 'inline-block',
+          fontSize: '16rem',
+        }}
+      >
+        4
+      </span>
+    </p>
+    <div
+      style={{
+        backgroundColor: 'black',
+        margin: '0 auto',
+        padding: 5,
+        width: 'max-content',
+      }}
+    >
+      <Logo aria-hidden width={89} height={32} />
+    </div>
+  </div>
+)
