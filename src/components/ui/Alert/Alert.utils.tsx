@@ -5,7 +5,7 @@ import {AlertProps} from './Alert'
 export function getBgColor(type: AlertProps['type']) {
   switch (type) {
     case 'warning':
-      return 'bg-flamingo-500 bg-opacity-10 border border-flamingo-500 text-flamingo-500'
+      return 'bg-indigo-500 bg-opacity-10 border border-indigo-500 text-indigo-500'
     default:
       return ''
   }

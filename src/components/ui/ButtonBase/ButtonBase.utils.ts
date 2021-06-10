@@ -14,7 +14,7 @@ export function getButtonStylesByVariant(
         'hover:bg-opacity-20',
         'focus:bg-opacity-20 border focus:outline-none',
         {
-          'hover:text-flamingo-500 focus:border-flamingo-500 hover:bg-flamingo-500 hover:border-flamingo-500':
+          'hover:text-indigo-500 focus:border-indigo-500 hover:bg-indigo-500 hover:border-indigo-500':
             color === 'primary',
           'focus:border-dark-slate-gray-500 hover:bg-dark-slate-gray-500 hover:border-dark-slate-gray-500':
             color === 'default',
@@ -24,8 +24,7 @@ export function getButtonStylesByVariant(
     case 'contained':
       return clsx(
         {
-          'bg-flamingo-500 text-white hover:bg-flamingo-600':
-            color === 'primary',
+          'bg-indigo-500 text-white hover:bg-indigo-600': color === 'primary',
           'bg-dark-slate-gray-500 text-white hover:bg-dark-slate-gray-600':
             color === 'default',
         },
