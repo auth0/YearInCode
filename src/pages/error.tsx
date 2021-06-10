@@ -1,13 +1,37 @@
 import {GetServerSideProps} from 'next'
+import Link from 'next/link'
 
-import {Footer, Header, Layout} from '@components/common'
+import {Footer, Header, Layout, PosterBackdrop} from '@components/common'
+import {Button, Typography} from '@components/ui'
 import {auth0} from '@lib/auth'
 
 const ErrorPage: React.FC<ErrorPageProps> = ({isLoggedIn}) => (
   <Layout
     navigation={<Header isLoggedIn={isLoggedIn} />}
     footer={<Footer />}
-    content={null}
+    content={
+      <div className="flex flex-col flex-1 lg:flex-row">
+        <PosterBackdrop>Howdy</PosterBackdrop>
+        <div className="flex flex-col flex-1 p-10 text-center justify-center items-center">
+          <Typography variant="h3" className="font-bold mb-6">
+            Oh, no!
+          </Typography>
+          <Typography
+            variant="h6"
+            as="p"
+            className="text-white leading-relaxed opacity-60 mb-6"
+          >
+            This page does not exist, do not let this stop you from building
+            awesome things.
+          </Typography>
+          <Link href="/" passHref>
+            <Button color="primary" className="max-w-max">
+              Go Home
+            </Button>
+          </Link>
+        </div>
+      </div>
+    }
   />
 )
 
