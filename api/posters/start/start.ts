@@ -153,12 +153,7 @@ export function startImplementation(event: SQSEvent) {
       logger.error(e)
 
       try {
-        await PosterModel.update(
-          {posterSlug, userId},
-          {
-            step: PosterSteps.FAILED,
-          },
-        )
+        await sendUpdateToClient(posterSlug, userId, PosterSteps.FAILED)
 
         logger.info(`Marked poster as FAILED for user (${userId})`)
       } catch (err) {
