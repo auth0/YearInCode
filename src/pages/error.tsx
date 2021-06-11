@@ -6,6 +6,10 @@ import {Footer, Header, Layout} from '@components/common'
 import {Button, Typography} from '@components/ui'
 import {auth0} from '@lib/auth'
 
+interface ErrorPageProps {
+  isLoggedIn: boolean
+}
+
 const ErrorPage: React.FC<ErrorPageProps> = ({isLoggedIn}) => (
   <Layout
     navigation={<Header isLoggedIn={isLoggedIn} />}
@@ -42,7 +46,5 @@ export const getServerSideProps: GetServerSideProps<ErrorPageProps> = async ({
   const session = await auth0.getSession(req)
   return {props: {isLoggedIn: Boolean(session)}}
 }
-
-type ErrorPageProps = {isLoggedIn: boolean}
 
 export default ErrorPage
