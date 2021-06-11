@@ -66,9 +66,8 @@ export function startImplementation(event: SQSEvent) {
         repositories = repositories.concat(arr)
       }
 
-      logger.info(
-        `Repositories are done! Analyzing ${repositories.length} repos`,
-      )
+      const totalRepositories = repositories.length
+      logger.info(`Repositories are done! Analyzing ${totalRepositories} repos`)
 
       const repositoriesStats = await getRepositoryStats(
         repositories,
@@ -114,6 +113,7 @@ export function startImplementation(event: SQSEvent) {
         year,
         totalLinesOfCode,
         weeks: completeWeeks.filter(val => val !== undefined) as PosterWeek[],
+        totalRepositories,
         dominantRepository,
         dominantLanguage,
       }
