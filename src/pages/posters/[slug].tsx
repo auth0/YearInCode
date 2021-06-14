@@ -75,13 +75,15 @@ export default function PosterBySlug({
     )
   }
 
+  const description = getPosterDescription(posterData)
+
   return (
     <>
       <NextSeo
         title={`${posterData.name}'s ${posterData.year} Year in Code`}
         openGraph={{
           type: 'website',
-          description: `Come take a look at the art generated from ${posterData.name}’s code in ${posterData.year}!`,
+          description,
           images: [
             {
               url: `${constants.site.cloudfront_url}/${posterImages.openGraph}`,
@@ -124,6 +126,22 @@ export default function PosterBySlug({
       />
     </>
   )
+}
+
+const getPosterDescription = ({
+  year,
+  totalRepositories,
+  dominantLanguage,
+}: Poster) => {
+  const dominantLanguageDescription = `mostly ${dominantLanguage}`
+
+  const reposSuffix = totalRepositories === 1 ? '' : 's'
+
+  const posterDescription = totalRepositories
+    ? `on ${totalRepositories} repo${reposSuffix} and ${dominantLanguageDescription}`
+    : dominantLanguageDescription
+
+  return `Take a look at my ${year} year in code where I worked ${posterDescription}. What’s your year in code look like?`
 }
 
 export async function getServerSideProps({

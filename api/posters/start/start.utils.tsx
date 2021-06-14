@@ -25,10 +25,12 @@ import {
   InstagramPoster,
   OpenGraphPoster,
   HighQualityPoster,
+  TwitterPoster,
 } from '../components'
 import PosterModel from '../poster.model'
 import ConnectionModel from '../connection.model'
-import TwitterPoster from '../components/TwitterPoster'
+
+import ErrorNotification from './components/ErrorNotification'
 
 export type Repositories = RestEndpointMethodTypes['repos']['listForAuthenticatedUser']['response']['data']
 
@@ -579,5 +581,44 @@ export async function sendUpdateToClient(
     }
   } catch (error) {
     logger.error(error)
+  }
+}
+
+export const sendErrorEmail = async (userEmail: string | null) => {
+  if (!userEmail) {
+    logger.info(
+      "Error notitifaction not sent to user, since it doesn't have an email",
+    )
+
+    return
+  }
+  const bccRecipients = (
+    process.env.SEND_POSTER_ANALYTICS_RECIPIENTS || ''
+  ).split(',')
+
+  const params: AWS.SES.SendEmailRequest = {
+    Destination: {
+      ToAddresses: [userEmail],
+      BccAddresses: bccRecipients,
+    },
+    Source: process.env.AWS_SOURCE_EMAIL as string,
+    Message: {
+      Subject: {
+        Data: 'Auth0 Poster Generation - Error Notification',
+      },
+      Body: {
+        Html: {
+          Data: ReactDOMServer.renderToString(<ErrorNotification />),
+        },
+      },
+    },
+  }
+
+  logger.info('Sending error notification to user...')
+
+  try {
+    await SES.sendEmail(params).promise()
+  } catch (e) {
+    logger.error('Failed to send error notification', e)
   }
 }

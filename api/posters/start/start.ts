@@ -23,6 +23,7 @@ import {
   getDominantRepository,
   getDominantLanguage,
   getGitHubToken,
+  sendErrorEmail,
 } from './start.utils'
 
 export function startImplementation(event: SQSEvent) {
@@ -31,6 +32,8 @@ export function startImplementation(event: SQSEvent) {
     const {
       body: {userId, year, username, posterSlug},
     } = record as SetBodyToType<SQSRecord, QueueRecordDTO>
+
+    let userEmail: string | null = null
 
     try {
       await sendUpdateToClient(posterSlug, userId, PosterSteps.START)
@@ -49,6 +52,7 @@ export function startImplementation(event: SQSEvent) {
         data: {name: githubName, followers: githubFollowers, email},
       } = await githubClient.users.getAuthenticated()
 
+      userEmail = email
       const {
         repositories: initialRepositories,
         totalPages,
@@ -66,9 +70,8 @@ export function startImplementation(event: SQSEvent) {
         repositories = repositories.concat(arr)
       }
 
-      logger.info(
-        `Repositories are done! Analyzing ${repositories.length} repos`,
-      )
+      const totalRepositories = repositories.length
+      logger.info(`Repositories are done! Analyzing ${totalRepositories} repos`)
 
       const repositoriesStats = await getRepositoryStats(
         repositories,
@@ -114,6 +117,7 @@ export function startImplementation(event: SQSEvent) {
         year,
         totalLinesOfCode,
         weeks: completeWeeks.filter(val => val !== undefined) as PosterWeek[],
+        totalRepositories,
         dominantRepository,
         dominantLanguage,
       }
@@ -149,12 +153,7 @@ export function startImplementation(event: SQSEvent) {
       logger.error(e)
 
       try {
-        await PosterModel.update(
-          {posterSlug, userId},
-          {
-            step: PosterSteps.FAILED,
-          },
-        )
+        await sendUpdateToClient(posterSlug, userId, PosterSteps.FAILED)
 
         logger.info(`Marked poster as FAILED for user (${userId})`)
       } catch (err) {
@@ -162,6 +161,8 @@ export function startImplementation(event: SQSEvent) {
           `Error marking poster as FAILED for user (${userId}). Error details: ${err}`,
         )
       }
+
+      await sendErrorEmail(userEmail)
 
       return Promise.reject(e)
     }
