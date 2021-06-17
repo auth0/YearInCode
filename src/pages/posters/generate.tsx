@@ -2,13 +2,9 @@ import React from 'react'
 import useWebSocket, {ReadyState} from 'react-use-websocket'
 import * as Iron from '@hapi/iron'
 import nProgress from 'nprogress'
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from 'next'
+import {GetServerSidePropsContext, NextApiRequest, NextApiResponse} from 'next'
 import Link from 'next/link'
+import {useRouter} from 'next/router'
 
 import {auth0} from '@lib/auth'
 import {constants, createLoginUrl} from '@lib/common'
@@ -30,6 +26,7 @@ export default function Loading({
   wsPayload,
   currentStep,
 }: Props) {
+  const router = useRouter()
   const [step, setStep] = React.useState(currentStep)
   const [posterSlug, setPosterSlug] = React.useState('')
 
@@ -63,6 +60,10 @@ export default function Loading({
 
       setStep(step)
       setPosterSlug(posterSlug)
+
+      if (step === PosterSteps.FAILED) {
+        router.push('/error')
+      }
     }
   }, [lastJsonMessage])
 
