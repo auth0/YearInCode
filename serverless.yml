@@ -91,10 +91,6 @@ custom:
       forceInclude:
         - uuid
     packager: "yarn"
-    # packagerOptions:
-    #   scripts:
-    #     - npx del-cli node_modules/aws-sdk "node_modules/**/@types/**"
-    #       "node_modules/**/*.d.ts" "node_modules/**/.bin"
   domainRoot: yearincode.dev
   cdnDomains:
     production: cdn.${self:custom.domainRoot}
