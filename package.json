@@ -164,7 +164,7 @@
     "serverless-offline-ses": "^0.0.6",
     "serverless-offline-sqs": "^4.1.1",
     "serverless-s3-local": "^0.6.7",
-    "serverless-webpack": "^5.3.5",
+    "serverless-webpack": "^5.5.1",
     "start-server-and-test": "^1.12.0",
     "storybook-css-modules-preset": "^1.1.1",
     "tailwindcss": "^2.2.4",
