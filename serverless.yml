@@ -4,7 +4,7 @@ service: nebula-serverless
 # app: nebula
 # org: ORG_NAME
 
-frameworkVersion: ">2.15.0 <=2.22.0"
+frameworkVersion: ">2.15.0 <=2.28.7"
 
 package:
   individually: true
