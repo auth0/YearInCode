@@ -91,10 +91,6 @@ custom:
       forceInclude:
         - uuid
     packager: "yarn"
-    packagerOptions:
-      scripts:
-        - npx del-cli node_modules/aws-sdk "node_modules/**/@types/**"
-          "node_modules/**/*.d.ts" "node_modules/**/.bin"
   domainRoot: yearincode.dev
   cdnDomains:
     production: cdn.${self:custom.domainRoot}
@@ -216,8 +212,7 @@ functions:
       SEND_POSTER_ANALYTICS_RECIPIENTS:
         ${ssm:/${self:custom.stage}/ses/poster_analytics_recipients,
         env:SEND_POSTER_ANALYTICS_RECIPIENTS}
-      AWS_SOURCE_EMAIL:
-        ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
+      AWS_SOURCE_EMAIL: ${ssm:/${self:custom.stage}/ses/source_email, env:AWS_SOURCE_EMAIL}
     events:
       - schedule: cron(0 0 ? * 1 *) # Notify at the start of the week
 
