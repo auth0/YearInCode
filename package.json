@@ -31,7 +31,7 @@
     "aws-sdk": "2.771.0"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "0.16.1",
+    "@auth0/nextjs-auth0": "1.4.2",
     "@babel/runtime": "^7.12.13",
     "@fontsource/inter": "^4.1.1",
     "@hapi/iron": "^6.0.0",
