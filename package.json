@@ -88,7 +88,7 @@
     "react-use": "^15.3.8",
     "react-use-websocket": "^2.2.0",
     "svg-path-parser": "^1.1.0",
-    "uuid": "3.3.2",
+    "uuid": "14.0.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
