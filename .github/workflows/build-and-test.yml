@@ -10,15 +10,15 @@ jobs:
       NEXT_PUBLIC_API_URL: http://localhost:3000/api
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@2b250bc32ad02700b996b496c14ac8c2840a2991 # v2.1.8
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1.4.6
         with:
           node-version: "12.20.0"
 
@@ -35,21 +35,21 @@ jobs:
       NEXT_PUBLIC_API_URL: http://localhost:3000/api
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
 
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1.4.6
         with:
           node-version: "12.20.0"
 
       - name: Cache Next.js build
-        uses: actions/cache@v2
+        uses: actions/cache@2b250bc32ad02700b996b496c14ac8c2840a2991 # v2.1.8
         with:
           path: ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2.7.0
+        uses: cypress-io/github-action@6e6d77eeb1dda289679ea46f13aff1ec4d879d55 # v2.7.0
         continue-on-error: true
         with:
           record: true
